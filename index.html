@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacepal — Corre para mantenerlo vivo</title>
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Nunito', system-ui, sans-serif; background: #14191f; color: #fff; -webkit-font-smoothing: antialiased; }
+  canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+  /* Fade-up on scroll */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* Smooth energy bar */
+  .e-bar { transition: width 1s cubic-bezier(.22,1,.36,1), background-color .6s ease; }
+
+  /* Float */
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+  .float { animation: float 3.5s ease-in-out infinite; }
+
+  /* Subtle grain overlay on hero */
+  .grain::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    background-size: 180px;
+    opacity: .35;
+    z-index: 1;
+  }
+
+  /* Horizontal rule */
+  .rule { border: none; border-top: 1px solid rgba(255,255,255,.07); }
+
+  /* Pill tag */
+  .tag { display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.35); }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ────────────────────────────────────────────────────────────── -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-[#14191f]/85 backdrop-blur-xl">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <img src="assets/logo_bueno.png" class="h-7" alt="Pacepal">
+    <a href="#"
+       class="text-sm font-extrabold text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-2.5 rounded-full transition-colors">
+      Descargar
+    </a>
+  </div>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────────────────────── -->
+<section class="grain relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16">
+  <video autoplay muted loop playsinline
+         class="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none">
+    <source src="assets/run.mp4" type="video/mp4">
+  </video>
+  <!-- vignette -->
+  <div class="absolute inset-0 bg-radial-gradient"
+       style="background:radial-gradient(ellipse 80% 60% at 50% 40%, transparent 30%, #14191f 100%)"></div>
+  <div class="absolute bottom-0 left-0 right-0 h-48"
+       style="background:linear-gradient(to bottom, transparent, #14191f)"></div>
+
+  <div class="relative z-10 flex flex-col items-center text-center px-6 py-24 gap-10 max-w-3xl">
+    <img src="assets/logo_bueno.png" class="w-56 md:w-72 opacity-95" alt="Pacepal">
+
+    <!-- Pet -->
+    <div class="float flex flex-col items-center gap-3">
+      <canvas id="heroPet" class="drop-shadow-2xl"></canvas>
+      <!-- HP bar -->
+      <div class="w-44">
+        <div class="flex justify-between text-xs mb-1.5">
+          <span id="heroHpLabel" class="font-extrabold tracking-wide" style="color:#4ADE80">HP</span>
+          <span id="heroEnergyPct" class="font-mono" style="color:rgba(255,255,255,.35)">78%</span>
+        </div>
+        <div class="h-2.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)">
+          <div id="heroBar" class="e-bar h-full rounded-full" style="width:78%;background:#4ADE80"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h1 class="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-5">
+        Corre para<br><span style="color:#F9703E">mantenerlo vivo.</span>
+      </h1>
+      <p class="text-lg md:text-xl leading-relaxed" style="color:rgba(255,255,255,.5)">
+        Tu compañero pixel-art pierde energía cada día.<br>
+        Solo tus kilómetros pueden salvarlo.
+      </p>
+    </div>
+
+    <div class="flex flex-col items-center gap-3">
+      <a href="#"
+         class="inline-flex items-center gap-2.5 font-extrabold text-base text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        Descargar gratis en App Store
+      </a>
+      <a href="#demo" class="text-sm font-semibold transition-colors" style="color:rgba(255,255,255,.3)">
+        Ver cómo funciona ↓
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEMO ───────────────────────────────────────────────────────────── -->
+<section id="demo" class="py-28" style="background:#14191f">
+  <div class="max-w-6xl mx-auto px-6">
+
+    <div class="mb-16 reveal">
+      <span class="tag">Vista previa</span>
+      <h2 class="text-4xl md:text-5xl font-black mt-3 leading-tight">
+        Así se ve en tu iPhone.
+      </h2>
+    </div>
+
+    <div class="flex flex-col lg:flex-row items-start gap-12 lg:gap-20 reveal">
+
+      <!-- App screen card -->
+      <div class="flex-1 flex flex-col rounded-2xl overflow-hidden relative"
+           style="background:#F5F8FC;min-height:420px">
+
+        <!-- Subtle orange glow at top (matches AppBackground) -->
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(249,112,62,.08) 0%,transparent 100%);pointer-events:none"></div>
+
+        <!-- Top bar -->
+        <div class="relative flex items-center justify-between px-6 pt-5 pb-2">
+          <img src="assets/logo_bueno.png" style="height:18px;opacity:.9" alt="">
+          <div style="display:flex;gap:8px">
+            <div style="width:32px;height:32px;background:#F5ECE4;border-radius:50%;display:flex;align-items:center;justify-content:center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A09080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div style="width:32px;height:32px;background:#F5ECE4;border-radius:50%;display:flex;align-items:center;justify-content:center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A09080" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- HP card -->
+        <div class="relative mx-5 mb-2 px-4 py-3 rounded-xl"
+             style="background:#2B2420;border:1.5px solid rgba(255,255,255,.78);box-shadow:0 4px 14px rgba(0,0,0,.2)">
+          <div class="flex justify-between items-baseline mb-2">
+            <span style="font-family:'Courier New',monospace;font-weight:900;font-size:14px;color:#fff;letter-spacing:.04em">SMOOTH</span>
+            <span style="font-family:'Courier New',monospace;font-size:11px;color:rgba(255,255,255,.55)">DÍA: 01/66</span>
+          </div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span id="demoHpLabel" style="font-family:'Courier New',monospace;font-size:13px;font-weight:900;color:#4ADE80;min-width:18px">HP</span>
+            <div class="flex-1 rounded overflow-hidden" style="height:13px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.72);box-sizing:border-box">
+              <div id="demoBar" class="e-bar h-full rounded" style="width:78%;background:#4ADE80"></div>
+            </div>
+            <span id="demoEnergyPct" style="font-family:'Courier New',monospace;font-size:12px;color:#4ADE80;min-width:36px;text-align:right">78%</span>
+          </div>
+          <div id="timeLeftLabel" style="font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.38)">18h 43m restantes</div>
+        </div>
+
+        <!-- Pet -->
+        <div class="relative flex-1 flex items-center justify-center">
+          <div class="float">
+            <canvas id="demoPet"></canvas>
+          </div>
+        </div>
+
+        <!-- KM display -->
+        <div class="relative flex items-end justify-center gap-1 pb-2">
+          <span style="font-size:52px;font-weight:900;color:#F9703E;line-height:1;font-family:'Nunito',sans-serif">3.2</span>
+          <span style="font-size:20px;font-weight:700;color:rgba(249,112,62,.65);padding-bottom:6px">km</span>
+        </div>
+
+        <!-- Mood pill -->
+        <div class="relative flex justify-center pb-5">
+          <div id="moodPill" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:999px;border:1.5px solid #4ADE80;background:rgba(74,222,128,.10)">
+            <div id="moodDot" style="width:7px;height:7px;border-radius:50%;background:#4ADE80;flex-shrink:0"></div>
+            <span id="moodPillText" style="font-size:12px;font-weight:600;color:#4A3F35">listo para correr</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Controls -->
+      <div class="flex-1 pt-4">
+        <h3 class="text-2xl font-black mb-2">¿Qué pasa si no corres?</h3>
+        <p class="text-base leading-relaxed mb-8" style="color:rgba(255,255,255,.45)">
+          La energía se drena sola. Observa cómo cambia su humor conforme pasan las horas sin actividad.
+        </p>
+
+        <!-- Mood pills -->
+        <div class="flex flex-wrap gap-2.5 mb-8">
+          <button onclick="setMood('happy')"
+                  class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
+                  style="background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);color:#4ADE80">
+            Feliz
+          </button>
+          <button onclick="setMood('idle')"
+                  class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
+                  style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.7)">
+            Normal
+          </button>
+          <button onclick="setMood('sad')"
+                  class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
+                  style="background:rgba(253,211,77,.1);border-color:rgba(253,211,77,.25);color:#FCD34D">
+            Triste
+          </button>
+          <button onclick="setMood('angry')"
+                  class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
+                  style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#F87171">
+            Enojado
+          </button>
+        </div>
+
+        <button onclick="addRun()"
+                class="w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-base text-white transition-all duration-200 hover:scale-[1.03] active:scale-95"
+                style="background:#F9703E">
+          Correr 5 km — +30% energía
+        </button>
+
+        <hr class="rule my-8">
+
+        <!-- Quick stats -->
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <div class="text-2xl font-black">66</div>
+            <div class="text-xs font-semibold mt-0.5" style="color:rgba(255,255,255,.35)">días del reto</div>
+          </div>
+          <div>
+            <div class="text-2xl font-black">30+</div>
+            <div class="text-xs font-semibold mt-0.5" style="color:rgba(255,255,255,.35)">paletas de color</div>
+          </div>
+          <div>
+            <div class="text-2xl font-black">4</div>
+            <div class="text-xs font-semibold mt-0.5" style="color:rgba(255,255,255,.35)">estados de ánimo</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────────────── -->
+<section class="py-28" style="background:#191f27">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="mb-16 reveal">
+      <span class="tag">Cómo funciona</span>
+      <h2 class="text-4xl md:text-5xl font-black mt-3 leading-tight max-w-xl">
+        Simple por diseño.<br>Efectivo por naturaleza.
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-px rounded-2xl overflow-hidden reveal"
+         style="background:rgba(255,255,255,.07)">
+
+      <div class="px-8 py-10" style="background:#191f27">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.25)">01</div>
+        <h3 class="text-xl font-black mb-3">Elige tu compañero</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
+          Más de treinta combinaciones de color. Cada mascota tiene su propia apariencia en pixel-art, generada con el mismo motor de la app.
+        </p>
+      </div>
+
+      <div class="px-8 py-10" style="background:#191f27">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.25)">02</div>
+        <h3 class="text-xl font-black mb-3">Sal a correr</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
+          Apple Health sincroniza tus kilómetros automáticamente. Sin botones que apretar, sin trampa posible. Corres, él vive.
+        </p>
+      </div>
+
+      <div class="px-8 py-10" style="background:#191f27">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.25)">03</div>
+        <h3 class="text-xl font-black mb-3">Mantenlo feliz 66 días</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
+          La ciencia dice que un hábito tarda 66 días en formarse, no 21. Cada hito de racha desbloquea un fondo exclusivo.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── EMOTIONAL HOOK ─────────────────────────────────────────────────── -->
+<section class="py-28 overflow-hidden" style="background:#14191f">
+  <div class="max-w-6xl mx-auto px-6">
+
+    <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+
+      <!-- Text -->
+      <div class="flex-1 reveal">
+        <span class="tag mb-4 block">La diferencia</span>
+        <h2 class="text-4xl md:text-6xl font-black leading-[1.05] tracking-tight mb-6">
+          No lo dejes<br>sin energía.
+        </h2>
+        <p class="text-lg leading-relaxed mb-8" style="color:rgba(255,255,255,.5)">
+          Otros apps te muestran estadísticas.<br>
+          Pacepal te da una razón emocional para salir hoy.
+        </p>
+        <a href="#"
+           class="inline-flex items-center gap-2 text-sm font-extrabold transition-colors"
+           style="color:#F9703E">
+          Descargar gratis
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Pet comparison -->
+      <div class="flex items-end gap-10 md:gap-16 reveal" style="transition-delay:.1s">
+        <div class="flex flex-col items-center gap-3">
+          <canvas id="happyPet" class="drop-shadow-2xl float"></canvas>
+          <span class="text-xs font-extrabold tracking-widest uppercase" style="color:#4ADE80">Corriste</span>
+        </div>
+        <div class="text-3xl font-black pb-10" style="color:rgba(255,255,255,.1)">vs</div>
+        <div class="flex flex-col items-center gap-3">
+          <canvas id="angryPet" class="drop-shadow-2xl"></canvas>
+          <span class="text-xs font-extrabold tracking-widest uppercase" style="color:#F87171">3 días sin correr</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── QUOTES ─────────────────────────────────────────────────────────── -->
+<section class="py-24" style="background:#14191f">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="grid md:grid-cols-2 gap-px rounded-2xl overflow-hidden reveal"
+         style="background:rgba(255,255,255,.07)">
+
+      <div class="p-10" style="background:#14191f">
+        <div class="text-5xl font-black leading-none mb-6" style="color:rgba(249,112,62,.2)">"</div>
+        <p class="text-lg leading-relaxed font-semibold mb-6" style="color:rgba(255,255,255,.75)">
+          Llevaba meses intentando correr sin lograrlo. Con Pacepal llevo 47 días sin fallar. No quiero que se muera.
+        </p>
+        <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">
+          María G. — Ciudad de México
+        </div>
+      </div>
+
+      <div class="p-10" style="background:#14191f">
+        <div class="text-5xl font-black leading-none mb-6" style="color:rgba(249,112,62,.2)">"</div>
+        <p class="text-lg leading-relaxed font-semibold mb-6" style="color:rgba(255,255,255,.75)">
+          El widget en mi pantalla de inicio es lo mejor. Cada vez que lo veo triste, sé que tengo que salir. Funciona.
+        </p>
+        <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">
+          Andrea M. — Buenos Aires
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ──────────────────────────────────────────────────────── -->
+<section class="py-32 text-center" style="background:#191f27">
+  <div class="max-w-2xl mx-auto px-6 reveal">
+    <div class="flex justify-center mb-10 float">
+      <canvas id="ctaPet" class="drop-shadow-2xl"></canvas>
+    </div>
+    <h2 class="text-4xl md:text-6xl font-black leading-[1.05] tracking-tight mb-5">
+      Empieza hoy.<br>
+      <span style="color:#F9703E">Tu compañero<br>te está esperando.</span>
+    </h2>
+    <p class="text-lg mb-10" style="color:rgba(255,255,255,.4)">
+      Gratis. Sin suscripción. Solo corre.
+    </p>
+    <a href="#"
+       class="inline-flex items-center gap-3 font-extrabold text-lg text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-10 py-5 rounded-2xl transition-all duration-300 shadow-2xl hover:scale-105">
+      <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+      </svg>
+      Descargar en App Store
+    </a>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+<footer style="background:#0e1318;border-top:1px solid rgba(255,255,255,.05)">
+  <div class="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
+    <img src="assets/logo_bueno.png" class="h-6 opacity-40" alt="Pacepal">
+    <div class="flex gap-6 text-sm font-semibold" style="color:rgba(255,255,255,.25)">
+      <a href="terms.html"   class="hover:text-white/60 transition-colors">Términos y Condiciones</a>
+      <a href="privacy.html" class="hover:text-white/60 transition-colors">Política de Privacidad</a>
+    </div>
+    <p class="text-sm" style="color:rgba(255,255,255,.18)">© 2025 Pacepal</p>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SPRITE ENGINE — port fiel del motor Swift/JS
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+const GS = 24;
+const C = {
+  empty:0, body:1, outline:2, face:3, eyePupil:4, eyeShine:5,
+  mouth:6, cheek:7, shade:8, nose:9, tear:10, gold:11,
+  speedLine:12, gray:13, accent1:14, accent2:15, lightning:16
+};
+
+const DNA = {
+  bodyCx:12, bodyCy:11, bodyRx:6, bodyRy:7,
+  earTopY:4, earSp:3, armStyle:1, eyeSp:3, mouthStyle:1,
+  hasCheeks:true, hasMuzzle:false, hasNose:false,
+  hasMarking:false, hasBow:false, hasTail:false, tailOffset:0,
+  palette:{
+    body:'#002159', shade:'#2186EB', face:'#B6E0FE',
+    eyeP:'#002159', cheek:'#F191C1', accent1:'#AFF75C', accent2:'#62F4EB'
+  }
+};
+
+const makeGrid = () => Array.from({length:GS},()=>new Array(GS).fill(C.empty));
+const pset = (g,x,y,c) => { if(x>=0&&x<GS&&y>=0&&y<GS) g[y][x]=c; };
+const pget = (g,x,y) => (x>=0&&x<GS&&y>=0&&y<GS)?g[y][x]:null;
+
+function fillEllipse(g,cx,cy,rx,ry,c){
+  if(rx<=0||ry<=0)return;
+  for(let y=Math.floor(cy-ry);y<=Math.ceil(cy+ry);y++)
+    for(let x=Math.floor(cx-rx);x<=Math.ceil(cx+rx);x++){
+      const dx=(x-cx)/rx,dy=(y-cy)/ry;
+      if(dx*dx+dy*dy<=1)pset(g,x,y,c);
+    }
+}
+
+function addOutline(g){
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
+  const edges=[];
+  for(let y=0;y<GS;y++)for(let x=0;x<GS;x++){
+    if(g[y][x]!==C.body)continue;
+    for(const[dx,dy]of dirs)if(pget(g,x+dx,y+dy)===C.empty){edges.push([x,y]);break;}
+  }
+  for(const[x,y]of edges)g[y][x]=C.outline;
+}
+
+function buildGrid(pose,frame){
+  const g=makeGrid();
+  const{bodyCx:bCx,bodyCy:bCy,bodyRx:bRx,bodyRy:bRy}=DNA;
+  fillEllipse(g,bCx,bCy,bRx,bRy,C.body);
+
+  const aY=Math.round(bCy+bRy*0.1);
+  const lX=Math.round(bCx-bRx)-1;
+  const rX=Math.round(bCx+bRx);
+
+  if(pose==='running'){
+    switch(frame){
+      case 0: pset(g,lX-1,aY+2,C.body);pset(g,lX,aY+3,C.body);pset(g,rX,aY-3,C.body);pset(g,rX,aY-2,C.body);break;
+      case 1: pset(g,lX,aY+1,C.body);pset(g,lX,aY+2,C.body);pset(g,rX,aY-1,C.body);pset(g,rX,aY,C.body);break;
+      case 2: pset(g,lX,aY-3,C.body);pset(g,lX,aY-2,C.body);pset(g,rX+1,aY+2,C.body);pset(g,rX,aY+3,C.body);break;
+      default:pset(g,lX,aY-1,C.body);pset(g,lX,aY,C.body);pset(g,rX,aY+1,C.body);pset(g,rX,aY+2,C.body);
+    }
+  }else if(pose==='happy'){
+    const hi=frame%2===0;
+    pset(g,lX,hi?aY-2:aY-1,C.body);pset(g,lX,hi?aY-1:aY,C.body);
+    pset(g,rX,hi?aY-2:aY-1,C.body);pset(g,rX,hi?aY-1:aY,C.body);
+  }else if(pose==='sad'){
+    const dr=frame<=1?1:2;
+    pset(g,lX,aY+dr,C.body);pset(g,lX,aY+dr+1,C.body);
+    if(frame===3){pset(g,rX,aY-1,C.body);pset(g,rX,aY,C.body);}
+    else{pset(g,rX,aY+dr,C.body);pset(g,rX,aY+dr+1,C.body);}
+  }else if(pose==='angry'){
+    const hi=frame%2===0;
+    pset(g,hi?lX:lX-1,aY-1,C.body);pset(g,hi?lX:lX-1,aY,C.body);
+    const rt=hi?aY-3:aY-2;
+    pset(g,hi?rX:rX+1,rt,C.body);pset(g,hi?rX:rX+1,rt+1,C.body);
+  }else if(pose==='dead'){
+    pset(g,lX-1,aY,C.body);pset(g,lX,aY,C.body);pset(g,lX,aY+1,C.body);
+    pset(g,rX+1,aY,C.body);pset(g,rX,aY,C.body);pset(g,rX,aY+1,C.body);
+  }else{
+    pset(g,lX,aY-1,C.body);pset(g,lX,aY,C.body);
+    pset(g,rX,aY,C.body);pset(g,rX,aY+1,C.body);
+  }
+
+  for(let y=19;y<=21;y++)for(let x=0;x<GS;x++)if(g[y][x]===C.body)g[y][x]=C.empty;
+  if(pose==='running'){
+    // Left foot: frame0=UP, frame1=MID, frames2-3=DOWN
+    switch(frame){
+      case 0: pset(g,8,17,C.body);pset(g,10,17,C.body);pset(g,8,18,C.body);pset(g,10,18,C.body);pset(g,9,19,C.body);break;
+      case 1: pset(g,8,18,C.body);pset(g,10,18,C.body);pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,9,20,C.body);break;
+      default:pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,8,20,C.body);pset(g,10,20,C.body);pset(g,9,21,C.body);
+    }
+    // Right foot: frames0-1=DOWN, frame2=UP, frame3=MID
+    switch(frame){
+      case 2: pset(g,14,17,C.body);pset(g,16,17,C.body);pset(g,14,18,C.body);pset(g,16,18,C.body);pset(g,15,19,C.body);break;
+      case 3: pset(g,14,18,C.body);pset(g,16,18,C.body);pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,15,20,C.body);break;
+      default:pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,14,20,C.body);pset(g,16,20,C.body);pset(g,15,21,C.body);
+    }
+  }else if(pose!=='dead'){
+    pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,8,20,C.body);pset(g,10,20,C.body);pset(g,9,21,C.body);
+    pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,14,20,C.body);pset(g,16,20,C.body);pset(g,15,21,C.body);
+  }
+
+  addOutline(g);
+
+  const fCx=bCx-1,eyeY=bCy-Math.round(bRy*0.15),mthY=bCy+Math.round(bRy*0.35);
+  const fpCy=Math.round((eyeY+mthY)/2);
+  const fRy=(mthY-eyeY)/2+1;
+  const fRx=Math.max(fRy*0.65,Math.min(bRx*0.52,fRy*0.9));
+  fillEllipse(g,fCx,fpCy,fRx,fRy,C.face);
+
+  const esp=Math.min(Math.trunc(DNA.eyeSp),Math.max(1,Math.trunc(fRx-0.3)));
+  const eLX=Math.trunc(fCx)-esp,eRX=Math.trunc(fCx)+esp,eY=Math.trunc(eyeY);
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+    if(pget(g,eLX+dx,eY+dy)!==C.empty)pset(g,eLX+dx,eY+dy,C.face);
+    if(pget(g,eRX+dx,eY+dy)!==C.empty)pset(g,eRX+dx,eY+dy,C.face);
+  }
+
+  if(pose==='running'){
+    // Focused eyes: 2×2 no shine (determined look)
+    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
+    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
+    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+  }else if(pose==='happy'){
+    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
+    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+    pset(g,eLX-1,eY-1,C.eyeShine);
+    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
+    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+    pset(g,eRX,eY-1,C.eyeShine);
+  }else if(pose==='sad'){
+    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
+    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
+    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+    if(frame===3){pset(g,eLX,eY,C.eyePupil);pset(g,eRX,eY,C.eyePupil);}
+  }else if(pose==='angry'){
+    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+  }else if(pose==='dead'){
+    for(const[ex,ey]of[[eLX,eY],[eRX,eY]]){
+      pset(g,ex-1,ey-1,C.eyePupil);pset(g,ex+1,ey-1,C.eyePupil);
+      pset(g,ex,ey,C.eyePupil);
+      pset(g,ex-1,ey+1,C.eyePupil);pset(g,ex+1,ey+1,C.eyePupil);
+    }
+  }else{
+    if(frame===6){
+      pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+      pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+    }else{
+      pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
+      pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+      pset(g,eLX-1,eY-1,C.eyeShine);
+      pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
+      pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+      pset(g,eRX,eY-1,C.eyeShine);
+    }
+  }
+
+  const mY=Math.trunc(bCy+Math.round(bRy*0.35)),mCx=Math.trunc(fCx);
+  if(pose==='running'){
+    pset(g,mCx-1,mY,C.mouth);pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY,C.mouth);
+  }else if(pose==='happy'){
+    pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY+1,C.mouth);
+    pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);pset(g,mCx+2,mY,C.mouth);
+  }else if(pose==='sad'){
+    pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
+  }else if(pose==='angry'){
+    pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY,C.mouth);
+    pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY,C.mouth);
+  }else if(pose!=='dead'){
+    pset(g,mCx,mY,C.mouth);
+    pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
+  }
+
+  if(pose!=='dead'){
+    const ckY=eY+1,ckLX=Math.trunc(fCx-bRx*0.58),ckRX=Math.trunc(fCx+bRx*0.58);
+    pset(g,ckLX-1,ckY,C.cheek);pset(g,ckLX,ckY,C.cheek);
+    pset(g,ckRX,ckY,C.cheek);pset(g,ckRX+1,ckY,C.cheek);
+  }
+
+  if(pose==='happy'){
+    const ss=[[[eRX+2,eY-2],[lX-1,aY-2]],[[mCx+4,Math.trunc(bCy)],[eLX-2,eY-1]],[[eRX+3,Math.trunc(bCy)-1],[mCx-1,5]],[[eLX-1,eY-3],[rX+1,aY-2]]];
+    for(const[sx,sy]of ss[frame%4]){pset(g,sx,sy-1,C.gold);pset(g,sx-1,sy,C.gold);pset(g,sx,sy,C.gold);pset(g,sx+1,sy,C.gold);pset(g,sx,sy+1,C.gold);}
+  }
+  if(pose==='running'){
+    // Speed lines to the right of body
+    const lineYs=[Math.trunc(DNA.bodyCy)-2,Math.trunc(DNA.bodyCy),Math.trunc(DNA.bodyCy)+2,Math.trunc(DNA.bodyCy)+4];
+    const lenT=[[4,1,3,1],[2,3,1,2],[3,1,4,1],[1,2,2,3]];
+    const xs=frame%2;
+    for(let i=0;i<lineYs.length;i++)for(let dx=0;dx<lenT[frame][i];dx++)pset(g,rX+1+xs+dx,lineYs[i],C.speedLine);
+    // Dust on foot strike
+    if(frame===0){pset(g,13,22,C.shade);pset(g,14,22,C.shade);pset(g,15,22,C.shade);pset(g,16,22,C.shade);pset(g,12,21,C.shade);pset(g,17,21,C.shade);}
+    if(frame===2){pset(g,7,22,C.shade);pset(g,8,22,C.shade);pset(g,9,22,C.shade);pset(g,10,22,C.shade);pset(g,6,21,C.shade);pset(g,11,21,C.shade);}
+  }
+  if(pose==='sad'){
+    const tx=frame<2?eLX:eRX,ty=eY+1+(frame%2)*2;
+    pset(g,tx,ty,C.tear);pset(g,tx,ty+1,C.tear);
+  }
+  if(pose==='angry'){
+    const hi=frame%2===0,stX=hi?rX:rX+1,pnY=hi?aY-3:aY-2;
+    for(let d=1;d<=3;d++)pset(g,stX,pnY-d,C.body);
+    const sx1=Math.max(0,stX-2),sx2=Math.min(GS-1,stX+2),sy1=pnY-6;
+    if(sy1>=0){for(let sx=sx1;sx<=sx2;sx++){pset(g,sx,sy1,C.gray);if(sy1+2<GS)pset(g,sx,sy1+2,C.gray);}pset(g,sx1,sy1+1,C.gray);pset(g,sx2,sy1+1,C.gray);pset(g,stX,sy1+1,C.speedLine);}
+    if(!hi){const vX=eLX-3,vY=eY-2;pset(g,vX+1,vY,C.speedLine);pset(g,vX+2,vY,C.speedLine);pset(g,vX+1,vY+1,C.speedLine);pset(g,vX,vY+2,C.speedLine);pset(g,vX+1,vY+2,C.speedLine);}
+  }
+  return g;
+}
+
+function hexRgb(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function tone(r,g,b,a){const cl=v=>Math.max(0,Math.min(255,Math.round(v+a)));return`rgb(${cl(r)},${cl(g)},${cl(b)})`;}
+
+function cellColor(cell,gx,gy){
+  const p=DNA.palette;
+  if(cell===C.empty)return null;
+  if(cell===C.outline){const[r,g,b]=hexRgb(p.body);return tone(r,g,b,-70);}
+  if(cell===C.body||cell===C.accent1||cell===C.accent2){
+    const h=cell===C.accent1?p.accent1:cell===C.accent2?p.accent2:p.body;
+    const[r,g,b]=hexRgb(h);
+    const dx=(gx-DNA.bodyCx)/Math.max(1,DNA.bodyRx),dy=(gy-DNA.bodyCy)/Math.max(1,DNA.bodyRy);
+    const l=dx-dy,ck=(gx+gy)%2;
+    if(l>0.65)return tone(r,g,b,90);
+    if(l>0.50)return tone(r,g,b,ck?42:90);
+    if(l>0.25)return tone(r,g,b,42);
+    if(l>0.10)return tone(r,g,b,ck?0:42);
+    if(l>-0.15)return tone(r,g,b,0);
+    if(l>-0.30)return tone(r,g,b,ck?-55:0);
+    return tone(r,g,b,-55);
+  }
+  if(cell===C.face){
+    const[r,g,b]=hexRgb(p.face);
+    const dx=(gx-DNA.bodyCx)/Math.max(1,DNA.bodyRx),dy=(gy-DNA.bodyCy)/Math.max(1,DNA.bodyRy);
+    const l=dx-dy,ck=(gx+gy)%2;
+    if(l>0.25)return tone(r,g,b,ck?-15:-40);
+    if(l>-0.10)return tone(r,g,b,-40);
+    return tone(r,g,b,ck?-40:-60);
+  }
+  return({[C.eyePupil]:p.eyeP,[C.eyeShine]:'#e0eeff',[C.mouth]:p.eyeP,[C.cheek]:p.cheek,[C.shade]:p.shade,[C.nose]:p.eyeP,[C.tear]:'#5599ff',[C.gold]:'#ffcc00',[C.speedLine]:'#ff7700',[C.gray]:'#888',[C.lightning]:'#00cfff'})[cell]||null;
+}
+
+function renderPet(canvas,pose,frame,px){
+  const sz=GS*px;canvas.width=sz;canvas.height=sz;
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,sz,sz);
+  const grid=buildGrid(pose,frame);
+  for(let y=0;y<GS;y++)for(let x=0;x<GS;x++){
+    const c=cellColor(grid[y][x],x,y);
+    if(c){ctx.fillStyle=c;ctx.fillRect(x*px,y*px,px,px);}
+  }
+}
+
+// ── State ──────────────────────────────────────────────────────────────
+let demoEnergy=78, currentMood='idle', frameIdx=0, frameTimer=0, drainTimer=0, lastTs=0;
+
+function energyToMood(e){return e<=0?'dead':e>50?'idle':e>25?'angry':e>14?'sad':'dead';}
+function energyColor(e){return e>=60?'#4ADE80':e>=30?'#A3E635':e>=15?'#FCD34D':'#E12D39';}
+
+function updateHUD(){
+  const ec=energyColor(demoEnergy);
+  const setEl=(id,fn)=>{const el=document.getElementById(id);if(el)fn(el);};
+  setEl('demoBar', el=>{el.style.width=Math.max(0,demoEnergy)+'%';el.style.background=ec;});
+  setEl('demoEnergyPct', el=>el.textContent=Math.round(demoEnergy)+'%');
+  setEl('demoHpLabel', el=>el.style.color=ec);
+  setEl('timeLeftLabel', el=>{
+    if(demoEnergy<=0){el.textContent='Sin energía';return;}
+    const totalMins=Math.round(demoEnergy*1440/100);
+    const h=Math.floor(totalMins/60),m=totalMins%60;
+    el.textContent=h===0?`${m}m restantes`:m===0?`${h}h restantes`:`${h}h ${m}m restantes`;
+  });
+  const moodLabel=(e)=>e<=0?'exhausto...':(e>50?'listo para correr':e>25?'exigiendo que corras':e>14?'la energía se acaba...':'a punto de colapsar...');
+  setEl('moodPillText', el=>el.textContent=moodLabel(demoEnergy));
+  setEl('moodDot', el=>el.style.background=ec);
+  setEl('moodPill', el=>{el.style.borderColor=ec;const[r,g,b]=hexRgb(ec);el.style.background=`rgba(${r},${g},${b},.10)`;});
+  setEl('heroBar', el=>{el.style.width=demoEnergy+'%';el.style.background=ec;});
+  setEl('heroHpLabel', el=>el.style.color=ec);
+  setEl('heroEnergyPct', el=>el.textContent=Math.round(demoEnergy)+'%');
+}
+
+function setMood(m){
+  currentMood=m;
+  if(m==='happy') demoEnergy=Math.min(100,demoEnergy+30);
+  if(m==='sad')   demoEnergy=Math.min(20,demoEnergy);
+  if(m==='angry') demoEnergy=Math.min(10,demoEnergy);
+  frameIdx=0; updateHUD();
+}
+
+function addRun(){
+  demoEnergy=Math.min(100,demoEnergy+30);
+  currentMood='running';frameIdx=0;updateHUD();
+  setTimeout(()=>{if(currentMood==='running'){currentMood='happy';frameIdx=0;}},1500);
+}
+
+function renderStatics(){
+  renderPet(document.getElementById('heroPet'),'idle',0,11);
+  renderPet(document.getElementById('happyPet'),'happy',0,10);
+  renderPet(document.getElementById('angryPet'),'angry',1,10);
+  renderPet(document.getElementById('ctaPet'),'happy',0,12);
+}
+
+function animate(ts){
+  requestAnimationFrame(animate);
+  const dt=ts-lastTs; lastTs=ts;
+  if(dt>200||dt<0)return;
+
+  drainTimer+=dt;
+  if(drainTimer>=3000){
+    drainTimer=0;
+    demoEnergy=Math.max(0,demoEnergy-1);
+    if(currentMood!=='happy'&&currentMood!=='running'||(demoEnergy<70))currentMood=energyToMood(demoEnergy);
+    updateHUD();
+  }
+
+  const fps=currentMood==='idle'?3:currentMood==='running'?10:6;
+  const maxF=currentMood==='idle'?8:4;
+  frameTimer+=dt;
+  if(frameTimer>=1000/fps){
+    frameTimer=0; frameIdx=(frameIdx+1)%maxF;
+    const dc=document.getElementById('demoPet'); if(dc)renderPet(dc,currentMood,frameIdx,8);
+    const hc=document.getElementById('heroPet'); if(hc)renderPet(hc,currentMood,frameIdx,11);
+    const cc=document.getElementById('ctaPet');  if(cc)renderPet(cc,'happy',frameIdx%4,12);
+    const hp=document.getElementById('happyPet');if(hp)renderPet(hp,'happy',frameIdx%4,10);
+  }
+}
+
+// ── Reveal on scroll ───────────────────────────────────────────────────
+new IntersectionObserver(
+  entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),
+  {threshold:.12}
+).observe.bind(new IntersectionObserver(
+  entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),
+  {threshold:.12}
+));
+// Simpler observer setup:
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+renderStatics();
+updateHUD();
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
