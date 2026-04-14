@@ -14,7 +14,6 @@
   body { font-family: 'Nunito', system-ui, sans-serif; background: #14191f; color: #fff; -webkit-font-smoothing: antialiased; }
   canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 
-  /* ── Paper sections ─────────────────────────────────────────────── */
   .paper {
     background-color: #F9F496;
     background-image:
@@ -22,25 +21,20 @@
     color: #14191f;
   }
 
-  /* ── Reveal on scroll ───────────────────────────────────────────── */
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1); }
   .reveal.in  { opacity: 1; transform: none; }
 
-  /* ── Energy bar ─────────────────────────────────────────────────── */
   .e-bar { transition: width 1s cubic-bezier(.22,1,.36,1), background-color .6s ease; }
 
-  /* ── Float ──────────────────────────────────────────────────────── */
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
   .float { animation: float 3.5s ease-in-out infinite; }
 
-  /* ── Grain overlay (hero) ───────────────────────────────────────── */
   .grain::after {
     content:''; position:absolute; inset:0; pointer-events:none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
     background-size: 180px; opacity:.35; z-index:1;
   }
 
-  /* ── Scroll indicator ───────────────────────────────────────────── */
   .scroll-cue {
     position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center; gap: .5rem; z-index: 10;
@@ -63,16 +57,13 @@
     100% { top: 24px; opacity: 0; }
   }
 
-  /* ── Tags ───────────────────────────────────────────────────────── */
   .tag { display:inline-flex; align-items:center; gap:.4rem; font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
   .tag-dark  { color: rgba(20,25,31,.38); }
   .tag-light { color: rgba(255,255,255,.3); }
 
-  /* ── Rules ──────────────────────────────────────────────────────── */
   .rule-dark  { border: none; border-top: 1px solid rgba(20,25,31,.12); }
   .rule-light { border: none; border-top: 1px solid rgba(255,255,255,.07); }
 
-  /* ── Nav transition ─────────────────────────────────────────────── */
   #mainNav {
     border-bottom: 1px solid transparent;
     opacity: 0;
@@ -141,7 +132,7 @@
       </h1>
       <p class="text-base md:text-xl leading-relaxed" style="color:rgba(255,255,255,.45)">
         Nombra a tu compañero pixel-art. Pierde energía cada 48h.<br>
-        Solo tus kilómetros pueden salvarlo — 66 días seguidos.
+        Solo tus kilómetros pueden salvarlo. 66 días seguidos.
       </p>
     </div>
 
@@ -290,21 +281,21 @@
         <div class="text-4xl md:text-5xl font-black mb-4 md:mb-6" style="color:rgba(249,112,62,.22)">01</div>
         <h3 class="text-lg md:text-xl font-black mb-2 md:mb-3">Elige y ponle nombre</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
-          7 personajes de inicio — Bear, Cat, Frog, Axolotl y más — o genera uno al azar con más de 30 paletas de color. Es tuyo, ponle el nombre que quieras.
+          Bear, Cat, Frog, Axolotl o genera uno al azar. Más de 30 paletas de color. Ponle el nombre que quieras y ya es tuyo.
         </p>
       </div>
       <div class="px-6 py-8 md:px-8 md:py-10" style="background:#14191f">
         <div class="text-4xl md:text-5xl font-black mb-4 md:mb-6" style="color:rgba(249,112,62,.22)">02</div>
         <h3 class="text-lg md:text-xl font-black mb-2 md:mb-3">Corre. Apple Health hace el resto.</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
-          Sin botones que apretar, sin trampa posible. Tu energía se drena en 48 horas — solo tus kilómetros reales la recuperan. El widget en tu pantalla de bloqueo lo muestra en tiempo real.
+          Sin botones que apretar, sin trampa posible. Tu energía se drena en 48 horas. Solo tus kilómetros reales la recuperan. El widget en tu pantalla de bloqueo lo muestra en tiempo real.
         </p>
       </div>
       <div class="px-6 py-8 md:px-8 md:py-10" style="background:#14191f">
         <div class="text-4xl md:text-5xl font-black mb-4 md:mb-6" style="color:rgba(249,112,62,.22)">03</div>
         <h3 class="text-lg md:text-xl font-black mb-2 md:mb-3">66 días. 23 fondos. Una medalla.</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
-          Cada hito desbloquea un fondo exclusivo. Al llegar al día 66, tu compañero gana una medalla y su energía ya nunca baja. La ciencia dice que 66 días forman un hábito — no 21.
+          Cada hito desbloquea un fondo exclusivo. Al llegar al día 66, tu compañero gana una medalla y su energía ya nunca baja. La ciencia dice que 66 días forman un hábito, no 21.
         </p>
       </div>
     </div>
@@ -323,7 +314,7 @@
         </h2>
         <p class="text-base md:text-lg leading-relaxed mb-6 md:mb-8" style="color:rgba(20,25,31,.5)">
           Otros apps te muestran estadísticas.<br>
-          Pacepal te da una razón emocional para salir hoy — y todos los días durante 66.
+          Pacepal te da una razón emocional para salir hoy. Y todos los días durante 66.
         </p>
         <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
            class="inline-flex items-center justify-center lg:justify-start gap-2 text-sm font-extrabold transition-colors"
