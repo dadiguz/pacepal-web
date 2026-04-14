@@ -14,37 +14,85 @@
   body { font-family: 'Nunito', system-ui, sans-serif; background: #14191f; color: #fff; -webkit-font-smoothing: antialiased; }
   canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 
-  /* Fade-up on scroll */
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
-  .reveal.in { opacity: 1; transform: none; }
+  /* ── Paper sections ─────────────────────────────────────────────── */
+  .paper {
+    background-color: #F9F496;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)' opacity='0.18'/%3E%3C/svg%3E");
+    color: #14191f;
+  }
 
-  /* Smooth energy bar */
+  /* ── Reveal on scroll ───────────────────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1); }
+  .reveal.in  { opacity: 1; transform: none; }
+
+  /* ── Energy bar ─────────────────────────────────────────────────── */
   .e-bar { transition: width 1s cubic-bezier(.22,1,.36,1), background-color .6s ease; }
 
-  /* Float */
+  /* ── Float ──────────────────────────────────────────────────────── */
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
   .float { animation: float 3.5s ease-in-out infinite; }
 
-  /* Subtle grain overlay on hero */
+  /* ── Grain overlay (hero) ───────────────────────────────────────── */
   .grain::after {
     content:''; position:absolute; inset:0; pointer-events:none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-    background-size: 180px;
-    opacity: .35;
-    z-index: 1;
+    background-size: 180px; opacity:.35; z-index:1;
   }
 
-  /* Horizontal rule */
-  .rule { border: none; border-top: 1px solid rgba(255,255,255,.07); }
+  /* ── Scroll indicator ───────────────────────────────────────────── */
+  .scroll-cue {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem; z-index: 10;
+  }
+  .scroll-mouse {
+    width: 22px; height: 36px;
+    border: 2px solid rgba(255,255,255,.22);
+    border-radius: 11px; position: relative;
+  }
+  .scroll-wheel {
+    width: 3px; height: 7px;
+    background: rgba(255,255,255,.65);
+    border-radius: 2px;
+    position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+    animation: scrollDown 1.8s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  @keyframes scrollDown {
+    0%   { top: 5px;  opacity: 1; }
+    70%  { top: 20px; opacity: .3; }
+    100% { top: 24px; opacity: 0; }
+  }
 
-  /* Pill tag */
-  .tag { display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.35); }
+  /* ── Tags ───────────────────────────────────────────────────────── */
+  .tag { display:inline-flex; align-items:center; gap:.4rem; font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+  .tag-dark  { color: rgba(20,25,31,.38); }
+  .tag-light { color: rgba(255,255,255,.3); }
+
+  /* ── Rules ──────────────────────────────────────────────────────── */
+  .rule-dark  { border: none; border-top: 1px solid rgba(20,25,31,.12); }
+  .rule-light { border: none; border-top: 1px solid rgba(255,255,255,.07); }
+
+  /* ── Nav transition ─────────────────────────────────────────────── */
+  #mainNav {
+    border-bottom: 1px solid transparent;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity .4s ease, transform .4s ease, background .4s, border-color .4s;
+  }
+  #mainNav.visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    background: rgba(20,25,31,.97) !important;
+    border-color: rgba(255,255,255,.06);
+  }
 </style>
 </head>
 <body>
 
-<!-- ── NAV ────────────────────────────────────────────────────────────── -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-[#14191f]/85 backdrop-blur-xl">
+<!-- ── NAV ───────────────────────────────────────────────────────────── -->
+<nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 bg-[#14191f]/80 backdrop-blur-xl">
   <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
     <img src="assets/logo_bueno.png" class="h-7" alt="Pacepal">
     <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
@@ -54,82 +102,88 @@
   </div>
 </nav>
 
-<!-- ── HERO ───────────────────────────────────────────────────────────── -->
-<section class="grain relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16">
+<!-- ── MASCOTA FIJA ────────────────────────────────────────────────────── -->
+<div id="fixedPetWrap"
+     style="position:fixed; right:1.5rem; bottom:2rem; z-index:40; display:none; flex-direction:column; align-items:center; gap:8px; pointer-events:none;">
+  <div class="float">
+    <canvas id="heroPet" class="drop-shadow-2xl"></canvas>
+  </div>
+  <div style="width:90px; padding:6px 9px; border-radius:10px; background:rgba(20,25,31,.5); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+      <span id="heroHpLabel" style="font-family:'Nunito',sans-serif; font-size:9px; font-weight:900; color:#4ADE80; letter-spacing:.06em;">HP</span>
+      <span id="heroEnergyPct" style="font-family:monospace; font-size:9px; color:rgba(255,255,255,.38);">78%</span>
+    </div>
+    <div style="height:5px; border-radius:99px; overflow:hidden; background:rgba(255,255,255,.1);">
+      <div id="heroBar" class="e-bar" style="height:100%; border-radius:99px; width:78%; background:#4ADE80;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HERO — pantalla completa ───────────────────────────────────────── -->
+<section class="grain relative h-screen flex flex-col items-center justify-center overflow-hidden">
   <video autoplay muted loop playsinline
-         class="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none">
+         class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+         style="opacity:.45">
     <source src="assets/run.mp4" type="video/mp4">
   </video>
-  <!-- vignette -->
-  <div class="absolute inset-0 bg-radial-gradient"
-       style="background:radial-gradient(ellipse 80% 60% at 50% 40%, transparent 30%, #14191f 100%)"></div>
-  <div class="absolute bottom-0 left-0 right-0 h-48"
+
+  <!-- Viñeta -->
+  <div class="absolute inset-0"
+       style="background:radial-gradient(ellipse 80% 65% at 50% 42%, transparent 25%, #14191f 100%)"></div>
+  <div class="absolute bottom-0 left-0 right-0 h-40"
        style="background:linear-gradient(to bottom, transparent, #14191f)"></div>
 
-  <div class="relative z-10 flex flex-col items-center text-center px-6 py-24 gap-10 max-w-3xl">
-    <img src="assets/logo_bueno.png" class="w-56 md:w-72 opacity-95" alt="Pacepal">
-
-    <!-- Pet -->
-    <div class="float flex flex-col items-center gap-3">
-      <canvas id="heroPet" class="drop-shadow-2xl"></canvas>
-      <!-- HP bar -->
-      <div class="w-44">
-        <div class="flex justify-between text-xs mb-1.5">
-          <span id="heroHpLabel" class="font-extrabold tracking-wide" style="color:#4ADE80">HP</span>
-          <span id="heroEnergyPct" class="font-mono" style="color:rgba(255,255,255,.35)">78%</span>
-        </div>
-        <div class="h-2.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)">
-          <div id="heroBar" class="e-bar h-full rounded-full" style="width:78%;background:#4ADE80"></div>
-        </div>
-      </div>
-    </div>
+  <!-- Contenido -->
+  <div class="relative z-10 flex flex-col items-center text-center px-6 gap-9 max-w-3xl">
+    <img src="assets/logo_bueno.png" class="w-52 md:w-64 opacity-95" alt="Pacepal">
 
     <div>
-      <h1 class="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-5">
+      <h1 class="text-5xl md:text-7xl font-black leading-[1.04] tracking-tight mb-5">
         Corre para<br><span style="color:#F9703E">mantenerlo vivo.</span>
       </h1>
-      <p class="text-lg md:text-xl leading-relaxed" style="color:rgba(255,255,255,.5)">
+      <p class="text-lg md:text-xl leading-relaxed" style="color:rgba(255,255,255,.45)">
         Tu compañero pixel-art pierde energía cada día.<br>
         Solo tus kilómetros pueden salvarlo.
       </p>
     </div>
 
-    <div class="flex flex-col items-center gap-3">
-      <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-         class="inline-flex items-center gap-2.5 font-extrabold text-base text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl">
-        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-        Descargar gratis en App Store
-      </a>
-      <a href="#demo" class="text-sm font-semibold transition-colors" style="color:rgba(255,255,255,.3)">
-        Ver cómo funciona ↓
-      </a>
+    <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
+       class="inline-flex items-center gap-2.5 font-extrabold text-base text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+      </svg>
+      Descargar gratis en App Store
+    </a>
+  </div>
+
+  <!-- Indicador de scroll -->
+  <div class="scroll-cue">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
     </div>
+    <span style="font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2)">Scroll</span>
   </div>
 </section>
 
-<!-- ── DEMO ───────────────────────────────────────────────────────────── -->
-<section id="demo" class="py-28" style="background:#14191f">
+<!-- ── DEMO — papel amarillo ──────────────────────────────────────────── -->
+<section id="demo" class="paper py-28" style="border-top:2px solid #14191f">
   <div class="max-w-6xl mx-auto px-6">
 
     <div class="mb-16 reveal">
-      <span class="tag">Vista previa</span>
-      <h2 class="text-4xl md:text-5xl font-black mt-3 leading-tight">
+      <span class="tag tag-dark">Vista previa</span>
+      <h2 class="text-4xl md:text-5xl font-black mt-3 leading-tight text-[#14191f]">
         Así se ve en tu iPhone.
       </h2>
     </div>
 
     <div class="flex flex-col lg:flex-row items-start gap-12 lg:gap-20 reveal">
 
-      <!-- App screen card -->
-      <div class="flex-1 flex flex-col rounded-2xl overflow-hidden relative"
-           style="background:#F5F8FC;min-height:420px">
+      <!-- App card -->
+      <div class="flex-1 flex flex-col rounded-2xl overflow-hidden relative shadow-2xl"
+           style="background:#F5F8FC; min-height:420px; border:2px solid rgba(20,25,31,.1)">
 
-        <!-- Subtle orange glow at top (matches AppBackground) -->
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(249,112,62,.08) 0%,transparent 100%);pointer-events:none"></div>
 
-        <!-- Top bar -->
         <div class="relative flex items-center justify-between px-6 pt-5 pb-2">
           <img src="assets/logo_bueno.png" style="height:18px;opacity:.9" alt="">
           <div style="display:flex;gap:8px">
@@ -142,7 +196,6 @@
           </div>
         </div>
 
-        <!-- HP card -->
         <div class="relative mx-5 mb-2 px-4 py-3 rounded-xl"
              style="background:#2B2420;border:1.5px solid rgba(255,255,255,.78);box-shadow:0 4px 14px rgba(0,0,0,.2)">
           <div class="flex justify-between items-baseline mb-2">
@@ -159,58 +212,43 @@
           <div id="timeLeftLabel" style="font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.38)">18h 43m restantes</div>
         </div>
 
-        <!-- Pet -->
         <div class="relative flex-1 flex items-center justify-center">
-          <div class="float">
-            <canvas id="demoPet"></canvas>
-          </div>
+          <div class="float"><canvas id="demoPet"></canvas></div>
         </div>
 
-        <!-- KM display -->
         <div class="relative flex items-end justify-center gap-1 pb-2">
           <span style="font-size:52px;font-weight:900;color:#F9703E;line-height:1;font-family:'Nunito',sans-serif">3.2</span>
           <span style="font-size:20px;font-weight:700;color:rgba(249,112,62,.65);padding-bottom:6px">km</span>
         </div>
 
-        <!-- Mood pill -->
         <div class="relative flex justify-center pb-5">
           <div id="moodPill" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:999px;border:1.5px solid #4ADE80;background:rgba(74,222,128,.10)">
             <div id="moodDot" style="width:7px;height:7px;border-radius:50%;background:#4ADE80;flex-shrink:0"></div>
             <span id="moodPillText" style="font-size:12px;font-weight:600;color:#4A3F35">listo para correr</span>
           </div>
         </div>
-
       </div>
 
-      <!-- Controls -->
+      <!-- Controles -->
       <div class="flex-1 pt-4">
-        <h3 class="text-2xl font-black mb-2">¿Qué pasa si no corres?</h3>
-        <p class="text-base leading-relaxed mb-8" style="color:rgba(255,255,255,.45)">
+        <h3 class="text-2xl font-black mb-2 text-[#14191f]">¿Qué pasa si no corres?</h3>
+        <p class="text-base leading-relaxed mb-8" style="color:rgba(20,25,31,.5)">
           La energía se drena sola. Observa cómo cambia su humor conforme pasan las horas sin actividad.
         </p>
 
-        <!-- Mood pills -->
         <div class="flex flex-wrap gap-2.5 mb-8">
           <button onclick="setMood('happy')"
                   class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
-                  style="background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);color:#4ADE80">
-            Feliz
-          </button>
+                  style="background:rgba(74,222,128,.15);border-color:rgba(20,180,80,.3);color:#0d6630">Feliz</button>
           <button onclick="setMood('idle')"
                   class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
-                  style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.7)">
-            Normal
-          </button>
+                  style="background:rgba(20,25,31,.08);border-color:rgba(20,25,31,.2);color:rgba(20,25,31,.65)">Normal</button>
           <button onclick="setMood('sad')"
                   class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
-                  style="background:rgba(253,211,77,.1);border-color:rgba(253,211,77,.25);color:#FCD34D">
-            Triste
-          </button>
+                  style="background:rgba(160,120,0,.1);border-color:rgba(160,120,0,.25);color:#6b4f00">Triste</button>
           <button onclick="setMood('angry')"
                   class="mood-pill px-4 py-2 rounded-full text-sm font-extrabold border transition-all duration-200 hover:scale-105 active:scale-95"
-                  style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#F87171">
-            Enojado
-          </button>
+                  style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#b91c1c">Enojado</button>
         </div>
 
         <button onclick="addRun()"
@@ -219,21 +257,20 @@
           Correr 5 km — +30% energía
         </button>
 
-        <hr class="rule my-8">
+        <hr class="rule-dark my-8">
 
-        <!-- Quick stats -->
         <div class="grid grid-cols-3 gap-6">
           <div>
-            <div class="text-2xl font-black">66</div>
-            <div class="text-xs font-semibold mt-0.5" style="color:rgba(255,255,255,.35)">días del reto</div>
+            <div class="text-2xl font-black text-[#14191f]">66</div>
+            <div class="text-xs font-semibold mt-0.5" style="color:rgba(20,25,31,.4)">días del reto</div>
           </div>
           <div>
-            <div class="text-2xl font-black">30+</div>
-            <div class="text-xs font-semibold mt-0.5" style="color:rgba(255,255,255,.35)">paletas de color</div>
+            <div class="text-2xl font-black text-[#14191f]">30+</div>
+            <div class="text-xs font-semibold mt-0.5" style="color:rgba(20,25,31,.4)">paletas de color</div>
           </div>
           <div>
-            <div class="text-2xl font-black">4</div>
-            <div class="text-xs font-semibold mt-0.5" style="color:rgba(255,255,255,.35)">estados de ánimo</div>
+            <div class="text-2xl font-black text-[#14191f]">4</div>
+            <div class="text-xs font-semibold mt-0.5" style="color:rgba(20,25,31,.4)">estados de ánimo</div>
           </div>
         </div>
       </div>
@@ -242,11 +279,11 @@
   </div>
 </section>
 
-<!-- ── HOW IT WORKS ───────────────────────────────────────────────────── -->
-<section class="py-28" style="background:#191f27">
+<!-- ── CÓMO FUNCIONA — oscuro ─────────────────────────────────────────── -->
+<section class="py-28" style="background:#14191f">
   <div class="max-w-6xl mx-auto px-6">
     <div class="mb-16 reveal">
-      <span class="tag">Cómo funciona</span>
+      <span class="tag tag-light">Cómo funciona</span>
       <h2 class="text-4xl md:text-5xl font-black mt-3 leading-tight max-w-xl">
         Simple por diseño.<br>Efectivo por naturaleza.
       </h2>
@@ -254,48 +291,42 @@
 
     <div class="grid md:grid-cols-3 gap-px rounded-2xl overflow-hidden reveal"
          style="background:rgba(255,255,255,.07)">
-
-      <div class="px-8 py-10" style="background:#191f27">
-        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.25)">01</div>
+      <div class="px-8 py-10" style="background:#14191f">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.22)">01</div>
         <h3 class="text-xl font-black mb-3">Elige tu compañero</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
           Más de treinta combinaciones de color. Cada mascota tiene su propia apariencia en pixel-art, generada con el mismo motor de la app.
         </p>
       </div>
-
-      <div class="px-8 py-10" style="background:#191f27">
-        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.25)">02</div>
+      <div class="px-8 py-10" style="background:#14191f">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.22)">02</div>
         <h3 class="text-xl font-black mb-3">Sal a correr</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
           Apple Health sincroniza tus kilómetros automáticamente. Sin botones que apretar, sin trampa posible. Corres, él vive.
         </p>
       </div>
-
-      <div class="px-8 py-10" style="background:#191f27">
-        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.25)">03</div>
+      <div class="px-8 py-10" style="background:#14191f">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.22)">03</div>
         <h3 class="text-xl font-black mb-3">Mantenlo feliz 66 días</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
           La ciencia dice que un hábito tarda 66 días en formarse, no 21. Cada hito de racha desbloquea un fondo exclusivo.
         </p>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ── EMOTIONAL HOOK ─────────────────────────────────────────────────── -->
-<section class="py-28 overflow-hidden" style="background:#14191f">
+<!-- ── HOOK EMOCIONAL — papel amarillo ───────────────────────────────── -->
+<section class="paper py-28 overflow-hidden" style="border-top:2px solid #14191f">
   <div class="max-w-6xl mx-auto px-6">
-
     <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
 
-      <!-- Text -->
       <div class="flex-1 reveal">
-        <span class="tag mb-4 block">La diferencia</span>
-        <h2 class="text-4xl md:text-6xl font-black leading-[1.05] tracking-tight mb-6">
+        <span class="tag tag-dark mb-4 block">La diferencia</span>
+        <h2 class="text-4xl md:text-6xl font-black leading-[1.04] tracking-tight mb-6 text-[#14191f]">
           No lo dejes<br>sin energía.
         </h2>
-        <p class="text-lg leading-relaxed mb-8" style="color:rgba(255,255,255,.5)">
+        <p class="text-lg leading-relaxed mb-8" style="color:rgba(20,25,31,.5)">
           Otros apps te muestran estadísticas.<br>
           Pacepal te da una razón emocional para salir hoy.
         </p>
@@ -307,16 +338,15 @@
         </a>
       </div>
 
-      <!-- Pet comparison -->
       <div class="flex items-end gap-10 md:gap-16 reveal" style="transition-delay:.1s">
         <div class="flex flex-col items-center gap-3">
           <canvas id="happyPet" class="drop-shadow-2xl float"></canvas>
-          <span class="text-xs font-extrabold tracking-widest uppercase" style="color:#4ADE80">Corriste</span>
+          <span class="text-xs font-extrabold tracking-widest uppercase" style="color:#0d6630">Corriste</span>
         </div>
-        <div class="text-3xl font-black pb-10" style="color:rgba(255,255,255,.1)">vs</div>
+        <div class="text-3xl font-black pb-10" style="color:rgba(20,25,31,.12)">vs</div>
         <div class="flex flex-col items-center gap-3">
           <canvas id="angryPet" class="drop-shadow-2xl"></canvas>
-          <span class="text-xs font-extrabold tracking-widest uppercase" style="color:#F87171">3 días sin correr</span>
+          <span class="text-xs font-extrabold tracking-widest uppercase" style="color:#b91c1c">3 días sin correr</span>
         </div>
       </div>
 
@@ -324,7 +354,7 @@
   </div>
 </section>
 
-<!-- ── QUOTES ─────────────────────────────────────────────────────────── -->
+<!-- ── TESTIMONIOS — oscuro ──────────────────────────────────────────── -->
 <section class="py-24" style="background:#14191f">
   <div class="max-w-5xl mx-auto px-6">
     <div class="grid md:grid-cols-2 gap-px rounded-2xl overflow-hidden reveal"
@@ -335,9 +365,7 @@
         <p class="text-lg leading-relaxed font-semibold mb-6" style="color:rgba(255,255,255,.75)">
           Llevaba meses intentando correr sin lograrlo. Con Pacepal llevo 47 días sin fallar. No quiero que se muera.
         </p>
-        <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">
-          María G. — Ciudad de México
-        </div>
+        <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">María G. — Ciudad de México</div>
       </div>
 
       <div class="p-10" style="background:#14191f">
@@ -345,22 +373,20 @@
         <p class="text-lg leading-relaxed font-semibold mb-6" style="color:rgba(255,255,255,.75)">
           El widget en mi pantalla de inicio es lo mejor. Cada vez que lo veo triste, sé que tengo que salir. Funciona.
         </p>
-        <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">
-          Andrea M. — Buenos Aires
-        </div>
+        <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">Andrea M. — Buenos Aires</div>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- ── FINAL CTA ──────────────────────────────────────────────────────── -->
+<!-- ── CTA FINAL — oscuro ────────────────────────────────────────────── -->
 <section class="py-32 text-center" style="background:#191f27">
   <div class="max-w-2xl mx-auto px-6 reveal">
     <div class="flex justify-center mb-10 float">
       <canvas id="ctaPet" class="drop-shadow-2xl"></canvas>
     </div>
-    <h2 class="text-4xl md:text-6xl font-black leading-[1.05] tracking-tight mb-5">
+    <h2 class="text-4xl md:text-6xl font-black leading-[1.04] tracking-tight mb-5">
       Empieza hoy.<br>
       <span style="color:#F9703E">Tu compañero<br>te está esperando.</span>
     </h2>
@@ -390,7 +416,7 @@
 </footer>
 
 <!-- ══════════════════════════════════════════════════════════════════════
-     SPRITE ENGINE — port fiel del motor Swift/JS
+     SPRITE ENGINE
      ═══════════════════════════════════════════════════════════════════ -->
 <script>
 const GS = 24;
@@ -474,13 +500,11 @@ function buildGrid(pose,frame){
 
   for(let y=19;y<=21;y++)for(let x=0;x<GS;x++)if(g[y][x]===C.body)g[y][x]=C.empty;
   if(pose==='running'){
-    // Left foot: frame0=UP, frame1=MID, frames2-3=DOWN
     switch(frame){
       case 0: pset(g,8,17,C.body);pset(g,10,17,C.body);pset(g,8,18,C.body);pset(g,10,18,C.body);pset(g,9,19,C.body);break;
       case 1: pset(g,8,18,C.body);pset(g,10,18,C.body);pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,9,20,C.body);break;
       default:pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,8,20,C.body);pset(g,10,20,C.body);pset(g,9,21,C.body);
     }
-    // Right foot: frames0-1=DOWN, frame2=UP, frame3=MID
     switch(frame){
       case 2: pset(g,14,17,C.body);pset(g,16,17,C.body);pset(g,14,18,C.body);pset(g,16,18,C.body);pset(g,15,19,C.body);break;
       case 3: pset(g,14,18,C.body);pset(g,16,18,C.body);pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,15,20,C.body);break;
@@ -507,7 +531,6 @@ function buildGrid(pose,frame){
   }
 
   if(pose==='running'){
-    // Focused eyes: 2×2 no shine (determined look)
     pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
     pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
     pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
@@ -575,12 +598,10 @@ function buildGrid(pose,frame){
     for(const[sx,sy]of ss[frame%4]){pset(g,sx,sy-1,C.gold);pset(g,sx-1,sy,C.gold);pset(g,sx,sy,C.gold);pset(g,sx+1,sy,C.gold);pset(g,sx,sy+1,C.gold);}
   }
   if(pose==='running'){
-    // Speed lines to the right of body
     const lineYs=[Math.trunc(DNA.bodyCy)-2,Math.trunc(DNA.bodyCy),Math.trunc(DNA.bodyCy)+2,Math.trunc(DNA.bodyCy)+4];
     const lenT=[[4,1,3,1],[2,3,1,2],[3,1,4,1],[1,2,2,3]];
     const xs=frame%2;
     for(let i=0;i<lineYs.length;i++)for(let dx=0;dx<lenT[frame][i];dx++)pset(g,rX+1+xs+dx,lineYs[i],C.speedLine);
-    // Dust on foot strike
     if(frame===0){pset(g,13,22,C.shade);pset(g,14,22,C.shade);pset(g,15,22,C.shade);pset(g,16,22,C.shade);pset(g,12,21,C.shade);pset(g,17,21,C.shade);}
     if(frame===2){pset(g,7,22,C.shade);pset(g,8,22,C.shade);pset(g,9,22,C.shade);pset(g,10,22,C.shade);pset(g,6,21,C.shade);pset(g,11,21,C.shade);}
   }
@@ -639,7 +660,7 @@ function renderPet(canvas,pose,frame,px){
   }
 }
 
-// ── State ──────────────────────────────────────────────────────────────
+// ── State ───────────────────────────────────────────────────────────────
 let demoEnergy=78, currentMood='idle', frameIdx=0, frameTimer=0, drainTimer=0, lastTs=0;
 
 function energyToMood(e){return e<=0?'dead':e>50?'idle':e>25?'angry':e>14?'sad':'dead';}
@@ -648,7 +669,7 @@ function energyColor(e){return e>=60?'#4ADE80':e>=30?'#A3E635':e>=15?'#FCD34D':'
 function updateHUD(){
   const ec=energyColor(demoEnergy);
   const setEl=(id,fn)=>{const el=document.getElementById(id);if(el)fn(el);};
-  setEl('demoBar', el=>{el.style.width=Math.max(0,demoEnergy)+'%';el.style.background=ec;});
+  setEl('demoBar',     el=>{el.style.width=Math.max(0,demoEnergy)+'%';el.style.background=ec;});
   setEl('demoEnergyPct', el=>el.textContent=Math.round(demoEnergy)+'%');
   setEl('demoHpLabel', el=>el.style.color=ec);
   setEl('timeLeftLabel', el=>{
@@ -659,11 +680,11 @@ function updateHUD(){
   });
   const moodLabel=(e)=>e<=0?'exhausto...':(e>50?'listo para correr':e>25?'exigiendo que corras':e>14?'la energía se acaba...':'a punto de colapsar...');
   setEl('moodPillText', el=>el.textContent=moodLabel(demoEnergy));
-  setEl('moodDot', el=>el.style.background=ec);
+  setEl('moodDot',  el=>el.style.background=ec);
   setEl('moodPill', el=>{el.style.borderColor=ec;const[r,g,b]=hexRgb(ec);el.style.background=`rgba(${r},${g},${b},.10)`;});
-  setEl('heroBar', el=>{el.style.width=demoEnergy+'%';el.style.background=ec;});
-  setEl('heroHpLabel', el=>el.style.color=ec);
-  setEl('heroEnergyPct', el=>el.textContent=Math.round(demoEnergy)+'%');
+  setEl('heroBar',      el=>{el.style.width=demoEnergy+'%';el.style.background=ec;});
+  setEl('heroHpLabel',  el=>el.style.color=ec);
+  setEl('heroEnergyPct',el=>el.textContent=Math.round(demoEnergy)+'%');
 }
 
 function setMood(m){
@@ -681,7 +702,7 @@ function addRun(){
 }
 
 function renderStatics(){
-  renderPet(document.getElementById('heroPet'),'idle',0,11);
+  renderPet(document.getElementById('heroPet'),'idle',0,7);
   renderPet(document.getElementById('happyPet'),'happy',0,10);
   renderPet(document.getElementById('angryPet'),'angry',1,10);
   renderPet(document.getElementById('ctaPet'),'happy',0,12);
@@ -705,24 +726,34 @@ function animate(ts){
   frameTimer+=dt;
   if(frameTimer>=1000/fps){
     frameTimer=0; frameIdx=(frameIdx+1)%maxF;
-    const dc=document.getElementById('demoPet'); if(dc)renderPet(dc,currentMood,frameIdx,8);
-    const hc=document.getElementById('heroPet'); if(hc)renderPet(hc,currentMood,frameIdx,11);
-    const cc=document.getElementById('ctaPet');  if(cc)renderPet(cc,'happy',frameIdx%4,12);
-    const hp=document.getElementById('happyPet');if(hp)renderPet(hp,'happy',frameIdx%4,10);
+    const dc=document.getElementById('demoPet');  if(dc)renderPet(dc,currentMood,frameIdx,8);
+    const hc=document.getElementById('heroPet');  if(hc)renderPet(hc,currentMood,frameIdx,7);
+    const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'happy',frameIdx%4,12);
+    const hp=document.getElementById('happyPet'); if(hp)renderPet(hp,'happy',frameIdx%4,10);
   }
 }
 
-// ── Reveal on scroll ───────────────────────────────────────────────────
-new IntersectionObserver(
-  entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),
-  {threshold:.12}
-).observe.bind(new IntersectionObserver(
-  entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),
-  {threshold:.12}
-));
-// Simpler observer setup:
-const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+// ── Reveal on scroll ─────────────────────────────────────────────────────
+const obs = new IntersectionObserver(
+  es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
+  { threshold: .12 }
+);
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── Mostrar mascota fija solo en md+ ─────────────────────────────────────
+const fixedPet = document.getElementById('fixedPetWrap');
+function syncFixedPet() {
+  fixedPet.style.display = window.innerWidth >= 768 ? 'flex' : 'none';
+}
+syncFixedPet();
+window.addEventListener('resize', syncFixedPet, { passive: true });
+
+// ── Nav: aparece al pasar el hero ─────────────────────────────────────────
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  const pastHero = window.scrollY > window.innerHeight * 0.85;
+  nav.classList.toggle('visible', pastHero);
+}, { passive: true });
 
 renderStatics();
 updateHUD();
