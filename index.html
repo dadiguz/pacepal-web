@@ -6,8 +6,10 @@
 <title>Pacepal — Corre para mantenerlo vivo</title>
 <meta name="description" content="Tu mascota pixel-art pierde energía cada 48h. Solo tus kilómetros pueden salvarla. 66 días para formar el hábito. 7 días gratis.">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://us.i.posthog.com">
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&display=swap" rel="stylesheet">
 
 <!-- PostHog -->
@@ -20,6 +22,20 @@
     capture_pageleave: true,
     autocapture: true
   });
+
+  // Track time on page (how long before they bounce)
+  var _pageStart = Date.now();
+  var _timeFired = {};
+  setInterval(function(){
+    var secs = Math.floor((Date.now() - _pageStart) / 1000);
+    var marks = [3, 5, 10, 15, 30, 60];
+    for (var i = 0; i < marks.length; i++) {
+      if (secs >= marks[i] && !_timeFired[marks[i]]) {
+        _timeFired[marks[i]] = true;
+        posthog.capture('time_on_page', { seconds: marks[i] });
+      }
+    }
+  }, 1000);
 
   // Capture UTM params
   (function() {
@@ -177,7 +193,7 @@
 <!-- nav -->
 <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 bg-[#14191f]/80 backdrop-blur-xl">
   <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-    <img src="assets/logo_bueno.png" class="h-7" alt="Pacepal">
+    <img src="assets/logo_sm.png" class="h-7" alt="Pacepal">
     <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
        onclick="posthog.capture('cta_click',{location:'nav',label:'Descargar'})"
        class="hidden md:inline-flex text-sm font-extrabold text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-2.5 rounded-full transition-colors">
@@ -206,9 +222,10 @@
 <!-- hero -->
 <section class="snap-section grain relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
          style="min-height:100svh">
-  <video autoplay muted loop playsinline preload="auto"
+  <!-- Video loads lazily — hero renders instantly without it -->
+  <video id="heroVideo" muted loop playsinline preload="none"
          class="absolute inset-0 w-full h-full object-cover pointer-events-none"
-         style="opacity:.45">
+         style="opacity:0;transition:opacity 1s ease">
     <source src="assets/run.mp4" type="video/mp4">
   </video>
 
@@ -218,7 +235,7 @@
        style="background:linear-gradient(to bottom, transparent, #14191f)"></div>
 
   <div class="relative z-10 flex flex-col items-center text-center px-5 md:px-6 gap-4 md:gap-7 max-w-3xl w-full">
-    <img src="assets/logo_bueno.png" class="w-24 md:w-48 opacity-95" alt="Pacepal">
+    <img src="assets/logo_sm.png" class="w-24 md:w-48 opacity-95" alt="Pacepal">
 
     <div>
       <h1 class="hero-title text-4xl md:text-7xl font-black leading-[1.04] tracking-tight mb-2 md:mb-4">
@@ -289,7 +306,7 @@
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(249,112,62,.08) 0%,transparent 100%);pointer-events:none"></div>
 
         <div class="relative flex items-center justify-between px-6 pt-5 pb-2">
-          <img src="assets/logo_bueno.png" style="height:18px;opacity:.9" alt="">
+          <img src="assets/logo_sm.png" style="height:18px;opacity:.9" alt="">
           <div style="display:flex;gap:8px">
             <div style="width:32px;height:32px;background:#F5ECE4;border-radius:50%;display:flex;align-items:center;justify-content:center">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A09080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -570,7 +587,7 @@
 <!-- footer -->
 <footer style="background:#0e1318;border-top:1px solid rgba(255,255,255,.05)">
   <div class="max-w-6xl mx-auto px-5 md:px-6 py-8 md:py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-    <img src="assets/logo_bueno.png" class="h-6 opacity-40" alt="Pacepal">
+    <img src="assets/logo_sm.png" class="h-6 opacity-40" alt="Pacepal">
     <div class="flex gap-6 text-sm font-semibold" style="color:rgba(255,255,255,.25)">
       <a href="terms.html"   class="hover:text-white/60 transition-colors">Términos y Condiciones</a>
       <a href="privacy.html" class="hover:text-white/60 transition-colors">Política de Privacidad</a>
@@ -975,6 +992,28 @@ window.addEventListener('scroll', () => {
 renderStatics();
 updateHUD();
 requestAnimationFrame(animate);
+
+// Lazy-load hero video after page is interactive
+(function(){
+  var vid = document.getElementById('heroVideo');
+  if (!vid) return;
+  // Wait until page is painted and idle, then load video
+  var load = function(){
+    vid.preload = 'auto';
+    vid.load();
+    vid.play().then(function(){
+      vid.style.opacity = '.45';
+    }).catch(function(){
+      vid.style.opacity = '.45';
+    });
+    posthog.capture('video_loaded', { delay_ms: Math.round(performance.now()) });
+  };
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(load, { timeout: 3000 });
+  } else {
+    setTimeout(load, 1500);
+  }
+})();
 </script>
 </body>
 </html>
