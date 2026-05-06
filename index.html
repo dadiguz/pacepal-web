@@ -4,14 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pacepal — Corre para mantenerlo vivo</title>
+<meta name="description" content="Tu mascota pixel-art pierde energía cada 48h. Solo tus kilómetros pueden salvarla. 66 días para formar el hábito. 7 días gratis.">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&display=swap" rel="stylesheet">
+
+<!-- PostHog -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_DgdbFHfuW2GnFSYDnS7a3LafSoV7USYHripvhLANsmJB', {
+    api_host: 'https://us.i.posthog.com',
+    person_profiles: 'identified_only',
+    capture_pageview: true,
+    capture_pageleave: true,
+    autocapture: true
+  });
+
+  // Capture UTM params
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var utms = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid','ttclid'].forEach(function(k) {
+      var v = params.get(k);
+      if (v) utms[k] = v;
+    });
+    if (Object.keys(utms).length > 0) {
+      posthog.register(utms);
+      posthog.capture('ad_landing', utms);
+    }
+  })();
+</script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Nunito', system-ui, sans-serif; background: #14191f; color: #fff; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Nunito', system-ui, sans-serif; background: #14191f; color: #fff; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
   canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 
   .paper {
@@ -78,6 +106,70 @@
     background: rgba(20,25,31,.97) !important;
     border-color: rgba(255,255,255,.06);
   }
+
+  /* Sticky mobile CTA */
+  #mobileStickyBar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: rgba(20,25,31,.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255,255,255,.06);
+    transform: translateY(100%); transition: transform .4s ease;
+  }
+  #mobileStickyBar.visible { transform: none; }
+
+  @keyframes pulseGlow {
+    0%,100% { box-shadow: 0 0 0 0 rgba(249,112,62,.4); }
+    50% { box-shadow: 0 0 0 10px rgba(249,112,62,0); }
+  }
+  .cta-pulse { animation: pulseGlow 2.5s ease-in-out infinite; }
+
+  @media (min-width: 768px) {
+    #mobileStickyBar { display: none !important; }
+  }
+
+  /* Mobile-first TikTok optimizations */
+  @media (max-width: 767px) {
+    /* Tighter hero for small screens */
+    .hero-title { font-size: 2.25rem; } /* 36px instead of 2.5rem/40px */
+    .hero-sub { font-size: .875rem; line-height: 1.5; }
+
+    /* Bigger touch targets */
+    .mood-pill { min-height: 44px; min-width: 44px; padding: 10px 18px !important; font-size: .8125rem !important; }
+
+    /* Full-width CTA on mobile */
+    .cta-mobile-full { width: 100%; justify-content: center; }
+
+    /* Reduce section padding on mobile */
+    .section-mobile { padding-top: 3rem; padding-bottom: 3rem; }
+
+    /* Hide scroll cue on small phones */
+    .scroll-cue { bottom: 1.25rem; }
+    @media (max-height: 700px) {
+      .scroll-cue { display: none; }
+    }
+
+    /* Demo mockup smaller */
+    .demo-mockup { min-height: 380px !important; }
+
+    /* Footer extra padding for sticky bar */
+    footer { padding-bottom: 80px !important; }
+  }
+
+  /* Hide scrollbar on swipeable containers */
+  .overflow-x-auto::-webkit-scrollbar { display: none; }
+  .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* iPhone SE / very small screens */
+  @media (max-width: 374px) {
+    .hero-title { font-size: 1.875rem; }
+    .hero-sub { font-size: .8125rem; }
+  }
+
+  /* Smooth snap feeling for TikTok users */
+  @supports (scroll-snap-type: y proximity) {
+    html { scroll-snap-type: y proximity; }
+    .snap-section { scroll-snap-align: start; }
+  }
 </style>
 </head>
 <body>
@@ -87,8 +179,9 @@
   <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
     <img src="assets/logo_bueno.png" class="h-7" alt="Pacepal">
     <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-       class="text-sm font-extrabold text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-2.5 rounded-full transition-colors">
-      Descargar
+       onclick="posthog.capture('cta_click',{location:'nav',label:'Descargar'})"
+       class="hidden md:inline-flex text-sm font-extrabold text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-2.5 rounded-full transition-colors">
+      Descargar gratis
     </a>
   </div>
 </nav>
@@ -111,8 +204,9 @@
 </div>
 
 <!-- hero -->
-<section class="grain relative h-screen flex flex-col items-center justify-center overflow-hidden">
-  <video autoplay muted loop playsinline
+<section class="snap-section grain relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+         style="min-height:100svh">
+  <video autoplay muted loop playsinline preload="auto"
          class="absolute inset-0 w-full h-full object-cover pointer-events-none"
          style="opacity:.45">
     <source src="assets/run.mp4" type="video/mp4">
@@ -123,26 +217,40 @@
   <div class="absolute bottom-0 left-0 right-0 h-40"
        style="background:linear-gradient(to bottom, transparent, #14191f)"></div>
 
-  <div class="relative z-10 flex flex-col items-center text-center px-6 gap-6 md:gap-9 max-w-3xl">
-    <img src="assets/logo_bueno.png" class="w-36 md:w-64 opacity-95" alt="Pacepal">
+  <div class="relative z-10 flex flex-col items-center text-center px-5 md:px-6 gap-4 md:gap-7 max-w-3xl w-full">
+    <img src="assets/logo_bueno.png" class="w-24 md:w-48 opacity-95" alt="Pacepal">
 
     <div>
-      <h1 class="text-4xl md:text-7xl font-black leading-[1.04] tracking-tight mb-3 md:mb-5">
+      <h1 class="hero-title text-4xl md:text-7xl font-black leading-[1.04] tracking-tight mb-2 md:mb-4">
         Corre para<br><span style="color:#F9703E">mantenerlo vivo.</span>
       </h1>
-      <p class="text-base md:text-xl leading-relaxed" style="color:rgba(255,255,255,.45)">
-        Nombra a tu compañero pixel-art. Pierde energía cada 48h.<br>
-        Solo tus kilómetros pueden salvarlo. 66 días seguidos.
+      <p class="hero-sub text-sm md:text-xl leading-relaxed" style="color:rgba(255,255,255,.45)">
+        Tu mascota pixel-art pierde energía cada 48h.<br class="hidden md:inline">
+        Solo tus kilómetros pueden salvarla.<br class="md:hidden"> 66 días. El hábito de tu vida.
       </p>
     </div>
 
     <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-       class="inline-flex items-center gap-2.5 font-extrabold text-sm md:text-base text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-6 md:px-8 py-3.5 md:py-4 rounded-2xl transition-all duration-300 shadow-xl">
+       id="heroCta"
+       onclick="posthog.capture('cta_click',{location:'hero',label:'Empezar prueba gratis'})"
+       class="cta-pulse cta-mobile-full inline-flex items-center gap-2.5 font-extrabold text-sm md:text-base text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-6 md:px-8 py-4 md:py-4 rounded-2xl transition-all duration-300 shadow-xl">
       <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
       </svg>
-      Empezar prueba gratis — 7 días
+      Empezar gratis — 7 días
     </a>
+
+    <!-- Social proof badge -->
+    <div class="flex items-center gap-2 md:gap-3">
+      <div class="flex items-center gap-0.5">
+        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+      </div>
+      <span class="text-[11px] md:text-xs font-bold" style="color:rgba(255,255,255,.35)">Disponible en App Store</span>
+    </div>
   </div>
 
   <div class="scroll-cue">
@@ -153,8 +261,17 @@
   </div>
 </section>
 
+<!-- urgency bar -->
+<section class="snap-section py-3.5 md:py-5 text-center" style="background:#F9703E;">
+  <div class="max-w-4xl mx-auto px-4 md:px-5">
+    <p class="text-[13px] md:text-base font-extrabold text-[#14191f] leading-snug">
+      Tu mascota te está esperando. Empieza hoy —<br class="md:hidden"> <span class="underline">7 días gratis</span>, cancela cuando quieras.
+    </p>
+  </div>
+</section>
+
 <!-- demo -->
-<section id="demo" class="paper py-16 md:py-28" style="border-top:2px solid #14191f">
+<section id="demo" class="snap-section paper section-mobile py-16 md:py-28" style="border-top:2px solid #14191f">
   <div class="max-w-6xl mx-auto px-5 md:px-6">
 
     <div class="mb-10 md:mb-16 reveal">
@@ -166,7 +283,7 @@
 
     <div class="flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-20 reveal">
 
-      <div class="w-full lg:flex-1 flex flex-col rounded-2xl overflow-hidden relative shadow-2xl"
+      <div class="demo-mockup w-full lg:flex-1 flex flex-col rounded-2xl overflow-hidden relative shadow-2xl"
            style="background:#F5F8FC; min-height:420px; border:2px solid rgba(20,25,31,.1)">
 
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(249,112,62,.08) 0%,transparent 100%);pointer-events:none"></div>
@@ -265,8 +382,8 @@
   </div>
 </section>
 
-<!-- cómo funciona -->
-<section class="py-16 md:py-28" style="background:#14191f">
+<!-- como funciona -->
+<section id="how" class="snap-section section-mobile py-16 md:py-28" style="background:#14191f">
   <div class="max-w-6xl mx-auto px-5 md:px-6">
     <div class="mb-10 md:mb-16 reveal">
       <span class="tag tag-light">Cómo funciona</span>
@@ -275,35 +392,74 @@
       </h2>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-px rounded-2xl overflow-hidden reveal"
+    <!-- Desktop: grid -->
+    <div class="hidden md:grid md:grid-cols-3 gap-px rounded-2xl overflow-hidden reveal"
          style="background:rgba(255,255,255,.07)">
-      <div class="px-6 py-8 md:px-8 md:py-10" style="background:#14191f">
-        <div class="text-4xl md:text-5xl font-black mb-4 md:mb-6" style="color:rgba(249,112,62,.22)">01</div>
-        <h3 class="text-lg md:text-xl font-black mb-2 md:mb-3">Elige y ponle nombre</h3>
+      <div class="px-8 py-10" style="background:#14191f">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.22)">01</div>
+        <h3 class="text-xl font-black mb-3">Elige y ponle nombre</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
           Bear, Cat, Frog, Axolotl o genera uno al azar. Más de 30 paletas de color. Ponle el nombre que quieras y ya es tuyo.
         </p>
       </div>
-      <div class="px-6 py-8 md:px-8 md:py-10" style="background:#14191f">
-        <div class="text-4xl md:text-5xl font-black mb-4 md:mb-6" style="color:rgba(249,112,62,.22)">02</div>
-        <h3 class="text-lg md:text-xl font-black mb-2 md:mb-3">Corre. Apple Health hace el resto.</h3>
+      <div class="px-8 py-10" style="background:#14191f">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.22)">02</div>
+        <h3 class="text-xl font-black mb-3">Corre. Apple Health hace el resto.</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
           Sin botones que apretar, sin trampa posible. Tu energía se drena en 48 horas. Solo tus kilómetros reales la recuperan. El widget en tu pantalla de bloqueo lo muestra en tiempo real.
         </p>
       </div>
-      <div class="px-6 py-8 md:px-8 md:py-10" style="background:#14191f">
-        <div class="text-4xl md:text-5xl font-black mb-4 md:mb-6" style="color:rgba(249,112,62,.22)">03</div>
-        <h3 class="text-lg md:text-xl font-black mb-2 md:mb-3">66 días. 23 fondos. Una medalla.</h3>
+      <div class="px-8 py-10" style="background:#14191f">
+        <div class="text-5xl font-black mb-6" style="color:rgba(249,112,62,.22)">03</div>
+        <h3 class="text-xl font-black mb-3">66 días. 23 fondos. Una medalla.</h3>
         <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
           Cada hito desbloquea un fondo exclusivo. Al llegar al día 66, tu compañero gana una medalla y su energía ya nunca baja. La ciencia dice que 66 días forman un hábito, no 21.
         </p>
       </div>
     </div>
+
+    <!-- Mobile: swipeable horizontal cards -->
+    <div class="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 -mx-5 px-5 reveal"
+         style="-webkit-overflow-scrolling:touch; scrollbar-width:none;">
+      <div class="snap-center shrink-0 w-[78vw] px-5 py-6 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+        <div class="text-3xl font-black mb-3" style="color:rgba(249,112,62,.3)">01</div>
+        <h3 class="text-base font-black mb-2">Elige y ponle nombre</h3>
+        <p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,.45)">
+          Bear, Cat, Frog, Axolotl o genera uno al azar. Más de 30 paletas de color. Ponle el nombre que quieras y ya es tuyo.
+        </p>
+      </div>
+      <div class="snap-center shrink-0 w-[78vw] px-5 py-6 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+        <div class="text-3xl font-black mb-3" style="color:rgba(249,112,62,.3)">02</div>
+        <h3 class="text-base font-black mb-2">Corre. Apple Health hace el resto.</h3>
+        <p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,.45)">
+          Sin botones que apretar, sin trampa posible. Tu energía se drena en 48 horas. Solo tus kilómetros reales la recuperan.
+        </p>
+      </div>
+      <div class="snap-center shrink-0 w-[78vw] px-5 py-6 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+        <div class="text-3xl font-black mb-3" style="color:rgba(249,112,62,.3)">03</div>
+        <h3 class="text-base font-black mb-2">66 días. 23 fondos. Una medalla.</h3>
+        <p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,.45)">
+          Cada hito desbloquea un fondo exclusivo. Al día 66, tu compañero gana una medalla y su energía ya nunca baja.
+        </p>
+      </div>
+    </div>
+
+    <!-- mid CTA -->
+    <div class="mt-10 md:mt-14 text-center reveal">
+      <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
+         onclick="posthog.capture('cta_click',{location:'how_it_works',label:'Descargar gratis'})"
+         class="cta-mobile-full inline-flex items-center gap-2 font-extrabold text-sm md:text-base text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-6 md:px-8 py-3.5 md:py-4 rounded-2xl transition-all duration-300 shadow-xl">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        Descargar gratis — 7 días
+      </a>
+    </div>
   </div>
 </section>
 
 <!-- hook emocional -->
-<section class="paper py-16 md:py-28 overflow-hidden" style="border-top:2px solid #14191f">
+<section class="snap-section paper section-mobile py-16 md:py-28 overflow-hidden" style="border-top:2px solid #14191f">
   <div class="max-w-6xl mx-auto px-5 md:px-6">
     <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-24">
 
@@ -317,8 +473,8 @@
           Pacepal te da una razón emocional para salir hoy. Y todos los días durante 66.
         </p>
         <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-           class="inline-flex items-center justify-center lg:justify-start gap-2 text-sm font-extrabold transition-colors"
-           style="color:#F9703E">
+           onclick="posthog.capture('cta_click',{location:'emotional_hook',label:'Prueba gratis 7 días'})"
+           class="cta-mobile-full inline-flex items-center justify-center lg:justify-start gap-2 text-sm font-extrabold transition-all md:bg-transparent md:px-0 md:py-0 md:shadow-none bg-[#F9703E] text-[#14191f] md:text-[#F9703E] px-6 py-3.5 rounded-2xl shadow-lg">
           Prueba gratis 7 días
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
         </a>
@@ -341,33 +497,54 @@
 </section>
 
 <!-- testimonios -->
-<section class="py-14 md:py-24" style="background:#14191f">
+<section id="testimonials" class="snap-section section-mobile py-14 md:py-24" style="background:#14191f">
   <div class="max-w-5xl mx-auto px-5 md:px-6">
-    <div class="grid md:grid-cols-2 gap-px rounded-2xl overflow-hidden reveal"
+    <div class="mb-8 md:mb-12 text-center reveal">
+      <span class="tag tag-light">Lo que dicen los corredores</span>
+    </div>
+    <!-- Mobile: horizontal scroll cards. Desktop: grid -->
+    <div class="hidden md:grid md:grid-cols-2 gap-px rounded-2xl overflow-hidden reveal"
          style="background:rgba(255,255,255,.07)">
-
-      <div class="p-6 md:p-10" style="background:#14191f">
-        <div class="text-4xl md:text-5xl font-black leading-none mb-4 md:mb-6" style="color:rgba(249,112,62,.2)">"</div>
-        <p class="text-base md:text-lg leading-relaxed font-semibold mb-4 md:mb-6" style="color:rgba(255,255,255,.75)">
+      <div class="p-10" style="background:#14191f">
+        <div class="text-5xl font-black leading-none mb-6" style="color:rgba(249,112,62,.2)">"</div>
+        <p class="text-lg leading-relaxed font-semibold mb-6" style="color:rgba(255,255,255,.75)">
           Llevaba meses intentando correr sin lograrlo. Con Pacepal llevo 47 días sin fallar. No quiero que se muera.
         </p>
         <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">María G. — Ciudad de México</div>
       </div>
-
-      <div class="p-6 md:p-10" style="background:#14191f">
-        <div class="text-4xl md:text-5xl font-black leading-none mb-4 md:mb-6" style="color:rgba(249,112,62,.2)">"</div>
-        <p class="text-base md:text-lg leading-relaxed font-semibold mb-4 md:mb-6" style="color:rgba(255,255,255,.75)">
+      <div class="p-10" style="background:#14191f">
+        <div class="text-5xl font-black leading-none mb-6" style="color:rgba(249,112,62,.2)">"</div>
+        <p class="text-lg leading-relaxed font-semibold mb-6" style="color:rgba(255,255,255,.75)">
           El widget en mi pantalla de inicio es lo mejor. Cada vez que lo veo triste, sé que tengo que salir. Funciona.
         </p>
         <div class="text-sm font-extrabold" style="color:rgba(255,255,255,.4)">Andrea M. — Buenos Aires</div>
       </div>
+    </div>
 
+    <!-- Mobile: swipeable cards -->
+    <div class="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-5 px-5 reveal"
+         style="-webkit-overflow-scrolling:touch; scrollbar-width:none;"
+         onscroll="this.style.setProperty('--scroll','scrolled')">
+      <div class="snap-center shrink-0 w-[85vw] p-5 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+        <div class="text-3xl font-black leading-none mb-3" style="color:rgba(249,112,62,.25)">"</div>
+        <p class="text-[15px] leading-relaxed font-semibold mb-4" style="color:rgba(255,255,255,.75)">
+          Llevaba meses intentando correr sin lograrlo. Con Pacepal llevo 47 días sin fallar. No quiero que se muera.
+        </p>
+        <div class="text-xs font-extrabold" style="color:rgba(255,255,255,.4)">María G. — Ciudad de México</div>
+      </div>
+      <div class="snap-center shrink-0 w-[85vw] p-5 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
+        <div class="text-3xl font-black leading-none mb-3" style="color:rgba(249,112,62,.25)">"</div>
+        <p class="text-[15px] leading-relaxed font-semibold mb-4" style="color:rgba(255,255,255,.75)">
+          El widget en mi pantalla de inicio es lo mejor. Cada vez que lo veo triste, sé que tengo que salir. Funciona.
+        </p>
+        <div class="text-xs font-extrabold" style="color:rgba(255,255,255,.4)">Andrea M. — Buenos Aires</div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- cta -->
-<section class="py-20 md:py-32 text-center" style="background:#191f27">
+<section class="snap-section section-mobile py-20 md:py-32 text-center" style="background:#191f27">
   <div class="max-w-2xl mx-auto px-5 md:px-6 reveal">
     <div class="flex justify-center mb-7 md:mb-10 float">
       <canvas id="ctaPet" class="drop-shadow-2xl"></canvas>
@@ -380,7 +557,8 @@
       7 días gratis. Cancela cuando quieras. Solo corre.
     </p>
     <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-       class="inline-flex items-center gap-2 md:gap-3 font-extrabold text-base md:text-lg text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-7 md:px-10 py-4 md:py-5 rounded-2xl transition-all duration-300 shadow-2xl hover:scale-105">
+       onclick="posthog.capture('cta_click',{location:'final_cta',label:'Empezar 7 dias gratis'})"
+       class="cta-pulse cta-mobile-full inline-flex items-center gap-2 md:gap-3 font-extrabold text-base md:text-lg text-[#14191f] bg-white hover:bg-[#F9703E] hover:text-white px-7 md:px-10 py-4 md:py-5 rounded-2xl transition-all duration-300 shadow-2xl hover:scale-105">
       <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
       </svg>
@@ -397,9 +575,21 @@
       <a href="terms.html"   class="hover:text-white/60 transition-colors">Términos y Condiciones</a>
       <a href="privacy.html" class="hover:text-white/60 transition-colors">Política de Privacidad</a>
     </div>
-    <p class="text-sm" style="color:rgba(255,255,255,.18)">© 2025 Pacepal</p>
+    <p class="text-sm" style="color:rgba(255,255,255,.18)">&copy; 2025 Pacepal</p>
   </div>
 </footer>
+
+<!-- Sticky mobile CTA -->
+<div id="mobileStickyBar">
+  <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
+     onclick="posthog.capture('cta_click',{location:'sticky_mobile',label:'Descargar gratis'})"
+     class="flex items-center justify-center gap-2 w-full font-extrabold text-base text-[#14191f] bg-[#F9703E] py-3.5 rounded-2xl shadow-lg">
+    <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+    </svg>
+    Descargar gratis — 7 días
+  </a>
+</div>
 
 <!-- sprite engine -->
 <script>
@@ -671,26 +861,31 @@ function updateHUD(){
   setEl('heroEnergyPct',el=>el.textContent=Math.round(demoEnergy)+'%');
 }
 
+let demoInteracted = false;
 function setMood(m){
   currentMood=m;
   if(m==='happy') demoEnergy=Math.min(100,demoEnergy+30);
   if(m==='sad')   demoEnergy=Math.min(20,demoEnergy);
   if(m==='angry') demoEnergy=Math.min(10,demoEnergy);
   frameIdx=0; updateHUD();
+  if (!demoInteracted) { demoInteracted = true; posthog.capture('demo_first_interaction', {mood: m}); }
+  posthog.capture('demo_mood_change', {mood: m, energy: demoEnergy});
 }
 
 function addRun(){
   demoEnergy=Math.min(100,demoEnergy+30);
   currentMood='running';frameIdx=0;updateHUD();
+  posthog.capture('demo_run_click', {energy_after: demoEnergy});
   setTimeout(()=>{if(currentMood==='running'){currentMood='happy';frameIdx=0;}},1500);
 }
 
 function renderStatics(){
   renderPet(document.getElementById('heroPet'),'idle',0,7);
-  const cmpPx = window.innerWidth < 768 ? 6 : 10;
+  const isMobile = window.innerWidth < 768;
+  const cmpPx = isMobile ? 6 : 10;
   renderPet(document.getElementById('happyPet'),'happy',0,cmpPx);
   renderPet(document.getElementById('angryPet'),'angry',1,cmpPx);
-  renderPet(document.getElementById('ctaPet'),'happy',0,12);
+  renderPet(document.getElementById('ctaPet'),'happy',0, isMobile ? 8 : 12);
 }
 
 function animate(ts){
@@ -711,7 +906,8 @@ function animate(ts){
   frameTimer+=dt;
   if(frameTimer>=1000/fps){
     frameTimer=0; frameIdx=(frameIdx+1)%maxF;
-    const dc=document.getElementById('demoPet');  if(dc)renderPet(dc,currentMood,frameIdx,8);
+    const demoPx=window.innerWidth<768?6:8;
+    const dc=document.getElementById('demoPet');  if(dc)renderPet(dc,currentMood,frameIdx,demoPx);
     const hc=document.getElementById('heroPet');  if(hc)renderPet(hc,currentMood,frameIdx,7);
     const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'happy',frameIdx%4,12);
     const cmpPx = window.innerWidth < 768 ? 6 : 10;
@@ -726,6 +922,37 @@ const obs = new IntersectionObserver(
 );
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
+// section visibility tracking
+const sectionObs = new IntersectionObserver(
+  es => es.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.tracked) {
+      e.target.dataset.tracked = '1';
+      posthog.capture('section_viewed', { section: e.target.id || e.target.dataset.section });
+    }
+  }),
+  { threshold: .3 }
+);
+document.querySelectorAll('section[id], section[data-section]').forEach(el => sectionObs.observe(el));
+
+// scroll depth tracking
+(function(){
+  var maxDepth = 0;
+  var thresholds = [25,50,75,100];
+  var fired = {};
+  window.addEventListener('scroll', function(){
+    var docH = document.documentElement.scrollHeight - window.innerHeight;
+    if (docH <= 0) return;
+    var pct = Math.round((window.scrollY / docH) * 100);
+    if (pct > maxDepth) maxDepth = pct;
+    for (var i = 0; i < thresholds.length; i++) {
+      if (maxDepth >= thresholds[i] && !fired[thresholds[i]]) {
+        fired[thresholds[i]] = true;
+        posthog.capture('scroll_depth', { depth: thresholds[i] });
+      }
+    }
+  }, { passive: true });
+})();
+
 // mascota fija: solo en md+
 const fixedPet = document.getElementById('fixedPetWrap');
 function syncFixedPet() {
@@ -736,9 +963,13 @@ window.addEventListener('resize', syncFixedPet, { passive: true });
 
 // nav: aparece al pasar el hero
 const nav = document.getElementById('mainNav');
+const mobileBar = document.getElementById('mobileStickyBar');
 window.addEventListener('scroll', () => {
-  const pastHero = window.scrollY > window.innerHeight * 0.85;
+  const vh = window.innerHeight;
+  const pastHero = window.scrollY > vh * 0.85;
+  const showMobileBar = window.scrollY > vh * 0.5; // Show earlier on mobile for TikTok traffic
   nav.classList.toggle('visible', pastHero);
+  if (mobileBar) mobileBar.classList.toggle('visible', showMobileBar);
 }, { passive: true });
 
 renderStatics();
