@@ -55,7 +55,7 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Nunito', system-ui, sans-serif; background: #14191f; color: #fff; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+  body { font-family: 'Nunito', system-ui, sans-serif; background: #FAFAFA; color: #1a1a2e; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
   canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1); }
@@ -73,7 +73,7 @@
   }
 
   .hero-bg {
-    background: linear-gradient(135deg, #14191f 0%, #1a2332 25%, #14191f 50%, #1f1520 75%, #14191f 100%);
+    background: linear-gradient(135deg, #FAFAFA 0%, #f0ebe4 25%, #FAFAFA 50%, #eae4f0 75%, #FAFAFA 100%);
     background-size: 400% 400%;
     animation: gradientShift 12s ease infinite;
   }
@@ -88,8 +88,9 @@
   #mobileStickyBar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
     padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(20,25,31,.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(0,0,0,.06);
+    box-shadow: 0 -4px 20px rgba(0,0,0,.06);
     transform: translateY(100%); transition: transform .4s ease;
   }
   #mobileStickyBar.visible { transform: none; }
@@ -111,8 +112,13 @@
   .overflow-x-auto::-webkit-scrollbar { display: none; }
   .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
 
-  .pet-box { width:100px;height:100px;display:flex;align-items:center;justify-content:center;overflow:hidden; }
-  @media (min-width:768px) { .pet-box { width:180px;height:180px; } }
+  .pet-box { width:144px;height:144px;display:flex;align-items:center;justify-content:center;overflow:hidden; }
+  @media (min-width:768px) { .pet-box { width:200px;height:200px; } }
+
+  .waitlist-input:focus { border-color: #F9703E !important; background: rgba(249,112,62,.05) !important; box-shadow: 0 0 0 3px rgba(249,112,62,.12); }
+  .waitlist-input::placeholder { color: rgba(0,0,0,.3); }
+  .waitlist-ok { animation: fadeInUp .5s cubic-bezier(.22,1,.36,1); }
+  @keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
 
   /* iPhone SE / very small screens */
   @media (max-width: 374px) {
@@ -124,7 +130,7 @@
 <body>
 
 <!-- nav (hidden initially, appears on scroll) -->
-<nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 bg-[#14191f]/80 backdrop-blur-xl"
+<nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl"
      style="border-bottom:1px solid transparent;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .4s ease,transform .4s ease,background .4s,border-color .4s">
   <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
     <img src="assets/logo_sm.png" class="h-6" alt="Pacepal">
@@ -140,7 +146,7 @@
          style="min-height:100svh">
 
   <!-- Subtle radial overlay -->
-  <div class="absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 55%, rgba(249,112,62,.06) 0%, transparent 70%)"></div>
+  <div class="absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 55%, rgba(249,112,62,.05) 0%, transparent 70%)"></div>
 
   <div class="relative z-10 flex flex-col items-center text-center px-5 gap-5 md:gap-7 max-w-2xl w-full">
 
@@ -150,23 +156,23 @@
     </div>
 
     <!-- Energy bar under pet -->
-    <div style="width:120px; padding:6px 10px; border-radius:12px; background:rgba(255,255,255,.06); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);">
+    <div style="width:120px; padding:6px 10px; border-radius:12px; background:rgba(0,0,0,.04);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <span id="heroHpLabel" style="font-size:9px; font-weight:900; color:#4ADE80; letter-spacing:.06em;">HP</span>
-        <span id="heroEnergyPct" style="font-family:monospace; font-size:9px; color:rgba(255,255,255,.38);">78%</span>
+        <span id="heroHpLabel" style="font-size:9px; font-weight:900; color:#16a34a; letter-spacing:.06em;">HP</span>
+        <span id="heroEnergyPct" style="font-family:monospace; font-size:9px; color:rgba(0,0,0,.35);">78%</span>
       </div>
-      <div style="height:5px; border-radius:99px; overflow:hidden; background:rgba(255,255,255,.1);">
-        <div id="heroBar" class="e-bar" style="height:100%; border-radius:99px; width:78%; background:#4ADE80;"></div>
+      <div style="height:5px; border-radius:99px; overflow:hidden; background:rgba(0,0,0,.08);">
+        <div id="heroBar" class="e-bar" style="height:100%; border-radius:99px; width:78%; background:#16a34a;"></div>
       </div>
     </div>
 
     <div>
-      <h1 class="hero-title text-3xl md:text-6xl font-black leading-[1.06] tracking-tight mb-2 md:mb-3">
+      <h1 class="hero-title text-3xl md:text-6xl font-black leading-[1.06] tracking-tight mb-2 md:mb-3" style="color:#1a1a2e">
         Tu mascota virtual<br><span style="color:#F9703E">te obliga a correr.</span>
       </h1>
-      <p class="hero-sub text-sm md:text-lg" style="color:rgba(255,255,255,.45)">
+      <p class="hero-sub text-sm md:text-lg" style="color:rgba(0,0,0,.45)">
         Si no corres, se muere. Así de simple.<br>
-        <span style="color:rgba(255,255,255,.3)">66 días · 7 días gratis</span>
+        <span style="color:rgba(0,0,0,.3)">66 días · 7 días gratis</span>
       </p>
     </div>
 
@@ -180,58 +186,68 @@
         </svg>
         Probar gratis — 7 días
       </a>
-      <div class="mt-3"><span class="text-[11px] font-bold" style="color:rgba(255,255,255,.25)">Solo iOS · Cancela cuando quieras</span></div>
+      <div class="mt-3"><span class="text-[11px] font-bold" style="color:rgba(0,0,0,.3)">Solo iOS · Cancela cuando quieras</span></div>
     </div>
 
     <!-- Android waitlist CTA -->
     <div id="androidCta" style="display:none" class="w-full max-w-sm">
-      <p class="text-sm font-bold mb-3" style="color:#F9703E">Pronto en Android</p>
-      <form id="heroWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'hero')">
-        <input type="email" required placeholder="tu@correo.com"
-               class="flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold text-white bg-white/10 border border-white/15 outline-none focus:border-[#F9703E] transition-colors"
-               style="backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)">
-        <button type="submit"
-                class="cta-pulse shrink-0 px-5 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-colors">
-          Avísame</button>
-      </form>
-      <div id="heroWaitlistOk" style="display:none;background:rgba(74,222,128,.12);color:#4ADE80" class="mt-3 px-4 py-3 rounded-xl text-sm font-bold text-center">
-        Te avisaremos cuando lance en Android
+      <div class="waitlist-form">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4" style="background:rgba(249,112,62,.12);border:1px solid rgba(249,112,62,.25)">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#F9703E"><path d="M17.523 2.237a.625.625 0 0 0-1.046 0L14.5 5.5h-5L7.523 2.237a.625.625 0 0 0-1.046 0L4.5 5.5A4.5 4.5 0 0 0 2 9.5v6A4.5 4.5 0 0 0 6.5 20h11a4.5 4.5 0 0 0 4.5-4.5v-6a4.5 4.5 0 0 0-2.5-4h0L17.523 2.237ZM8.75 11a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6.5 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/></svg>
+          <span class="text-xs font-extrabold" style="color:#F9703E">Pronto en Android</span>
+        </div>
+        <p class="text-sm mb-4" style="color:rgba(0,0,0,.4)">Déjanos tu correo y te avisamos el día que salga.</p>
+        <form id="heroWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'hero')">
+          <input type="email" required placeholder="tu@correo.com"
+                 class="waitlist-input flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold text-[#1a1a2e] outline-none transition-all duration-300"
+                 style="background:rgba(0,0,0,.04);border:1.5px solid rgba(0,0,0,.1)">
+          <button type="submit"
+                  class="cta-pulse shrink-0 px-6 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 hover:scale-105 active:scale-95">
+            Avísame</button>
+        </form>
       </div>
-      <div class="mt-3"><span class="text-[11px] font-bold" style="color:rgba(255,255,255,.25)">Te avisamos cuando esté disponible</span></div>
+      <div id="heroWaitlistOk" class="waitlist-ok" style="display:none">
+        <div class="flex flex-col items-center gap-3 py-2">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(74,222,128,.15)">
+            <svg class="w-6 h-6" fill="none" stroke="#4ADE80" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <p class="text-sm font-bold" style="color:#4ADE80">Te avisaremos cuando lance en Android</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- cómo funciona -->
-<section id="how" class="section-mobile py-12 md:py-24" style="background:#14191f;border-top:1px solid rgba(255,255,255,.06)">
+<section id="how" class="section-mobile py-12 md:py-24" style="background:#f3f1ee;border-top:1px solid rgba(0,0,0,.06)">
   <div class="max-w-5xl mx-auto px-5 md:px-6">
     <div class="mb-8 md:mb-14 text-center reveal">
-      <h2 class="text-2xl md:text-4xl font-black leading-tight">
+      <h2 class="text-2xl md:text-4xl font-black leading-tight" style="color:#1a1a2e">
         Así funciona <span style="color:#F9703E">Pacepal</span>
       </h2>
     </div>
 
     <!-- Desktop: grid -->
     <div class="hidden md:grid md:grid-cols-3 gap-px rounded-2xl overflow-hidden reveal"
-         style="background:rgba(255,255,255,.07)">
-      <div class="px-8 py-10" style="background:#14191f">
-        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.25)">01</div>
-        <h3 class="text-lg font-black mb-2">Elige tu mascota</h3>
-        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
+         style="background:rgba(0,0,0,.06)">
+      <div class="px-8 py-10" style="background:#f3f1ee">
+        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.35)">01</div>
+        <h3 class="text-lg font-black mb-2" style="color:#1a1a2e">Elige tu mascota</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(0,0,0,.45)">
           Bear, Cat, Frog, Axolotl o genera uno al azar. Más de 30 paletas. Ponle nombre y ya es tuyo.
         </p>
       </div>
-      <div class="px-8 py-10" style="background:#14191f">
-        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.25)">02</div>
-        <h3 class="text-lg font-black mb-2">Corre. Nosotros contamos tus km.</h3>
-        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
+      <div class="px-8 py-10" style="background:#f3f1ee">
+        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.35)">02</div>
+        <h3 class="text-lg font-black mb-2" style="color:#1a1a2e">Corre. Nosotros contamos tus km.</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(0,0,0,.45)">
           Conecta Apple Health o registra tus km manual. Tu energía se drena cada 48h. Solo correr la recupera.
         </p>
       </div>
-      <div class="px-8 py-10" style="background:#14191f">
-        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.25)">03</div>
-        <h3 class="text-lg font-black mb-2">66 días. El hábito de tu vida.</h3>
-        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.45)">
+      <div class="px-8 py-10" style="background:#f3f1ee">
+        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.35)">03</div>
+        <h3 class="text-lg font-black mb-2" style="color:#1a1a2e">66 días. El hábito de tu vida.</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(0,0,0,.45)">
           Cada hito desbloquea fondos. Al día 66, tu compañero gana una medalla y su energía nunca baja.
         </p>
       </div>
@@ -240,61 +256,61 @@
     <!-- Mobile: swipeable horizontal cards -->
     <div class="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 -mx-5 px-5 reveal"
          style="-webkit-overflow-scrolling:touch; scrollbar-width:none;">
-      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
-        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.3)">01</div>
-        <h3 class="text-base font-black mb-1.5">Elige tu mascota</h3>
-        <p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,.45)">
+      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:white;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)">
+        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.4)">01</div>
+        <h3 class="text-base font-black mb-1.5" style="color:#1a1a2e">Elige tu mascota</h3>
+        <p class="text-[13px] leading-relaxed" style="color:rgba(0,0,0,.45)">
           Bear, Cat, Frog, Axolotl o al azar. Más de 30 paletas. Ponle nombre y ya es tuyo.
         </p>
       </div>
-      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
-        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.3)">02</div>
-        <h3 class="text-base font-black mb-1.5">Corre. Nosotros contamos tus km.</h3>
-        <p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,.45)">
+      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:white;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)">
+        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.4)">02</div>
+        <h3 class="text-base font-black mb-1.5" style="color:#1a1a2e">Corre. Nosotros contamos tus km.</h3>
+        <p class="text-[13px] leading-relaxed" style="color:rgba(0,0,0,.45)">
           Conecta Apple Health o registra manual. Tu energía se drena cada 48h. Solo correr la recupera.
         </p>
       </div>
-      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">
-        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.3)">03</div>
-        <h3 class="text-base font-black mb-1.5">66 días. El hábito de tu vida.</h3>
-        <p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,.45)">
+      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:white;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)">
+        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.4)">03</div>
+        <h3 class="text-base font-black mb-1.5" style="color:#1a1a2e">66 días. El hábito de tu vida.</h3>
+        <p class="text-[13px] leading-relaxed" style="color:rgba(0,0,0,.45)">
           Cada hito desbloquea fondos. Al día 66, medalla y energía infinita.
         </p>
       </div>
     </div>
 
-    <!-- Comparison: happy vs angry pet -->
+    <!-- Comparison: running vs sad pet -->
     <div class="flex items-end justify-center gap-10 md:gap-16 mt-10 md:mt-14 reveal">
       <div class="flex flex-col items-center gap-2">
         <div class="float pet-box">
-          <canvas id="happyPet" class="drop-shadow-2xl"></canvas>
+          <canvas id="runningPet" class="drop-shadow-lg"></canvas>
         </div>
-        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#4ADE80">Corriste</span>
+        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#16a34a">Corriendo</span>
       </div>
-      <div class="text-xl md:text-3xl font-black pb-8 md:pb-10" style="color:rgba(255,255,255,.1)">vs</div>
+      <div class="text-xl md:text-3xl font-black pb-8 md:pb-10" style="color:rgba(0,0,0,.1)">vs</div>
       <div class="flex flex-col items-center gap-2">
         <div class="pet-box">
-          <canvas id="angryPet" class="drop-shadow-2xl"></canvas>
+          <canvas id="sadPet" class="drop-shadow-lg"></canvas>
         </div>
-        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#E12D39">Sin correr</span>
+        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#d97706">Sin correr</span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- CTA final -->
-<section data-section="final_cta" class="section-mobile py-16 md:py-28 text-center" style="background:#191f27;border-top:1px solid rgba(255,255,255,.06)">
+<section data-section="final_cta" class="section-mobile py-16 md:py-28 text-center" style="background:#FAFAFA;border-top:1px solid rgba(0,0,0,.06)">
   <div class="max-w-xl mx-auto px-5 md:px-6 reveal">
     <div class="flex justify-center mb-6 md:mb-8 float">
-      <canvas id="ctaPet" class="drop-shadow-2xl"></canvas>
+      <canvas id="ctaPet" class="drop-shadow-lg"></canvas>
     </div>
-    <h2 class="text-2xl md:text-5xl font-black leading-[1.06] tracking-tight mb-3 md:mb-4">
+    <h2 id="finalHeading" class="text-2xl md:text-5xl font-black leading-[1.06] tracking-tight mb-3 md:mb-4" style="color:#1a1a2e">
       Empieza hoy.<br>
       <span style="color:#F9703E">Tu compañero te espera.</span>
     </h2>
     <!-- iOS -->
     <div id="iosCtaFinal">
-      <p class="text-sm md:text-base mb-6 md:mb-8" style="color:rgba(255,255,255,.35)">
+      <p class="text-sm md:text-base mb-6 md:mb-8" style="color:rgba(0,0,0,.35)">
         7 días gratis · Cancela cuando quieras · Solo corre
       </p>
       <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
@@ -308,30 +324,38 @@
     </div>
     <!-- Android -->
     <div id="androidCtaFinal" style="display:none" class="w-full max-w-sm mx-auto">
-      <p class="text-sm md:text-base mb-5" style="color:#F9703E">Pronto en Android</p>
-      <form id="finalWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'final_cta')">
-        <input type="email" required placeholder="tu@correo.com"
-               class="flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold text-white bg-white/10 border border-white/15 outline-none focus:border-[#F9703E] transition-colors">
-        <button type="submit"
-                class="cta-pulse shrink-0 px-5 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-colors">
-          Avísame</button>
-      </form>
-      <div id="finalWaitlistOk" style="display:none;background:rgba(74,222,128,.12);color:#4ADE80" class="mt-3 px-4 py-3 rounded-xl text-sm font-bold text-center">
-        Te avisaremos cuando lance en Android
+      <div class="waitlist-form">
+        <p class="text-sm mb-4" style="color:rgba(0,0,0,.4)">Déjanos tu correo y te avisamos el día que salga en Android.</p>
+        <form id="finalWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'final_cta')">
+          <input type="email" required placeholder="tu@correo.com"
+                 class="waitlist-input flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold text-[#1a1a2e] outline-none transition-all duration-300"
+                 style="background:rgba(0,0,0,.04);border:1.5px solid rgba(0,0,0,.1)">
+          <button type="submit"
+                  class="cta-pulse shrink-0 px-6 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 hover:scale-105 active:scale-95">
+            Avísame</button>
+        </form>
+      </div>
+      <div id="finalWaitlistOk" class="waitlist-ok" style="display:none">
+        <div class="flex flex-col items-center gap-3 py-2">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(74,222,128,.15)">
+            <svg class="w-6 h-6" fill="none" stroke="#4ADE80" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <p class="text-sm font-bold" style="color:#4ADE80">Te avisaremos cuando lance en Android</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- footer -->
-<footer style="background:#0e1318;border-top:1px solid rgba(255,255,255,.05)">
+<footer style="background:#f3f1ee;border-top:1px solid rgba(0,0,0,.06)">
   <div class="max-w-6xl mx-auto px-5 md:px-6 py-6 md:py-8 flex flex-col md:flex-row items-center justify-between gap-3">
-    <img src="assets/logo_sm.png" class="h-5 opacity-35" alt="Pacepal">
-    <div class="flex gap-5 text-xs font-semibold" style="color:rgba(255,255,255,.2)">
-      <a href="terms.html" class="hover:text-white/50 transition-colors">Términos</a>
-      <a href="privacy.html" class="hover:text-white/50 transition-colors">Privacidad</a>
+    <img src="assets/logo_sm.png" class="h-5 opacity-40" alt="Pacepal">
+    <div class="flex gap-5 text-xs font-semibold" style="color:rgba(0,0,0,.3)">
+      <a href="terms.html" class="hover:text-black/60 transition-colors">Términos</a>
+      <a href="privacy.html" class="hover:text-black/60 transition-colors">Privacidad</a>
     </div>
-    <p class="text-xs" style="color:rgba(255,255,255,.15)">&copy; 2025 Pacepal</p>
+    <p class="text-xs" style="color:rgba(0,0,0,.2)">&copy; 2025 Pacepal</p>
   </div>
 </footer>
 
@@ -347,15 +371,21 @@
     Descargar gratis — 7 días
   </a>
   <!-- Android sticky -->
-  <form id="androidStickyForm" style="display:none" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'sticky_mobile')">
-    <input type="email" required placeholder="tu@correo.com"
-           class="flex-1 min-w-0 px-3 py-3 rounded-xl text-sm font-semibold text-white bg-white/10 border border-white/15 outline-none focus:border-[#F9703E] transition-colors">
-    <button type="submit"
-            class="shrink-0 px-4 py-3 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-colors">
-      Avísame</button>
-  </form>
-  <div id="stickyWaitlistOk" style="display:none;color:#4ADE80" class="text-sm font-bold text-center py-2">
-    Listo — te avisaremos
+  <div id="androidStickyWrap" style="display:none" class="w-full">
+    <form id="androidStickyForm" class="waitlist-form flex gap-2 w-full" onsubmit="return submitWaitlist(event,'sticky_mobile')">
+      <input type="email" required placeholder="tu@correo.com"
+             class="waitlist-input flex-1 min-w-0 px-3 py-3 rounded-xl text-sm font-semibold text-[#1a1a2e] outline-none transition-all duration-300"
+             style="background:rgba(0,0,0,.04);border:1.5px solid rgba(0,0,0,.1)">
+      <button type="submit"
+              class="shrink-0 px-5 py-3 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 active:scale-95">
+        Avísame</button>
+    </form>
+    <div id="stickyWaitlistOk" class="waitlist-ok" style="display:none">
+      <div class="flex items-center justify-center gap-2 py-1">
+        <svg class="w-4 h-4" fill="none" stroke="#4ADE80" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <span class="text-sm font-bold" style="color:#4ADE80">Listo — te avisaremos</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -603,9 +633,9 @@ function renderPet(canvas,pose,frame,px){
 }
 
 // state
-let demoEnergy=78, frameIdx=0, frameTimer=0, lastTs=0;
+let demoEnergy=78, frameIdx=0, frameTimer=0, fastFrameIdx=0, fastFrameTimer=0, lastTs=0;
 
-function energyColor(e){return e>=60?'#4ADE80':e>=30?'#A3E635':e>=15?'#FCD34D':'#E12D39';}
+function energyColor(e){return e>=60?'#16a34a':e>=30?'#65a30d':e>=15?'#ca8a04':'#dc2626';}
 
 function updateHUD(){
   const ec=energyColor(demoEnergy);
@@ -617,11 +647,11 @@ function updateHUD(){
 
 function renderStatics(){
   const isMobile = window.innerWidth < 768;
-  renderPet(document.getElementById('heroPet'),'idle',0, isMobile ? 7 : 10);
-  const cmpPx = isMobile ? 4 : 7;
-  renderPet(document.getElementById('happyPet'),'happy',0,cmpPx);
-  renderPet(document.getElementById('angryPet'),'angry',1,cmpPx);
-  renderPet(document.getElementById('ctaPet'),'happy',0, isMobile ? 7 : 12);
+  renderPet(document.getElementById('heroPet'),'happy',0, isMobile ? 7 : 10);
+  const cmpPx = isMobile ? 6 : 8;
+  renderPet(document.getElementById('runningPet'),'running',0,cmpPx);
+  renderPet(document.getElementById('sadPet'),'sad',0,cmpPx);
+  renderPet(document.getElementById('ctaPet'),'idle',0, isMobile ? 7 : 12);
 }
 
 function animate(ts){
@@ -629,16 +659,23 @@ function animate(ts){
   const dt=ts-lastTs; lastTs=ts;
   if(dt>200||dt<0)return;
 
-  const fps=3;
-  const maxF=8;
+  const isMobile = window.innerWidth < 768;
+  const cmpPx = isMobile ? 6 : 8;
+
+  // Slow animations (3fps): hero (happy), CTA (idle), sad pet
   frameTimer+=dt;
-  if(frameTimer>=1000/fps){
-    frameTimer=0; frameIdx=(frameIdx+1)%maxF;
-    const isMobile = window.innerWidth < 768;
-    const hc=document.getElementById('heroPet');  if(hc)renderPet(hc,'idle',frameIdx, isMobile ? 7 : 10);
-    const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'happy',frameIdx%4, isMobile ? 7 : 12);
-    const cmpPx = isMobile ? 4 : 7;
-    const hp=document.getElementById('happyPet'); if(hp)renderPet(hp,'happy',frameIdx%4,cmpPx);
+  if(frameTimer>=333){
+    frameTimer=0; frameIdx=(frameIdx+1)%8;
+    const hc=document.getElementById('heroPet');  if(hc)renderPet(hc,'happy',frameIdx%4, isMobile ? 7 : 10);
+    const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'idle',frameIdx, isMobile ? 7 : 12);
+    const sp=document.getElementById('sadPet');   if(sp)renderPet(sp,'sad',frameIdx%4,cmpPx);
+  }
+
+  // Fast animation (10fps): running pet
+  fastFrameTimer+=dt;
+  if(fastFrameTimer>=100){
+    fastFrameTimer=0; fastFrameIdx=(fastFrameIdx+1)%4;
+    const rp=document.getElementById('runningPet'); if(rp)renderPet(rp,'running',fastFrameIdx,cmpPx);
   }
 }
 
@@ -690,8 +727,8 @@ window.addEventListener('scroll', () => {
   nav.style.transform = pastHero ? 'none' : 'translateY(-8px)';
   nav.style.pointerEvents = pastHero ? 'auto' : 'none';
   if (pastHero) {
-    nav.style.background = 'rgba(20,25,31,.97)';
-    nav.style.borderColor = 'rgba(255,255,255,.06)';
+    nav.style.background = 'rgba(255,255,255,.92)';
+    nav.style.borderColor = 'rgba(0,0,0,.06)';
   }
 }, { passive: true });
 
@@ -705,6 +742,7 @@ if (mobileBar && window.innerWidth < 768) {
 
 // Android detection & waitlist
 var isAndroid = /android/i.test(navigator.userAgent);
+var showingAndroid = false;
 
 function submitWaitlist(e, location) {
   e.preventDefault();
@@ -715,46 +753,57 @@ function submitWaitlist(e, location) {
   posthog.capture('waitlist_signup', { email: email, location: location, platform: 'android' });
   posthog.identify(email, { email: email, waitlist: true, platform: 'android' });
 
-  // Hide form, show confirmation
-  form.style.display = 'none';
-  var okId = location === 'hero' ? 'heroWaitlistOk'
-           : location === 'final_cta' ? 'finalWaitlistOk'
-           : 'stickyWaitlistOk';
-  var ok = document.getElementById(okId);
-  if (ok) ok.style.display = 'block';
-
-  // Also update other forms to show submitted state
+  // Hide ALL forms, show ALL confirmations across the page
   document.querySelectorAll('.waitlist-form').forEach(function(f) { f.style.display = 'none'; });
   document.querySelectorAll('.waitlist-ok').forEach(function(o) { o.style.display = 'block'; });
 
   return false;
 }
 
+function setAndroidMode(on) {
+  showingAndroid = on;
+  var els = {
+    iosCta: document.getElementById('iosCta'),
+    androidCta: document.getElementById('androidCta'),
+    iosF: document.getElementById('iosCtaFinal'),
+    androidF: document.getElementById('androidCtaFinal'),
+    iosSticky: document.getElementById('iosStickyLink'),
+    androidSticky: document.getElementById('androidStickyWrap'),
+    navCta: document.querySelector('#mainNav a[href*="apps.apple"]')
+  };
+  if (els.iosCta) els.iosCta.style.display = on ? 'none' : '';
+  if (els.androidCta) els.androidCta.style.display = on ? 'block' : 'none';
+  if (els.iosF) els.iosF.style.display = on ? 'none' : '';
+  if (els.androidF) els.androidF.style.display = on ? 'block' : 'none';
+  if (els.iosSticky) els.iosSticky.style.display = on ? 'none' : '';
+  if (els.androidSticky) els.androidSticky.style.display = on ? 'block' : 'none';
+  if (els.navCta) els.navCta.style.display = on ? 'none' : '';
+
+  // Update final heading
+  var fh = document.getElementById('finalHeading');
+  if (fh) fh.innerHTML = on
+    ? 'No te lo pierdas.<br><span style="color:#F9703E">Llegamos pronto a Android.</span>'
+    : 'Empieza hoy.<br><span style="color:#F9703E">Tu compañero te espera.</span>';
+
+  // Update debug button label
+  var btn = document.getElementById('debugToggle');
+  if (btn) btn.textContent = on ? 'Android' : 'iOS';
+}
+
 if (isAndroid) {
   posthog.capture('android_user_detected');
-
-  // Swap hero CTA
-  var iosCta = document.getElementById('iosCta');
-  var androidCta = document.getElementById('androidCta');
-  if (iosCta) iosCta.style.display = 'none';
-  if (androidCta) androidCta.style.display = 'block';
-
-  // Swap final CTA
-  var iosF = document.getElementById('iosCtaFinal');
-  var androidF = document.getElementById('androidCtaFinal');
-  if (iosF) iosF.style.display = 'none';
-  if (androidF) androidF.style.display = 'block';
-
-  // Swap sticky bar
-  var iosSticky = document.getElementById('iosStickyLink');
-  var androidSticky = document.getElementById('androidStickyForm');
-  if (iosSticky) iosSticky.style.display = 'none';
-  if (androidSticky) androidSticky.style.display = 'flex';
-
-  // Hide nav CTA (iOS only)
-  var navCta = document.querySelector('#mainNav a[href*="apps.apple"]');
-  if (navCta) navCta.style.display = 'none';
+  setAndroidMode(true);
 }
+
+// Debug toggle button (remove before production)
+(function(){
+  var btn = document.createElement('button');
+  btn.id = 'debugToggle';
+  btn.textContent = isAndroid ? 'Android' : 'iOS';
+  btn.style.cssText = 'position:fixed;top:80px;right:12px;z-index:9999;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:900;font-family:Nunito,sans-serif;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1.5px solid rgba(0,0,0,.12);color:#1a1a2e;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(0,0,0,.08);';
+  btn.onclick = function(){ setAndroidMode(!showingAndroid); };
+  document.body.appendChild(btn);
+})();
 
 renderStatics();
 updateHUD();
