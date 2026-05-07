@@ -462,6 +462,13 @@ function buildGrid(pose,frame){
     pset(g,hi?lX:lX-1,aY-1,C.body);pset(g,hi?lX:lX-1,aY,C.body);
     const rt=hi?aY-3:aY-2;
     pset(g,hi?rX:rX+1,rt,C.body);pset(g,hi?rX:rX+1,rt+1,C.body);
+  }else if(pose==='sign'){
+    const bob=frame%2===0;
+    // Left arm raised excited
+    pset(g,lX-1,bob?aY-3:aY-2,C.body);pset(g,lX-1,bob?aY-2:aY-1,C.body);
+    // Right arm holds sign
+    const sTop=bob?aY-3:aY-2;
+    pset(g,bob?rX:rX+1,sTop,C.body);pset(g,bob?rX:rX+1,sTop+1,C.body);
   }else if(pose==='dead'){
     pset(g,lX-1,aY,C.body);pset(g,lX,aY,C.body);pset(g,lX,aY+1,C.body);
     pset(g,rX+1,aY,C.body);pset(g,rX,aY,C.body);pset(g,rX,aY+1,C.body);
@@ -514,6 +521,14 @@ function buildGrid(pose,frame){
     pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
     pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
     pset(g,eRX,eY-1,C.eyeShine);
+  }else if(pose==='sign'){
+    // Big happy eyes with shine
+    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
+    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
+    pset(g,eLX-1,eY-1,C.eyeShine);
+    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
+    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
+    pset(g,eRX,eY-1,C.eyeShine);
   }else if(pose==='sad'){
     pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
     pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
@@ -549,6 +564,18 @@ function buildGrid(pose,frame){
   }else if(pose==='happy'){
     pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY+1,C.mouth);
     pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);pset(g,mCx+2,mY,C.mouth);
+  }else if(pose==='sign'){
+    // Big open smile alternating
+    if(frame%2===0){
+      pset(g,mCx-3,mY,C.mouth);pset(g,mCx-2,mY+1,C.mouth);
+      pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx,mY+1,C.mouth);
+      pset(g,mCx+1,mY+1,C.mouth);pset(g,mCx+2,mY+1,C.mouth);
+      pset(g,mCx+3,mY,C.mouth);
+    }else{
+      pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY+1,C.mouth);
+      pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
+      pset(g,mCx+2,mY,C.mouth);
+    }
   }else if(pose==='sad'){
     pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
   }else if(pose==='angry'){
@@ -587,6 +614,26 @@ function buildGrid(pose,frame){
     const sx1=Math.max(0,stX-2),sx2=Math.min(GS-1,stX+2),sy1=pnY-6;
     if(sy1>=0){for(let sx=sx1;sx<=sx2;sx++){pset(g,sx,sy1,C.gray);if(sy1+2<GS)pset(g,sx,sy1+2,C.gray);}pset(g,sx1,sy1+1,C.gray);pset(g,sx2,sy1+1,C.gray);pset(g,stX,sy1+1,C.speedLine);}
     if(!hi){const vX=eLX-3,vY=eY-2;pset(g,vX+1,vY,C.speedLine);pset(g,vX+2,vY,C.speedLine);pset(g,vX+1,vY+1,C.speedLine);pset(g,vX,vY+2,C.speedLine);pset(g,vX+1,vY+2,C.speedLine);}
+  }
+  if(pose==='sign'){
+    const bob=frame%2===0;
+    const stX=bob?rX:rX+1;
+    const pnY=bob?aY-3:aY-2;
+    // Stick
+    for(let d=1;d<=3;d++)pset(g,stX,pnY-d,C.body);
+    // Sign frame (accent1 border)
+    const sX1=Math.max(0,stX-2),sX2=Math.min(GS-1,stX+2);
+    const sY2=pnY-4,sY1=Math.max(0,sY2-3);
+    for(let x=sX1;x<=sX2;x++){pset(g,x,sY1,C.accent1);pset(g,x,sY2,C.accent1);}
+    for(let y=sY1;y<=sY2;y++){pset(g,sX1,y,C.accent1);pset(g,sX2,y,C.accent1);}
+    // Fill interior
+    if(sX1+1<=sX2-1&&sY1+1<=sY2-1){
+      for(let y=sY1+1;y<=sY2-1;y++)for(let x=sX1+1;x<=sX2-1;x++)pset(g,x,y,C.face);
+    }
+    // Bell icon inside
+    const signCx=Math.floor((sX1+sX2)/2);
+    if(sY1+1<sY2){pset(g,signCx-1,sY1+1,bob?C.accent1:C.gold);pset(g,signCx,sY1+1,bob?C.accent1:C.gold);pset(g,signCx+1,sY1+1,bob?C.accent1:C.gold);}
+    if(sY2-1>sY1){pset(g,signCx,sY2-1,bob?C.gold:C.accent1);}
   }
   return g;
 }
@@ -651,7 +698,7 @@ function renderStatics(){
   const cmpPx = isMobile ? 6 : 8;
   renderPet(document.getElementById('runningPet'),'running',0,cmpPx);
   renderPet(document.getElementById('sadPet'),'sad',0,cmpPx);
-  renderPet(document.getElementById('ctaPet'),'idle',0, isMobile ? 7 : 12);
+  renderPet(document.getElementById('ctaPet'),'sign',0, isMobile ? 7 : 12);
 }
 
 function animate(ts){
@@ -667,7 +714,7 @@ function animate(ts){
   if(frameTimer>=333){
     frameTimer=0; frameIdx=(frameIdx+1)%8;
     const hc=document.getElementById('heroPet');  if(hc)renderPet(hc,'happy',frameIdx%4, isMobile ? 7 : 10);
-    const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'idle',frameIdx, isMobile ? 7 : 12);
+    const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'sign',frameIdx%4, isMobile ? 7 : 12);
     const sp=document.getElementById('sadPet');   if(sp)renderPet(sp,'sad',frameIdx%4,cmpPx);
   }
 
@@ -795,15 +842,15 @@ if (isAndroid) {
   setAndroidMode(true);
 }
 
-// Debug toggle button (remove before production)
-(function(){
-  var btn = document.createElement('button');
-  btn.id = 'debugToggle';
-  btn.textContent = isAndroid ? 'Android' : 'iOS';
-  btn.style.cssText = 'position:fixed;top:80px;right:12px;z-index:9999;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:900;font-family:Nunito,sans-serif;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1.5px solid rgba(0,0,0,.12);color:#1a1a2e;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(0,0,0,.08);';
-  btn.onclick = function(){ setAndroidMode(!showingAndroid); };
-  document.body.appendChild(btn);
-})();
+// Debug toggle (hidden — uncomment to re-enable)
+// (function(){
+//   var btn = document.createElement('button');
+//   btn.id = 'debugToggle';
+//   btn.textContent = isAndroid ? 'Android' : 'iOS';
+//   btn.style.cssText = 'position:fixed;top:80px;right:12px;z-index:9999;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:900;font-family:Nunito,sans-serif;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1.5px solid rgba(0,0,0,.12);color:#1a1a2e;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(0,0,0,.08);';
+//   btn.onclick = function(){ setAndroidMode(!showingAndroid); };
+//   document.body.appendChild(btn);
+// })();
 
 renderStatics();
 updateHUD();
