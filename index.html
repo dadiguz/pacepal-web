@@ -4,8 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pacepal — Corre para mantenerlo vivo</title>
-<meta name="description" content="Tu mascota pixel-art pierde energía cada 48h. Solo tus kilómetros pueden salvarla. 66 días para formar el hábito. 7 días gratis.">
+<meta name="description" content="Adopta una mascota pixel-art con 5 corazones. Cada día que no corres, pierde uno. 66 días para volverte alguien que corre.">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+
+<!-- Open Graph / social -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pacepal — Corre para mantenerlo vivo">
+<meta property="og:description" content="Tu mascota pixel tiene corazones. Cada día que no corres, pierde uno. En cero, se apaga. 66 días para formar el hábito.">
+<meta property="og:image" content="assets/icon.png">
+<meta property="og:locale" content="es_MX">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pacepal — Corre para mantenerlo vivo">
+<meta name="twitter:description" content="Corazones, no una barra. Cada día sin correr pierdes uno. Corre y tu pacepal vive.">
+<meta name="twitter:image" content="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://us.i.posthog.com">
@@ -55,49 +66,60 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Nunito', system-ui, sans-serif; background: #FAFAFA; color: #1a1a2e; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+  body {
+    font-family: 'Nunito', system-ui, sans-serif; color: #f4f4f1;
+    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none;
+    background-color: #0e0e11;
+    background-image:
+      radial-gradient(ellipse 90% 45% at 50% 0%, rgba(249,112,62,.07), transparent 60%),
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: auto, 34px 34px, 34px 34px;
+    background-attachment: fixed, fixed, fixed;
+  }
   canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1); }
   .reveal.in  { opacity: 1; transform: none; }
 
-  .e-bar { transition: width 1s cubic-bezier(.22,1,.36,1), background-color .6s ease; }
-
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
   .float { animation: float 3.5s ease-in-out infinite; }
 
-  @keyframes gradientShift {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
   .hero-bg {
-    background: linear-gradient(135deg, #FAFAFA 0%, #f0ebe4 25%, #FAFAFA 50%, #eae4f0 75%, #FAFAFA 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 12s ease infinite;
+    background:
+      radial-gradient(ellipse 75% 55% at 50% 16%, rgba(249,112,62,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 82% 82%, rgba(181,140,255,.12) 0%, transparent 60%);
   }
 
   @keyframes pulseGlow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(249,112,62,.45); }
-    50% { box-shadow: 0 0 0 12px rgba(249,112,62,0); }
+    0%,100% { box-shadow: 0 0 0 0 rgba(249,112,62,.5); }
+    50% { box-shadow: 0 0 0 14px rgba(249,112,62,0); }
   }
   .cta-pulse { animation: pulseGlow 2s ease-in-out infinite; }
+
+  /* Chunky retro CTA */
+  .btn-cta {
+    border: 2px solid #14191f;
+    box-shadow: 0 5px 0 #b3460f, 0 10px 22px rgba(249,112,62,.32);
+    transition: transform .14s ease, box-shadow .14s ease, background .2s ease;
+  }
+  .btn-cta:hover { transform: translateY(-1px); }
+  .btn-cta:active { transform: translateY(4px); box-shadow: 0 1px 0 #b3460f, 0 3px 10px rgba(249,112,62,.25); }
+
+  @keyframes bobArrow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .scroll-hint { animation: bobArrow 1.8s ease-in-out infinite; }
 
   /* Sticky mobile CTA */
   #mobileStickyBar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
     padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(255,255,255,.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(0,0,0,.06);
-    box-shadow: 0 -4px 20px rgba(0,0,0,.06);
+    background: rgba(12,13,17,.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 -4px 24px rgba(0,0,0,.5);
     transform: translateY(100%); transition: transform .4s ease;
   }
   #mobileStickyBar.visible { transform: none; }
-
-  @media (min-width: 768px) {
-    #mobileStickyBar { display: none !important; }
-  }
+  @media (min-width: 768px) { #mobileStickyBar { display: none !important; } }
 
   /* Mobile-first TikTok optimizations */
   @media (max-width: 767px) {
@@ -108,228 +130,533 @@
     footer { padding-bottom: 80px !important; }
   }
 
-  /* Hide scrollbar on swipeable containers */
-  .overflow-x-auto::-webkit-scrollbar { display: none; }
-  .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
-
   .pet-box { width:144px;height:144px;display:flex;align-items:center;justify-content:center;overflow:hidden; }
   @media (min-width:768px) { .pet-box { width:200px;height:200px; } }
 
-  .waitlist-input:focus { border-color: #F9703E !important; background: rgba(249,112,62,.05) !important; box-shadow: 0 0 0 3px rgba(249,112,62,.12); }
-  .waitlist-input::placeholder { color: rgba(0,0,0,.3); }
+  .waitlist-input { background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.14); color: #fff; }
+  .waitlist-input:focus { border-color: #F9703E !important; background: rgba(249,112,62,.10) !important; box-shadow: 0 0 0 3px rgba(249,112,62,.18); }
+  .waitlist-input::placeholder { color: rgba(255,255,255,.35); }
   .waitlist-ok { animation: fadeInUp .5s cubic-bezier(.22,1,.36,1); }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
 
-  /* iPhone SE / very small screens */
   @media (max-width: 374px) {
     .hero-title { font-size: 1.75rem; }
     .hero-sub { font-size: .8125rem; }
   }
+
+  /* ── Live day chip ── */
+  .day-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.05); border: 1.5px solid rgba(249,112,62,.4);
+    color: #fff; font-weight: 900; font-size: 12px; letter-spacing: .1em;
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .day-chip #roadDay { color: #F9703E; font-family: ui-monospace, monospace; font-size: 15px; }
+
+  /* ── 66-day winding road (react.gg-style) ── */
+  .road-wrap { position: relative; width: 100%; max-width: 560px; margin: 0 auto; }
+  .road-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  #roadPet { position: absolute; left: 0; top: 0; width: 56px; height: auto; z-index: 3; pointer-events: none; filter: drop-shadow(0 4px 5px rgba(0,0,0,.5)); }
+  .road-label { font-family: 'Nunito', sans-serif; font-weight: 900; fill: #1d1608; letter-spacing: 0.8px; font-size: 4.7px; text-transform: uppercase; paint-order: stroke; stroke: #F2E9C9; stroke-width: 1px; stroke-linejoin: round; }
+
+  .station { position: absolute; z-index: 4; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 12px; }
+  .station.rev { flex-direction: row-reverse; }
+  .station.col { flex-direction: column; gap: 9px; }
+  .badge {
+    width: 52px; height: 52px; border-radius: 999px; flex: 0 0 auto;
+    background: #F2E9C9; color: #14110a; font-family: ui-monospace, monospace; font-weight: 900; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    border: 3px solid #0a0b0e;
+    box-shadow: 0 0 0 3px #0e0e11, 0 0 0 5px #0a0b0e, 0 7px 16px rgba(0,0,0,.55);
+  }
+  .badge.goal { background: #FFC53D; box-shadow: 0 0 0 3px #0e0e11, 0 0 0 5px #0a0b0e, 0 0 26px -1px rgba(255,197,61,.8), 0 7px 16px rgba(0,0,0,.55); }
+  .st-card {
+    background: rgba(18,20,26,.92); border: 1.5px solid rgba(255,255,255,.12);
+    border-radius: 13px; padding: 9px 14px; text-align: left;
+    box-shadow: 0 10px 26px rgba(0,0,0,.5); max-width: 176px; backdrop-filter: blur(4px);
+  }
+  .station.rev .st-card, .station.rev .st-day { text-align: right; }
+  .station.col .st-card, .station.col .st-day { text-align: center; }
+  .st-day { font-size: 10px; font-weight: 900; letter-spacing: .07em; color: #F9703E; margin-bottom: 2px; }
+  .st-title { font-size: 13px; font-weight: 800; color: #fff; line-height: 1.18; }
+
+  @media (max-width: 600px) {
+    .st-card { max-width: 130px; padding: 7px 11px; }
+    .st-title { font-size: 11.5px; }
+    .badge { width: 44px; height: 44px; font-size: 15px; }
+    .station { gap: 9px; }
+  }
+
+  /* milestone day-circles that interrupt the road (react.gg-style) */
+  .chap-node { fill: #F4ECCF; stroke: #0a0b0e; stroke-width: 1.4; }
+  .chap-node.goal { fill: #FFC53D; }
+  .chap-num { fill: #14110a; font-family: ui-monospace, monospace; font-weight: 900; text-anchor: middle; dominant-baseline: central; }
+  .chap-day { fill: rgba(20,17,10,.55); font-family: 'Nunito', sans-serif; font-weight: 900; text-anchor: middle; dominant-baseline: central; letter-spacing: .05em; }
+  .wrap-chap-day { fill: rgba(20,17,10,.55); font-family: 'Nunito', sans-serif; font-weight: 900; text-anchor: middle; dominant-baseline: central; letter-spacing: .08em; }
+
+  /* ── desktop wrapping board (road frames the content) ── */
+  #wrapWrap { position: relative; width: 100%; max-width: 1040px; margin: 0 auto; }
+  #wrapSvg { width: 100%; height: auto; display: block; overflow: visible; }
+  #wrapPet { position: absolute; left: 0; top: 0; width: 48px; height: auto; z-index: 6; pointer-events: none; filter: drop-shadow(0 3px 4px rgba(0,0,0,.5)); }
+  .wrap-label { font-family: 'Nunito', sans-serif; font-weight: 900; fill: #1d1608; letter-spacing: 1.2px; font-size: 15px; text-transform: uppercase; paint-order: stroke; stroke: #F2E9C9; stroke-width: 3px; stroke-linejoin: round; }
+  .wrap-chap { fill: #F4ECCF; stroke: #0a0b0e; stroke-width: 3.5; }
+  .wrap-chap.goal { fill: #FFC53D; }
+  .wrap-num { fill: #14110a; font-family: ui-monospace, monospace; font-weight: 900; text-anchor: middle; dominant-baseline: central; }
+
+  .pocket { position: absolute; z-index: 4; display: flex; align-items: center; gap: 26px; }
+  .pocket.rev { flex-direction: row-reverse; }
+  .pk-text { flex: 1 1 0; min-width: 0; }
+  .pk-art { flex: 0 0 auto; }
+
+  /* pixel mockups */
+  .phone { width: 150px; border: 3px solid #0a0b0e; border-radius: 24px; background: #0e1015; padding: 8px; box-shadow: 0 12px 28px rgba(0,0,0,.55); }
+  .phone .scr { background: #14161d; border-radius: 16px; padding: 13px 11px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .phone .scr canvas { width: 60px; height: 60px; image-rendering: pixelated; }
+  .phone .ebar { width: 100%; height: 7px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .phone .ebar i { display: block; height: 100%; width: 74%; background: #4ADE80; border-radius: 99px; }
+  .phone .pday { font-weight: 900; font-size: 12px; color: #fff; letter-spacing: .03em; }
+  .phone .pday b { color: #F9703E; font-family: ui-monospace, monospace; }
+  .cal { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; width: 188px; padding: 13px; background: #14161d; border: 3px solid #0a0b0e; border-radius: 16px; box-shadow: 0 12px 28px rgba(0,0,0,.55); }
+  .cal img { width: 100%; height: auto; image-rendering: pixelated; display: block; }
+  .cal img.off { opacity: .45; }
+  .cal img.today { filter: drop-shadow(0 0 3px rgba(255,197,61,.9)); }
+  .medalbox { width: 150px; padding: 20px 14px; text-align: center; background: #14161d; border: 3px solid #0a0b0e; border-radius: 18px; box-shadow: 0 12px 28px rgba(0,0,0,.55); }
+  .medalbox .m { font-size: 50px; line-height: 1; }
+  .medalbox .mt { margin-top: 8px; font-weight: 900; color: #FFC53D; font-size: 13px; }
+
+  /* milestone callouts + START (HTML pills positioned by JS over the road) */
+  #roadCallouts { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+  .callout { position: absolute; transform: translate(-50%, -165%); }
+  .callout .pill { font-size: 12px; }
+  .callout.start .pill { background: #34B06A; color: #06240f; box-shadow: 0 4px 0 #0a5a2c; }
+
+  /* ── react.gg-style pills ── */
+  .pill {
+    display: inline-block; background: #F2E9C9; color: #14110a;
+    font-weight: 800; font-size: 13.5px; line-height: 1.1; white-space: nowrap;
+    padding: 7px 13px; border-radius: 10px; border: 2px solid #0a0b0e;
+    box-shadow: 0 4px 0 #E0991A;
+  }
+  .pill-cluster { display: flex; flex-wrap: wrap; gap: 13px 14px; align-items: center; }
+  @media (max-width: 767px) { .pill-cluster { justify-content: center; } .pill { font-size: 12.5px; padding: 6px 11px; } }
+
+  /* narrative emphasis */
+  .narr strong { color: #fff; font-weight: 900; }
+
+  /* hero: contador ascendente de días */
+  .hero-counter { text-align: center; min-width: 300px; }
+  .hc-num {
+    font-weight: 900; color: #fff; line-height: 1;
+    font-size: clamp(4.6rem, 11vw, 8.5rem); letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hc-num .hc-total { color: rgba(255,255,255,.28); font-size: .48em; font-weight: 900; margin-left: 4px; }
+  .hc-label {
+    margin-top: 10px; font-weight: 800; font-size: 15px; letter-spacing: .06em;
+    text-transform: uppercase; color: rgba(255,255,255,.45);
+    transition: color .4s ease;
+  }
+  .hc-label.done { color: #F9703E; }
+  .hc-pet {
+    width: 110px; height: auto; margin: 22px auto 0; display: block;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,.5));
+  }
+  .hc-pet.show { opacity: 1; transform: none; }
+
+  /* fanned stack of real unlockable backgrounds */
+  .bgfan { position: relative; width: 108px; height: 168px; flex: 0 0 auto; }
+  .bgfan img {
+    position: absolute; inset: 0; width: 100%; border-radius: 12px;
+    border: 2.5px solid #0a0b0e;
+    transform: translate(var(--tx,0), var(--ty,0)) rotate(var(--r,0deg));
+    box-shadow: 0 10px 24px rgba(0,0,0,.5); image-rendering: pixelated;
+  }
+
+  /* react.gg-style content panels beside the road */
+  .panel-k { color: #FF4D7E; font-weight: 900; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .panel-h { color: #fff; font-weight: 900; font-size: 22px; line-height: 1.12; margin: 6px 0 10px; }
+  .panel-p { color: rgba(255,255,255,.58); font-size: 15px; line-height: 1.5; }
+
+  /* FAQ accordion (react.gg-style) */
+  .faq-wrap { background: #161617; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 6px 22px; }
+  .faq-item { border-bottom: 1px solid rgba(255,255,255,.08); }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q { display: flex; justify-content: space-between; align-items: center; gap: 18px; width: 100%; text-align: left;
+    padding: 19px 0; font-weight: 800; font-size: 16px; color: #f4f4f1; background: none; border: none; cursor: pointer; font-family: inherit; }
+  .faq-q .ico { color: #F9703E; font-size: 26px; line-height: 1; flex: 0 0 auto; transition: transform .25s ease; }
+  .faq-item.open .faq-q .ico { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .faq-item.open .faq-a { max-height: 360px; }
+  .faq-a-inner { padding: 0 0 19px; color: rgba(255,255,255,.55); font-size: 14.5px; line-height: 1.55; }
+  .faq-a-inner a { color: #F9703E; text-decoration: underline; text-underline-offset: 2px; }
+
+
+  /* ── hearts row (real app sprites) ── */
+  .heart-row { display: inline-flex; gap: 7px; align-items: center; }
+  .heart-row img { width: 30px; height: auto; image-rendering: pixelated; display: block; }
+  @media (min-width:768px){ .heart-row img { width: 38px; } }
+  @keyframes heartBreak { 0%,72%{transform:none;opacity:1} 82%{transform:translateY(4px) rotate(-9deg);opacity:.55} 100%{transform:translateY(9px) rotate(-14deg);opacity:.3} }
+  .heart-row img.losing { animation: heartBreak 2.6s ease-in-out infinite; }
 </style>
 </head>
 <body>
 
-<!-- nav (hidden initially, appears on scroll) -->
-<nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl"
-     style="border-bottom:1px solid transparent;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .4s ease,transform .4s ease,background .4s,border-color .4s">
-  <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-    <img src="assets/logo_sm.png" class="h-6" alt="Pacepal">
-    <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-       onclick="posthog.capture('cta_click',{location:'nav',label:'Descargar'})"
-       class="hidden md:inline-flex text-sm font-extrabold text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-2 rounded-full transition-colors">
-      Descargar gratis</a>
-  </div>
-</nav>
-
-<!-- HERO — renders instantly, no video, pet visible -->
-<section class="hero-bg relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+<!-- HERO — react.gg-style 2-column -->
+<section class="hero-bg relative flex flex-col items-center justify-center overflow-hidden"
          style="min-height:100svh">
 
-  <!-- Subtle radial overlay -->
-  <div class="absolute inset-0" style="background:radial-gradient(ellipse 70% 50% at 50% 55%, rgba(249,112,62,.05) 0%, transparent 70%)"></div>
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-8 grid md:grid-cols-2 gap-10 md:gap-10 items-center py-20 md:py-0">
 
-  <div class="relative z-10 flex flex-col items-center text-center px-5 gap-5 md:gap-7 max-w-2xl w-full">
-
-    <!-- Pet visible immediately — the visual hook -->
-    <div class="float">
-      <canvas id="heroPet" class="drop-shadow-2xl"></canvas>
-    </div>
-
-    <!-- Energy bar under pet -->
-    <div style="width:120px; padding:6px 10px; border-radius:12px; background:rgba(0,0,0,.04);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <span id="heroHpLabel" style="font-size:9px; font-weight:900; color:#16a34a; letter-spacing:.06em;">HP</span>
-        <span id="heroEnergyPct" style="font-family:monospace; font-size:9px; color:rgba(0,0,0,.35);">78%</span>
-      </div>
-      <div style="height:5px; border-radius:99px; overflow:hidden; background:rgba(0,0,0,.08);">
-        <div id="heroBar" class="e-bar" style="height:100%; border-radius:99px; width:78%; background:#16a34a;"></div>
-      </div>
-    </div>
-
-    <div>
-      <h1 class="hero-title text-3xl md:text-6xl font-black leading-[1.06] tracking-tight mb-2 md:mb-3" style="color:#1a1a2e">
-        Tu mascota virtual<br><span style="color:#F9703E">te obliga a correr.</span>
+    <!-- left: copy + CTA -->
+    <div class="text-center md:text-left order-2 md:order-1">
+      <h1 class="hero-title text-4xl md:text-6xl font-black leading-[1.04] tracking-tight mb-4 md:mb-5" style="color:#fff">
+        Corre.<br><span style="color:#F9703E">Mantenlo vivo.</span>
       </h1>
-      <p class="hero-sub text-sm md:text-lg" style="color:rgba(0,0,0,.45)">
-        Si no corres, se muere. Así de simple.<br>
-        <span style="color:rgba(0,0,0,.3)">66 días · 7 días gratis</span>
+      <p class="hero-sub text-base md:text-lg mb-6 md:mb-7 max-w-md mx-auto md:mx-0" style="color:rgba(255,255,255,.55)">
+        Tu mascota pixel arranca con corazones. Cada día que no corres, pierde uno. En cero, se apaga. <span style="color:#fff;font-weight:700">66 días</span> para volverte alguien que corre.
       </p>
-    </div>
 
-    <!-- iOS CTA -->
-    <div id="iosCta">
-      <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-         onclick="posthog.capture('cta_click',{location:'hero',label:'Probar gratis'})"
-         class="cta-pulse cta-mobile-full inline-flex items-center gap-2.5 font-extrabold text-base md:text-lg text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-7 md:px-10 py-4 md:py-5 rounded-2xl transition-all duration-300 shadow-2xl">
-        <svg class="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-        Probar gratis — 7 días
-      </a>
-      <div class="mt-3"><span class="text-[11px] font-bold" style="color:rgba(0,0,0,.3)">Solo iOS · Cancela cuando quieras</span></div>
-    </div>
-
-    <!-- Android waitlist CTA -->
-    <div id="androidCta" style="display:none" class="w-full max-w-sm">
-      <div class="waitlist-form">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4" style="background:rgba(249,112,62,.12);border:1px solid rgba(249,112,62,.25)">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#F9703E"><path d="M17.523 2.237a.625.625 0 0 0-1.046 0L14.5 5.5h-5L7.523 2.237a.625.625 0 0 0-1.046 0L4.5 5.5A4.5 4.5 0 0 0 2 9.5v6A4.5 4.5 0 0 0 6.5 20h11a4.5 4.5 0 0 0 4.5-4.5v-6a4.5 4.5 0 0 0-2.5-4h0L17.523 2.237ZM8.75 11a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6.5 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/></svg>
-          <span class="text-xs font-extrabold" style="color:#F9703E">Pronto en Android</span>
-        </div>
-        <p class="text-sm mb-4" style="color:rgba(0,0,0,.4)">Déjanos tu correo y te avisamos el día que salga.</p>
-        <form id="heroWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'hero')">
-          <input type="email" required placeholder="tu@correo.com"
-                 class="waitlist-input flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold text-[#1a1a2e] outline-none transition-all duration-300"
-                 style="background:rgba(0,0,0,.04);border:1.5px solid rgba(0,0,0,.1)">
-          <button type="submit"
-                  class="cta-pulse shrink-0 px-6 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 hover:scale-105 active:scale-95">
-            Avísame</button>
-        </form>
+      <!-- iOS CTA -->
+      <div id="iosCta">
+        <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
+           onclick="posthog.capture('cta_click',{location:'hero',label:'Descargar'})"
+           class="btn-cta cta-mobile-full inline-flex items-center gap-2.5 font-extrabold text-base md:text-lg text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-7 md:px-9 py-4 md:py-5 rounded-2xl">
+          <svg class="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          Descargar en el App Store
+        </a>
+        <div class="mt-4"><span class="text-[11px] font-bold" style="color:rgba(255,255,255,.32)">Solo iOS</span></div>
       </div>
-      <div id="heroWaitlistOk" class="waitlist-ok" style="display:none">
-        <div class="flex flex-col items-center gap-3 py-2">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(74,222,128,.15)">
-            <svg class="w-6 h-6" fill="none" stroke="#4ADE80" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+
+      <!-- Android waitlist CTA -->
+      <div id="androidCta" style="display:none" class="w-full max-w-sm mx-auto md:mx-0">
+        <div class="waitlist-form">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4" style="background:rgba(249,112,62,.14);border:1px solid rgba(249,112,62,.3)">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#F9703E"><path d="M17.523 2.237a.625.625 0 0 0-1.046 0L14.5 5.5h-5L7.523 2.237a.625.625 0 0 0-1.046 0L4.5 5.5A4.5 4.5 0 0 0 2 9.5v6A4.5 4.5 0 0 0 6.5 20h11a4.5 4.5 0 0 0 4.5-4.5v-6a4.5 4.5 0 0 0-2.5-4h0L17.523 2.237ZM8.75 11a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6.5 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/></svg>
+            <span class="text-xs font-extrabold" style="color:#F9703E">Pronto en Android</span>
           </div>
-          <p class="text-sm font-bold" style="color:#4ADE80">Te avisaremos cuando lance en Android</p>
+          <p class="text-sm mb-4" style="color:rgba(255,255,255,.45)">Déjanos tu correo y te avisamos el día que salga.</p>
+          <form id="heroWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'hero')">
+            <input type="email" required placeholder="tu@correo.com"
+                   class="waitlist-input flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold outline-none transition-all duration-300">
+            <button type="submit"
+                    class="cta-pulse shrink-0 px-6 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 hover:scale-105 active:scale-95">
+              Avísame</button>
+          </form>
         </div>
+        <div id="heroWaitlistOk" class="waitlist-ok" style="display:none">
+          <div class="flex flex-col items-center md:items-start gap-3 py-2">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(74,222,128,.15)">
+              <svg class="w-6 h-6" fill="none" stroke="#4ADE80" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <p class="text-sm font-bold" style="color:#4ADE80">Te avisaremos cuando lance en Android</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- right: contador de días 00/66 → hábito formado -->
+    <div class="order-1 md:order-2 flex justify-center md:justify-end md:pr-10">
+      <div class="hero-counter" id="heroCounter">
+        <div class="hc-num"><span id="hcDay">00</span><span class="hc-total">/66</span></div>
+        <div class="hc-label" id="hcLabel">días corriendo</div>
+        <canvas id="heroPet" class="hc-pet"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- scroll hint -->
+  <div class="scroll-hint absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1" style="color:rgba(255,255,255,.3)">
+    <span class="text-[11px] font-extrabold tracking-widest uppercase">Tu viaje de 66 días</span>
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+  </div>
+</section>
+
+<!-- MECHANIC: corazones, no barra de energía -->
+<section data-section="threat" class="section-mobile py-12 md:py-20" style="border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-3xl mx-auto px-5 md:px-6 text-center reveal">
+    <div class="text-[11px] md:text-xs font-black tracking-[0.14em] uppercase mb-3" style="color:#FF4D7E">La mecánica</div>
+    <h2 class="text-2xl md:text-4xl font-black leading-tight mb-4" style="color:#fff">
+      Cada día sin correr, <span style="color:#F9703E">pierde un corazón</span>.
+    </h2>
+    <p class="text-sm md:text-base max-w-lg mx-auto mb-8 md:mb-11" style="color:rgba(255,255,255,.5)">
+      Nada de barras raras ni porcentajes. Tu pacepal tiene corazones. Corre tu mínimo del día y el día cuenta. Fállale y pierdes uno. En cero, se apaga.
+    </p>
+
+    <!-- hearts row: one is breaking -->
+    <div class="heart-row mb-3">
+      <img src="assets/life-complete.png" alt="corazón lleno" loading="lazy">
+      <img src="assets/life-complete.png" alt="corazón lleno" loading="lazy">
+      <img src="assets/life-complete.png" alt="corazón lleno" loading="lazy">
+      <img src="assets/life-complete.png" alt="corazón lleno" loading="lazy">
+      <img class="losing" src="assets/life-uncomplete.png" alt="corazón que se pierde" loading="lazy">
+    </div>
+    <p class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase mb-10 md:mb-14" style="color:rgba(255,255,255,.3)">
+      Hábito: 5 corazones · Resistencia: 3 · Rendimiento: 2
+    </p>
+
+    <div class="flex items-end justify-center gap-10 md:gap-16">
+      <div class="flex flex-col items-center gap-2">
+        <div class="float pet-box">
+          <canvas id="runningPet"></canvas>
+        </div>
+        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#7BD66B">Corres: vive</span>
+      </div>
+      <div class="text-xl md:text-3xl font-black pb-8 md:pb-10" style="color:rgba(255,255,255,.15)">vs</div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="pet-box">
+          <canvas id="sadPet"></canvas>
+        </div>
+        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#F9703E">Lo dejas: se apaga</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- cómo funciona -->
-<section id="how" class="section-mobile py-12 md:py-24" style="background:#f3f1ee;border-top:1px solid rgba(0,0,0,.06)">
-  <div class="max-w-5xl mx-auto px-5 md:px-6">
-    <div class="mb-8 md:mb-14 text-center reveal">
-      <h2 class="text-2xl md:text-4xl font-black leading-tight" style="color:#1a1a2e">
-        Así funciona <span style="color:#F9703E">Pacepal</span>
-      </h2>
-    </div>
+<!-- JOURNEY: the winding 66-day road + side panels -->
+<section id="how" class="section-mobile py-14 md:py-24 overflow-hidden" style="border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-2xl mx-auto px-5 md:px-6 text-center mb-12 md:mb-16 reveal">
+    <div class="day-chip">DÍA <span id="roadDay">1</span> <span style="opacity:.5">/ 66</span></div>
+    <h2 class="text-2xl md:text-4xl font-black leading-tight mt-5" style="color:#fff">
+      El camino de los <span style="color:#F9703E">66 días</span>
+    </h2>
+    <p class="text-sm md:text-base mt-3" style="color:rgba(255,255,255,.45)">
+      Cada día que corres, tu compañero avanza por el tablero. Al día 66, el hábito ya es tuyo.
+    </p>
+  </div>
 
-    <!-- Desktop: grid -->
-    <div class="hidden md:grid md:grid-cols-3 gap-px rounded-2xl overflow-hidden reveal"
-         style="background:rgba(0,0,0,.06)">
-      <div class="px-8 py-10" style="background:#f3f1ee">
-        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.35)">01</div>
-        <h3 class="text-lg font-black mb-2" style="color:#1a1a2e">Elige tu mascota</h3>
-        <p class="text-sm leading-relaxed" style="color:rgba(0,0,0,.45)">
-          Bear, Cat, Frog, Axolotl o genera uno al azar. Más de 30 paletas. Ponle nombre y ya es tuyo.
-        </p>
-      </div>
-      <div class="px-8 py-10" style="background:#f3f1ee">
-        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.35)">02</div>
-        <h3 class="text-lg font-black mb-2" style="color:#1a1a2e">Corre. Nosotros contamos tus km.</h3>
-        <p class="text-sm leading-relaxed" style="color:rgba(0,0,0,.45)">
-          Conecta Apple Health o registra tus km manual. Tu energía se drena cada 48h. Solo correr la recupera.
-        </p>
-      </div>
-      <div class="px-8 py-10" style="background:#f3f1ee">
-        <div class="text-4xl font-black mb-4" style="color:rgba(249,112,62,.35)">03</div>
-        <h3 class="text-lg font-black mb-2" style="color:#1a1a2e">66 días. El hábito de tu vida.</h3>
-        <p class="text-sm leading-relaxed" style="color:rgba(0,0,0,.45)">
-          Cada hito desbloquea fondos. Al día 66, tu compañero gana una medalla y su energía nunca baja.
-        </p>
-      </div>
-    </div>
+  <!-- DESKTOP: the road wraps around the content -->
+  <div class="hidden lg:block px-6 reveal">
+    <div id="wrapWrap">
+      <svg id="wrapSvg" viewBox="0 0 1080 930" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path id="wrapBase"   fill="none" stroke="#0a0b0e" stroke-width="57" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="wrapCenter" fill="none" stroke="#F2E9C9" stroke-width="51" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="wrapTies"   fill="none" stroke="#0a0b0e" stroke-width="51" opacity=".6"/>
+        <g id="wrapDecor"></g>
+      </svg>
+      <canvas id="wrapPet"></canvas>
 
-    <!-- Mobile: swipeable horizontal cards -->
-    <div class="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 -mx-5 px-5 reveal"
-         style="-webkit-overflow-scrolling:touch; scrollbar-width:none;">
-      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:white;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)">
-        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.4)">01</div>
-        <h3 class="text-base font-black mb-1.5" style="color:#1a1a2e">Elige tu mascota</h3>
-        <p class="text-[13px] leading-relaxed" style="color:rgba(0,0,0,.45)">
-          Bear, Cat, Frog, Axolotl o al azar. Más de 30 paletas. Ponle nombre y ya es tuyo.
-        </p>
-      </div>
-      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:white;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)">
-        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.4)">02</div>
-        <h3 class="text-base font-black mb-1.5" style="color:#1a1a2e">Corre. Nosotros contamos tus km.</h3>
-        <p class="text-[13px] leading-relaxed" style="color:rgba(0,0,0,.45)">
-          Conecta Apple Health o registra manual. Tu energía se drena cada 48h. Solo correr la recupera.
-        </p>
-      </div>
-      <div class="snap-center shrink-0 w-[78vw] px-5 py-5 rounded-2xl" style="background:white;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)">
-        <div class="text-2xl font-black mb-2" style="color:rgba(249,112,62,.4)">03</div>
-        <h3 class="text-base font-black mb-1.5" style="color:#1a1a2e">66 días. El hábito de tu vida.</h3>
-        <p class="text-[13px] leading-relaxed" style="color:rgba(0,0,0,.45)">
-          Cada hito desbloquea fondos. Al día 66, medalla y energía infinita.
-        </p>
-      </div>
-    </div>
-
-    <!-- Comparison: running vs sad pet -->
-    <div class="flex items-end justify-center gap-10 md:gap-16 mt-10 md:mt-14 reveal">
-      <div class="flex flex-col items-center gap-2">
-        <div class="float pet-box">
-          <canvas id="runningPet" class="drop-shadow-lg"></canvas>
+      <div class="pocket" style="left:8.3%; top:11.8%; width:80.6%; height:19.4%">
+        <div class="pk-text">
+          <div class="panel-k">Empieza sin presión</div>
+          <h3 class="panel-h">Cero métricas que abruman</h3>
+          <p class="panel-p">Nada de zonas de frecuencia ni splits. Desde <strong style="color:#fff">0.1 km</strong> ya cuenta: tu mascota celebra que saliste, no tu ritmo.</p>
         </div>
-        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#16a34a">Corriendo</span>
-      </div>
-      <div class="text-xl md:text-3xl font-black pb-8 md:pb-10" style="color:rgba(0,0,0,.1)">vs</div>
-      <div class="flex flex-col items-center gap-2">
-        <div class="pet-box">
-          <canvas id="sadPet" class="drop-shadow-lg"></canvas>
+        <div class="pk-art">
+          <div class="phone"><div class="scr">
+            <canvas data-pet="happy" data-px="3"></canvas>
+            <div style="display:flex;gap:3px">
+              <img src="assets/life-complete.png" alt="" loading="lazy" style="width:13px;image-rendering:pixelated">
+              <img src="assets/life-complete.png" alt="" loading="lazy" style="width:13px;image-rendering:pixelated">
+              <img src="assets/life-complete.png" alt="" loading="lazy" style="width:13px;image-rendering:pixelated">
+              <img src="assets/life-complete.png" alt="" loading="lazy" style="width:13px;image-rendering:pixelated">
+              <img src="assets/life-complete.png" alt="" loading="lazy" style="width:13px;image-rendering:pixelated">
+            </div>
+            <div class="pday">DÍA <b>5</b> / 66</div>
+          </div></div>
         </div>
-        <span class="text-[11px] md:text-xs font-extrabold tracking-widest uppercase" style="color:#d97706">Sin correr</span>
+      </div>
+
+      <div class="pocket rev" style="left:11.1%; top:40.9%; width:80.6%; height:19.4%">
+        <div class="pk-text">
+          <div class="panel-k">Te recuerda volver</div>
+          <h3 class="panel-h">Un corazón menos por cada día que faltas</h3>
+          <p class="panel-p">Tu pacepal te avisa antes de perder otro. Corre en la <strong style="color:#fff">caminadora</strong> o afuera con GPS, o conecta <strong style="color:#fff">Apple Health</strong> — de contar nos encargamos nosotros.</p>
+        </div>
+        <div class="pk-art">
+          <div class="cal" id="streakCal"></div>
+        </div>
+      </div>
+
+      <div class="pocket" style="left:8.3%; top:69.9%; width:80.6%; height:19.4%">
+        <div class="pk-text">
+          <div class="panel-k">La meta</div>
+          <h3 class="panel-h">Día 66: medalla y diploma</h3>
+          <p class="panel-p">Al día 66 tu pacepal gana su medalla y tú un <strong style="color:#fff">diploma</strong>. Ya no corres por él — corres porque eres alguien que corre.</p>
+        </div>
+        <div class="pk-art" style="display:flex;align-items:center;gap:24px">
+          <div class="bgfan" style="margin-right:26px">
+            <img src="assets/background_05.jpg" alt="" style="--r:-11deg;--tx:-32%;--ty:3%">
+            <img src="assets/background_12.jpg" alt="">
+            <img src="assets/background_19.jpg" alt="" style="--r:11deg;--tx:32%;--ty:3%">
+          </div>
+          <div class="medalbox"><canvas id="medalCv" width="0" height="0" style="width:56px;margin:0 auto"></canvas><div class="mt">HÁBITO FORMADO</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE: vertical road + stacked panels -->
+  <div class="lg:hidden max-w-6xl mx-auto px-5 md:px-8 grid gap-12 items-start">
+
+  <div id="roadWrap" class="road-wrap reveal">
+    <svg id="roadSvg" class="road-svg" viewBox="0 0 100 308" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <path id="roadBase"   fill="none" stroke="#0a0b0e" stroke-width="16.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="roadCenter" fill="none" stroke="#F2E9C9" stroke-width="14.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="roadTies"   fill="none" stroke="#0a0b0e" stroke-width="14.5" opacity=".6"/>
+      <g id="dayNodes"></g>
+    </svg>
+
+    <!-- walking pet (positioned by JS along #roadCenter) -->
+    <canvas id="roadPet"></canvas>
+
+    <!-- milestone callouts + START (placed by JS) -->
+    <div id="roadCallouts"></div>
+  </div>
+
+    <!-- side content panels (react.gg-style) -->
+    <div class="space-y-12 lg:space-y-20 lg:pt-12">
+      <div class="panel reveal">
+        <div class="panel-k">Empieza sin presión</div>
+        <h3 class="panel-h">Cero métricas que abruman</h3>
+        <p class="panel-p">Nada de zonas de frecuencia ni splits. Desde <strong style="color:#fff">0.1 km</strong> ya cuenta: tu mascota celebra que saliste, no tu ritmo. La meta no es correr rápido, es no faltar.</p>
+      </div>
+      <div class="panel reveal">
+        <div class="panel-k">Cada km cuenta solo</div>
+        <h3 class="panel-h">Conéctalo y olvídate</h3>
+        <p class="panel-p">Enlaza <strong style="color:#fff">Apple Health</strong> y tus carreras se sincronizan solas. ¿Sin reloj? El <strong style="color:#fff">GPS y el podómetro</strong> de tu iPhone miden por ti. Tú corre — de contar nos encargamos nosotros.</p>
+      </div>
+      <div class="panel reveal">
+        <div class="panel-k">Una mascota que es tuya</div>
+        <h3 class="panel-h">20 especies, infinitas combinaciones</h3>
+        <p class="panel-p"><strong style="color:#fff">20 animales</strong> y <strong style="color:#fff">26 paletas</strong> con ADN generativo: la tuya es única. Cada 3 días de constancia desbloquea un <strong style="color:#fff">fondo nuevo</strong> y una pose de celebración.</p>
+        <div style="display:flex;gap:14px;margin-top:18px;align-items:center">
+          <div class="bgfan" style="width:86px;height:134px;margin:0 22px 0 8px">
+            <img src="assets/background_05.jpg" alt="" style="--r:-11deg;--tx:-30%;--ty:3%">
+            <img src="assets/background_12.jpg" alt="">
+            <img src="assets/background_19.jpg" alt="" style="--r:11deg;--tx:30%;--ty:3%">
+          </div>
+          <canvas data-pet="happy" data-pal="berenjena" data-px="3" style="width:58px"></canvas>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <div class="panel-k">Te recuerda volver</div>
+        <h3 class="panel-h">Pierde un corazón por cada día que faltas</h3>
+        <p class="panel-p">Tu pacepal te avisa antes de perder otro. Su humor y sus corazones viven en un <strong style="color:#fff">widget</strong> en tu pantalla de inicio y en tu <strong style="color:#fff">Apple Watch</strong>. Al <strong style="color:#FFC53D">día 66</strong>: medalla y diploma.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MANIFESTO / posicionamiento (estilo "WE GET IT") -->
+<section data-section="manifesto" class="section-mobile py-16 md:py-28" style="border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-2xl mx-auto px-5 md:px-6 narr reveal">
+    <h2 class="font-black uppercase leading-[1.02] tracking-tight mb-7 md:mb-9" style="font-size:clamp(2rem,7vw,3.4rem)">
+      <span style="color:#fff">Lo entendemos:</span><br>
+      <span style="color:#F9703E">empezar es lo difícil.</span>
+    </h2>
+    <div class="space-y-5 text-base md:text-lg" style="color:rgba(255,255,255,.6)">
+      <p>Has bajado mil apps de running. Te prometiste “desde el lunes”. Compraste tenis nuevos. Y aun así, el día sin ganas… no sales. <strong>No es falta de disciplina: es que los datos no motivan a quien apenas empieza.</strong></p>
+      <p>Strava, Adidas y compañía son geniales —cuando ya corres—. Te miden ritmo, zonas y splits. Pero si estás empezando, esos números no te sacan de la cama.</p>
+      <p>Pacepal le da la vuelta. <strong>Adoptas una mascota pixel que depende de ti.</strong> Empieza con corazones; cada día que corres, vive y celebra contigo; cada día que faltas, pierde uno. En cero, se apaga. Así de simple.</p>
+      <p>Está construida sobre la ciencia de hábitos de <a href="https://jamesclear.com/new-habit" target="_blank" rel="noopener" style="color:#F9703E;text-decoration:underline;text-underline-offset:3px">James Clear</a>: un sistema + una recompensa inmediata. Tu recompensa no es una gráfica — es ver a tu compañero vivo.</p>
+      <p>Son <strong style="color:#F9703E">66 días</strong>, lo que de verdad tarda en formarse un hábito. Al final ya no corres por la mascota. <strong>Corres porque te volviste alguien que corre.</strong></p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FEATURES: pills + tarjetas -->
+<section data-section="features" class="section-mobile py-16 md:py-24" style="border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-5xl mx-auto px-5 md:px-6 grid md:grid-cols-2 gap-10 md:gap-14 items-center mb-14 md:mb-20">
+    <div class="reveal">
+      <div class="text-6xl md:text-8xl font-black leading-none" style="color:#FF4D7E">Todo</div>
+      <h2 class="text-2xl md:text-4xl font-black mt-2 mb-4" style="color:#fff">para no rendirte</h2>
+      <p class="text-base md:text-lg" style="color:rgba(255,255,255,.55)">
+        Nada de métricas que abruman. Solo lo justo para que vuelvas mañana —y los próximos 65 días.
+      </p>
+    </div>
+    <div class="pill-cluster reveal">
+      <span class="pill" style="transform:rotate(-3deg)">5 corazones</span>
+      <span class="pill" style="transform:rotate(2deg)">Mapa estilo Duolingo</span>
+      <span class="pill" style="transform:rotate(-1.5deg)">Apple Health</span>
+      <span class="pill" style="transform:rotate(2.5deg)">Modo caminadora</span>
+      <span class="pill" style="transform:rotate(-2deg)">Apple Watch + widget</span>
+      <span class="pill" style="transform:rotate(-2.5deg)">Cero anuncios</span>
+      <span class="pill" style="transform:rotate(-1deg)">Medalla + diploma al día 66</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- FAQ -->
+<section data-section="faq" class="section-mobile py-16 md:py-24" style="border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-3xl mx-auto px-5 md:px-6">
+    <h2 class="text-2xl md:text-4xl font-black uppercase tracking-tight text-center mb-9 md:mb-12 reveal" style="color:#f4f4f1">
+      Preguntas frecuentes
+    </h2>
+    <div class="faq-wrap reveal">
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Necesito ser corredor para empezar?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Para nada. Pacepal está hecho justo para quien empieza. El nivel Hábito cuenta desde 0.1 km y tu pacepal arranca con sus 5 corazones llenos. La meta no es correr rápido — es no faltar.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Cómo cuenta mis kilómetros?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Se conecta con Apple Health y sincroniza tus carreras solo. Si no usas reloj, el GPS y el podómetro de tu iPhone miden la distancia por ti. Tú eliges cómo registrar.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Está disponible en Android?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Por ahora Pacepal está solo en iOS (iPhone). <strong style="color:#fff">Estamos trabajando en la versión de Android</strong> — déjanos tu correo en el botón de arriba y serás de los primeros en enterarte cuando salga.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Qué pasa si no corro un día?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Tu pacepal pierde un corazón. Empieza con 5 (en el nivel Hábito), así que un mal día no es el fin —pero si lo dejas varios días seguidos y llega a cero, se apaga. Ese es justo el punto: te recuerda volver mañana.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Sirve en caminadora?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Sí. Activa el modo interior y cuenta tus pasos con el sensor del iPhone —sigue contando aunque bloquees la pantalla. Afuera usa el GPS, y si prefieres, sincroniza todo con Apple Health.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Y si me voy de vacaciones o me lesiono?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Enciende el <strong style="color:#fff">Modo Invernar</strong>: tu pacepal se duerme y no pierde corazones hasta que lo despiertes. Descansa sin culpa y retoma justo donde lo dejaste.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿De verdad funciona lo de los 66 días?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">66 es el número que la ciencia de hábitos asocia a hábitos complejos como correr (no los “21 días” del mito). Cada hito desbloquea uno de los 23 fondos y celebraciones para mantenerte enganchado hasta que el hábito sea tuyo. Al día 66 ganas medalla y un diploma pixel con tus KM totales.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Qué tiene de especial la mascota?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">20 especies y 26 paletas con ADN generativo: la tuya es única. Le pones nombre, cambia de ánimo según sus corazones, la ves en tu Apple Watch y en un widget, y al día 66 gana su medalla y diploma.</div></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- CTA final -->
-<section data-section="final_cta" class="section-mobile py-16 md:py-28 text-center" style="background:#FAFAFA;border-top:1px solid rgba(0,0,0,.06)">
+<section data-section="final_cta" class="section-mobile py-16 md:py-28 text-center" style="border-top:1px solid rgba(255,255,255,.06)">
   <div class="max-w-xl mx-auto px-5 md:px-6 reveal">
     <div class="flex justify-center mb-6 md:mb-8 float">
-      <canvas id="ctaPet" class="drop-shadow-lg"></canvas>
+      <canvas id="ctaPet"></canvas>
     </div>
-    <h2 id="finalHeading" class="text-2xl md:text-5xl font-black leading-[1.06] tracking-tight mb-3 md:mb-4" style="color:#1a1a2e">
+    <h2 id="finalHeading" class="text-2xl md:text-5xl font-black leading-[1.06] tracking-tight mb-3 md:mb-4" style="color:#fff">
       Empieza hoy.<br>
       <span style="color:#F9703E">Tu compañero te espera.</span>
     </h2>
     <!-- iOS -->
     <div id="iosCtaFinal">
-      <p class="text-sm md:text-base mb-6 md:mb-8" style="color:rgba(0,0,0,.35)">
-        7 días gratis · Cancela cuando quieras · Solo corre
+      <p class="text-sm md:text-base mb-6 md:mb-8" style="color:rgba(255,255,255,.4)">
+        Tu pacepal cuenta cada km. No lo dejes en cero.
       </p>
       <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-         onclick="posthog.capture('cta_click',{location:'final_cta',label:'Empezar gratis'})"
-         class="cta-pulse cta-mobile-full inline-flex items-center gap-2.5 font-extrabold text-base md:text-lg text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-7 md:px-10 py-4 md:py-5 rounded-2xl transition-all duration-300 shadow-2xl">
+         onclick="posthog.capture('cta_click',{location:'final_cta',label:'Empezar'})"
+         class="btn-cta cta-mobile-full inline-flex items-center gap-2.5 font-extrabold text-base md:text-lg text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-7 md:px-10 py-4 md:py-5 rounded-2xl">
         <svg class="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
         </svg>
-        Empezar gratis — 7 días
+        Empezar hoy
       </a>
     </div>
     <!-- Android -->
     <div id="androidCtaFinal" style="display:none" class="w-full max-w-sm mx-auto">
       <div class="waitlist-form">
-        <p class="text-sm mb-4" style="color:rgba(0,0,0,.4)">Déjanos tu correo y te avisamos el día que salga en Android.</p>
+        <p class="text-sm mb-4" style="color:rgba(255,255,255,.45)">Déjanos tu correo y te avisamos el día que salga en Android.</p>
         <form id="finalWaitlist" class="flex gap-2 w-full" onsubmit="return submitWaitlist(event,'final_cta')">
           <input type="email" required placeholder="tu@correo.com"
-                 class="waitlist-input flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold text-[#1a1a2e] outline-none transition-all duration-300"
-                 style="background:rgba(0,0,0,.04);border:1.5px solid rgba(0,0,0,.1)">
+                 class="waitlist-input flex-1 min-w-0 px-4 py-3.5 rounded-xl text-sm font-semibold outline-none transition-all duration-300">
           <button type="submit"
                   class="cta-pulse shrink-0 px-6 py-3.5 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 hover:scale-105 active:scale-95">
             Avísame</button>
@@ -348,14 +675,19 @@
 </section>
 
 <!-- footer -->
-<footer style="background:#f3f1ee;border-top:1px solid rgba(0,0,0,.06)">
-  <div class="max-w-6xl mx-auto px-5 md:px-6 py-6 md:py-8 flex flex-col md:flex-row items-center justify-between gap-3">
-    <img src="assets/logo_sm.png" class="h-5 opacity-40" alt="Pacepal">
-    <div class="flex gap-5 text-xs font-semibold" style="color:rgba(0,0,0,.3)">
-      <a href="terms.html" class="hover:text-black/60 transition-colors">Términos</a>
-      <a href="privacy.html" class="hover:text-black/60 transition-colors">Privacidad</a>
+<footer style="background:#0c0d11;border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-6xl mx-auto px-5 md:px-6 py-6 md:py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <p class="text-xs" style="color:rgba(255,255,255,.25)">&copy; Pacepal 2026</p>
+    <a href="https://dallio.io" target="_blank" rel="noopener"
+       class="flex items-center gap-2 opacity-50 hover:opacity-90 transition-opacity">
+      <span class="text-xs font-semibold" style="color:rgba(255,255,255,.6)">Designed by</span>
+      <img src="assets/dallio.png" alt="Dallio Software Solutions" class="h-5"
+           style="filter:brightness(0) invert(1)">
+    </a>
+    <div class="flex gap-5 text-xs font-semibold" style="color:rgba(255,255,255,.4)">
+      <a href="terms.html" class="hover:text-white transition-colors">Términos</a>
+      <a href="privacy.html" class="hover:text-white transition-colors">Privacidad</a>
     </div>
-    <p class="text-xs" style="color:rgba(0,0,0,.2)">&copy; 2025 Pacepal</p>
   </div>
 </footer>
 
@@ -363,19 +695,18 @@
 <div id="mobileStickyBar">
   <!-- iOS sticky -->
   <a id="iosStickyLink" href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-     onclick="posthog.capture('cta_click',{location:'sticky_mobile',label:'Descargar gratis'})"
+     onclick="posthog.capture('cta_click',{location:'sticky_mobile',label:'Descargar'})"
      class="flex items-center justify-center gap-2 w-full font-extrabold text-base text-[#14191f] bg-[#F9703E] py-3.5 rounded-2xl shadow-lg">
     <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
       <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
     </svg>
-    Descargar gratis — 7 días
+    Descargar PacePal
   </a>
   <!-- Android sticky -->
   <div id="androidStickyWrap" style="display:none" class="w-full">
     <form id="androidStickyForm" class="waitlist-form flex gap-2 w-full" onsubmit="return submitWaitlist(event,'sticky_mobile')">
       <input type="email" required placeholder="tu@correo.com"
-             class="waitlist-input flex-1 min-w-0 px-3 py-3 rounded-xl text-sm font-semibold text-[#1a1a2e] outline-none transition-all duration-300"
-             style="background:rgba(0,0,0,.04);border:1.5px solid rgba(0,0,0,.1)">
+             class="waitlist-input flex-1 min-w-0 px-3 py-3 rounded-xl text-sm font-semibold outline-none transition-all duration-300">
       <button type="submit"
               class="shrink-0 px-5 py-3 rounded-xl font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] transition-all duration-200 active:scale-95">
         Avísame</button>
@@ -407,6 +738,16 @@ const DNA = {
     body:'#002159', shade:'#2186EB', face:'#B6E0FE',
     eyeP:'#002159', cheek:'#F191C1', accent1:'#AFF75C', accent2:'#62F4EB'
   }
+};
+
+// real palettes from the app (PetPalette.swift) — body/shade/face/eyeP/cheek
+const PALS = {
+  sapphire:  DNA.palette,
+  turquesa:  { body:'#0A7878', shade:'#109898', face:'#F0806A', eyeP:'#053C3C', cheek:'#F8B0A0', accent1:'#F35627', accent2:'#FADB5F' },
+  cereza:    { body:'#4A0820', shade:'#700C30', face:'#F0C0C8', eyeP:'#200410', cheek:'#E8A0B0', accent1:'#F35627', accent2:'#FADB5F' },
+  oliva_oro: { body:'#4A5A22', shade:'#6B8030', face:'#D4A835', eyeP:'#252E0F', cheek:'#E8CC6A', accent1:'#F35627', accent2:'#FADB5F' },
+  berenjena: { body:'#3A1860', shade:'#5A2890', face:'#D0C8D8', eyeP:'#1C0C30', cheek:'#B0A8C0', accent1:'#F35627', accent2:'#FADB5F' },
+  bordo:     { body:'#5A0818', shade:'#880C24', face:'#D4A830', eyeP:'#2D0408', cheek:'#E8CC70', accent1:'#F35627', accent2:'#FADB5F' }
 };
 
 const makeGrid = () => Array.from({length:GS},()=>new Array(GS).fill(C.empty));
@@ -641,8 +982,8 @@ function buildGrid(pose,frame){
 function hexRgb(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
 function tone(r,g,b,a){const cl=v=>Math.max(0,Math.min(255,Math.round(v+a)));return`rgb(${cl(r)},${cl(g)},${cl(b)})`;}
 
-function cellColor(cell,gx,gy){
-  const p=DNA.palette;
+function cellColor(cell,gx,gy,pal){
+  const p=pal||DNA.palette;
   if(cell===C.empty)return null;
   if(cell===C.outline){const[r,g,b]=hexRgb(p.body);return tone(r,g,b,-70);}
   if(cell===C.body||cell===C.accent1||cell===C.accent2){
@@ -669,36 +1010,414 @@ function cellColor(cell,gx,gy){
   return({[C.eyePupil]:p.eyeP,[C.eyeShine]:'#e0eeff',[C.mouth]:p.eyeP,[C.cheek]:p.cheek,[C.shade]:p.shade,[C.nose]:p.eyeP,[C.tear]:'#5599ff',[C.gold]:'#ffcc00',[C.speedLine]:'#ff7700',[C.gray]:'#888',[C.lightning]:'#00cfff'})[cell]||null;
 }
 
-function renderPet(canvas,pose,frame,px){
+function renderPet(canvas,pose,frame,px,pal){
+  if(!canvas) return;
   const sz=GS*px;canvas.width=sz;canvas.height=sz;
   const ctx=canvas.getContext('2d');ctx.clearRect(0,0,sz,sz);
   const grid=buildGrid(pose,frame);
   for(let y=0;y<GS;y++)for(let x=0;x<GS;x++){
-    const c=cellColor(grid[y][x],x,y);
+    const c=cellColor(grid[y][x],x,y,pal);
     if(c){ctx.fillStyle=c;ctx.fillRect(x*px,y*px,px,px);}
   }
 }
 
-// state
-let demoEnergy=78, frameIdx=0, frameTimer=0, fastFrameIdx=0, fastFrameTimer=0, lastTs=0;
-
-function energyColor(e){return e>=60?'#16a34a':e>=30?'#65a30d':e>=15?'#ca8a04':'#dc2626';}
-
-function updateHUD(){
-  const ec=energyColor(demoEnergy);
-  const setEl=(id,fn)=>{const el=document.getElementById(id);if(el)fn(el);};
-  setEl('heroBar',      el=>{el.style.width=demoEnergy+'%';el.style.background=ec;});
-  setEl('heroHpLabel',  el=>el.style.color=ec);
-  setEl('heroEnergyPct',el=>el.textContent=Math.round(demoEnergy)+'%');
+/* ── pixel-art medal (day 66 reward) ── */
+const MEDAL_ROWS = [
+  '.dddd...dddd.',
+  '.drrrd.drrrd.',
+  '.drrrd.drrrd.',
+  '..drrrdrrrd..',
+  '..drrrdrrrd..',
+  '...ddrdrdd...',
+  '..ddgggggdd..',
+  '.dgggggggggd.',
+  '.dggwggggggd.',
+  '.dgwgggggggd.',
+  '.dgggggggggd.',
+  '..dgggggggd..',
+  '...ddddddd...'
+];
+const MEDAL_COLORS = { d:'#0a0b0e', r:'#F9703E', g:'#FFC53D', w:'#FFF3D6' };
+function drawMedal(cv, px){
+  if(!cv) return;
+  const rows = MEDAL_ROWS, w = rows[0].length, h = rows.length;
+  cv.width = w*px; cv.height = h*px;
+  const ctx = cv.getContext('2d');
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const c = MEDAL_COLORS[rows[y][x]];
+    if(c){ ctx.fillStyle=c; ctx.fillRect(x*px,y*px,px,px); }
+  }
 }
+
+/* ═════════ 66-DAY BOARD-GAME ROAD ═════════ */
+const SVGNS = 'http://www.w3.org/2000/svg';
+// organic weaving path — waypoints with varied amplitude, smoothed (Catmull-Rom)
+const ROAD = { wp: [[26,16],[76,42],[24,86],[72,128],[26,170],[74,212],[25,254],[52,292]] };
+let roadWrap=null, roadPath=null, roadPet=null, roadDayEl=null, roadCallouts=null;
+let roadLen=0, roadScale=1, roadDist=0, roadResetting=false;
+let roadWalkFrame=0, roadWalkTimer=0, lastRoadFrame=-1;
+
+function catmullPath(W){
+  let d = 'M '+W[0][0]+' '+W[0][1];
+  for(let i=0;i<W.length-1;i++){
+    const p0=W[i-1]||W[i], p1=W[i], p2=W[i+1], p3=W[i+2]||W[i+1];
+    const c1x=p1[0]+(p2[0]-p0[0])/6, c1y=p1[1]+(p2[1]-p0[1])/6;
+    const c2x=p2[0]-(p3[0]-p1[0])/6, c2y=p2[1]-(p3[1]-p1[1])/6;
+    d += ' C '+c1x.toFixed(2)+' '+c1y.toFixed(2)+' '+c2x.toFixed(2)+' '+c2y.toFixed(2)+' '+p2[0]+' '+p2[1];
+  }
+  return d;
+}
+
+/* ── shared board-game decor (react.gg technique) ── */
+// 66 tile dividers: a dashed stroke as wide as the road paints thin crossbars
+function setTiles(tiesEl, total, tieW){
+  if(!tiesEl) return;
+  const gap = total/66 - tieW;
+  tiesEl.setAttribute('stroke-dasharray', tieW+' '+gap.toFixed(3));
+  tiesEl.setAttribute('stroke-dashoffset', -(total/66)*0.5);
+}
+function pathAngle(path,total,len){
+  const a=path.getPointAtLength(Math.max(0,len-1)), b=path.getPointAtLength(Math.min(total,len+1));
+  let ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
+  if(ang>90) ang-=180; if(ang<-90) ang+=180;
+  return ang;
+}
+// label that follows the road direction; opt: box (ticket frame), italic, size
+function boardLabel(path,total,g,cls,len,text,opt){
+  opt=opt||{};
+  const fs=opt.size, m=path.getPointAtLength(len);
+  const grp=document.createElementNS(SVGNS,'g');
+  grp.setAttribute('transform','translate('+m.x.toFixed(2)+' '+m.y.toFixed(2)+') rotate('+pathAngle(path,total,len).toFixed(1)+')');
+  if(opt.box){
+    const w=text.length*fs*0.62+fs*1.5;
+    const r=document.createElementNS(SVGNS,'rect');
+    r.setAttribute('x',(-w/2).toFixed(2)); r.setAttribute('y',(-fs*1.08).toFixed(2));
+    r.setAttribute('width',w.toFixed(2)); r.setAttribute('height',(fs*2.16).toFixed(2));
+    r.setAttribute('rx',(fs*0.45).toFixed(2)); r.setAttribute('fill','none');
+    r.setAttribute('stroke','#1d1608'); r.setAttribute('stroke-width',(fs*0.16).toFixed(2));
+    grp.appendChild(r);
+  }
+  const t=document.createElementNS(SVGNS,'text');
+  t.setAttribute('class',cls); t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+  t.setAttribute('font-size',fs);
+  if(opt.italic) t.setAttribute('font-style','italic');
+  t.textContent=text;
+  grp.appendChild(t); g.appendChild(grp);
+}
+// milestone day-circle that interrupts the road; o:{r,fs,goal,circCls,numCls,dayCls}
+function boardMile(path,g,len,day,o){
+  const pt=path.getPointAtLength(len);
+  const c=document.createElementNS(SVGNS,'circle');
+  c.setAttribute('cx',pt.x.toFixed(2)); c.setAttribute('cy',pt.y.toFixed(2)); c.setAttribute('r',o.r);
+  c.setAttribute('class',o.circCls+(o.goal?' goal':''));
+  g.appendChild(c);
+  const d=document.createElementNS(SVGNS,'text');
+  d.setAttribute('x',pt.x.toFixed(2)); d.setAttribute('y',(pt.y-o.r*0.42).toFixed(2));
+  d.setAttribute('class',o.dayCls); d.setAttribute('font-size',(o.fs*0.42).toFixed(2));
+  d.textContent='DÍA'; g.appendChild(d);
+  const t=document.createElementNS(SVGNS,'text');
+  t.setAttribute('x',pt.x.toFixed(2)); t.setAttribute('y',(pt.y+o.r*0.22).toFixed(2));
+  t.setAttribute('class',o.numCls); t.setAttribute('font-size',o.fs);
+  t.textContent=day; g.appendChild(t);
+}
+// 3D game-piece puck resting on a tile
+function boardToken(path,g,len,color,dark,r){
+  const m=path.getPointAtLength(len);
+  const grp=document.createElementNS(SVGNS,'g');
+  grp.setAttribute('transform','translate('+m.x.toFixed(2)+' '+m.y.toFixed(2)+')');
+  function disc(cy,fill){
+    const e=document.createElementNS(SVGNS,'ellipse');
+    e.setAttribute('cx',0); e.setAttribute('cy',cy.toFixed(2));
+    e.setAttribute('rx',r); e.setAttribute('ry',(r*0.68).toFixed(2));
+    e.setAttribute('fill',fill); e.setAttribute('stroke','#0a0b0e'); e.setAttribute('stroke-width',(r*0.2).toFixed(2));
+    return e;
+  }
+  grp.appendChild(disc(r*0.45,dark));
+  grp.appendChild(disc(0,color));
+  g.appendChild(grp);
+}
+// direction chevrons painted on the road surface
+function boardArrow(path,g,len,sz,color){
+  for(let k=0;k<2;k++){
+    const l=len+k*sz*2.4;
+    const m=path.getPointAtLength(l), a=path.getPointAtLength(l+1);
+    const ang=Math.atan2(a.y-m.y,a.x-m.x)*180/Math.PI;
+    const p=document.createElementNS(SVGNS,'path');
+    p.setAttribute('d','M '+(-sz*0.6)+' '+(-sz)+' L '+(sz*0.55)+' 0 L '+(-sz*0.6)+' '+sz);
+    p.setAttribute('fill','none'); p.setAttribute('stroke',color); p.setAttribute('stroke-width',(sz*0.4).toFixed(2));
+    p.setAttribute('stroke-linecap','round'); p.setAttribute('stroke-linejoin','round');
+    p.setAttribute('transform','translate('+m.x.toFixed(2)+' '+m.y.toFixed(2)+') rotate('+ang.toFixed(1)+')');
+    g.appendChild(p);
+  }
+}
+// static pet resting on the road (HTML canvas over the SVG, % coords so it scales)
+function boardPet(path, container, vbW, vbH, f, pose, palName, wPx, rot){
+  if(!path || !container) return;
+  const total=path.getTotalLength(), m=path.getPointAtLength(total*f);
+  const cv=document.createElement('canvas');
+  cv.className='board-pet';
+  cv.setAttribute('data-pet',pose); cv.setAttribute('data-px','3');
+  if(palName) cv.setAttribute('data-pal',palName);
+  cv.style.cssText='position:absolute;z-index:3;pointer-events:none;width:'+wPx+'px;'
+    +'left:'+(m.x/vbW*100).toFixed(2)+'%;top:'+(m.y/vbH*100).toFixed(2)+'%;'
+    +'transform:translate(-50%,-86%)'+(rot?' rotate('+rot+'deg)':'')+';'
+    +'filter:drop-shadow(0 4px 5px rgba(0,0,0,.45))';
+  container.appendChild(cv);
+  renderPet(cv,pose,0,3,PALS[palName]);
+}
+// pixel confetti scattered around the goal (the app's celebration colors)
+function boardConfetti(path,g,total,spread,sz){
+  const m=path.getPointAtLength(total);
+  const CC=['#FADB5F','#F9703E','#43C6DB','#4ADE80','#C084FC','#F472B6'];
+  const pts=[[-2.5,-1.2],[-1.7,1.0],[-1.0,-2.1],[-0.2,1.8],[0.7,-1.6],[1.3,1.3],[2.1,-1.0],[2.5,0.4],[-2.1,-0.1],[1.7,2.0],[-0.9,2.4],[0.2,-2.5]];
+  pts.forEach(function(p,i){
+    const rc=document.createElementNS(SVGNS,'rect');
+    const x=m.x+p[0]*spread, y=m.y+p[1]*spread;
+    rc.setAttribute('x',x.toFixed(2)); rc.setAttribute('y',y.toFixed(2));
+    rc.setAttribute('width',sz); rc.setAttribute('height',sz);
+    rc.setAttribute('fill',CC[i%CC.length]);
+    rc.setAttribute('transform','rotate('+((i*37)%70-35)+' '+x.toFixed(1)+' '+y.toFixed(1)+')');
+    g.appendChild(rc);
+  });
+}
+// angled START plate sitting across the road
+function boardStart(path,total,g,len,w,h,fs){
+  const m=path.getPointAtLength(len);
+  const grp=document.createElementNS(SVGNS,'g');
+  grp.setAttribute('transform','translate('+m.x.toFixed(2)+' '+m.y.toFixed(2)+') rotate('+pathAngle(path,total,len).toFixed(1)+')');
+  const r=document.createElementNS(SVGNS,'rect');
+  r.setAttribute('x',-w/2); r.setAttribute('y',-h/2); r.setAttribute('width',w); r.setAttribute('height',h);
+  r.setAttribute('rx',h*0.26); r.setAttribute('fill','#34B06A'); r.setAttribute('stroke','#0a0b0e'); r.setAttribute('stroke-width',h*0.09);
+  grp.appendChild(r);
+  const t=document.createElementNS(SVGNS,'text');
+  t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+  t.setAttribute('fill','#06240f'); t.setAttribute('font-weight','900'); t.setAttribute('font-size',fs);
+  t.setAttribute('font-family','Nunito,sans-serif'); t.setAttribute('letter-spacing','1');
+  t.textContent='START';
+  grp.appendChild(t); g.appendChild(grp);
+}
+
+function measureRoad(){
+  if(!roadWrap) return;
+  roadScale = roadWrap.clientWidth / 100;
+  if(roadPet) roadPet.style.width = Math.max(38, Math.round(roadScale*11)) + 'px';
+  if(roadLen) placeCallouts();
+}
+
+function placeCallouts(){
+  if(!roadCallouts || !roadPath) return;
+  const s = roadScale;
+  const items = [
+    { day:0,  cls:'start', txt:'START' },
+    { day:7,  cls:'',      txt:'Primera semana' }
+  ];
+  roadCallouts.innerHTML = '';
+  const wrapW = roadWrap ? roadWrap.clientWidth : 0;
+  items.forEach(function(m){
+    const pt = roadPath.getPointAtLength(roadLen * m.day / 66);
+    const el = document.createElement('div');
+    el.className = 'callout ' + m.cls;
+    el.innerHTML = '<span class="pill">' + m.txt + '</span>';
+    let x = pt.x * s;
+    if(wrapW){ x = Math.max(64, Math.min(wrapW - 64, x)); }
+    el.style.left = x + 'px';
+    el.style.top  = (pt.y * s) + 'px';
+    roadCallouts.appendChild(el);
+  });
+}
+
+function initRoad(){
+  roadWrap = document.getElementById('roadWrap');
+  roadPath = document.getElementById('roadCenter');
+  roadPet  = document.getElementById('roadPet');
+  roadDayEl= document.getElementById('roadDay');
+  roadCallouts = document.getElementById('roadCallouts');
+  if(!roadWrap || !roadPath || !roadPet || !roadPath.getTotalLength) return false;
+
+  const d = catmullPath(ROAD.wp);
+  ['roadBase','roadCenter','roadTies'].forEach(function(id){
+    const p = document.getElementById(id); if(p) p.setAttribute('d', d);
+  });
+  roadLen = roadPath.getTotalLength();
+  setTiles(document.getElementById('roadTies'), roadLen, 0.5);
+
+  const g = document.getElementById('dayNodes');
+  if(g){
+    g.innerHTML = '';
+    const L = function(f){ return roadLen*f; };
+    // a couple of game pieces — keep the board airy
+    boardToken(roadPath, g, L(0.278), '#7BD66B', '#3f8f4d', 3.6);
+    boardToken(roadPath, g, L(0.875), '#FF9EC4', '#c25f8a', 3.6);
+    // narrative tile labels — one idea per straight
+    [
+      {f:0.048, t:'día 1', size:4.7},
+      {f:0.212, t:'0.1 km', italic:true},
+      {f:0.358, t:'racha viva'},
+      {f:0.630, t:'fondos nuevos', box:true},
+      {f:0.805, t:'recta final', box:true},
+      {f:0.922, t:'ya casi', italic:true}
+    ].forEach(function(l){
+      boardLabel(roadPath, roadLen, g, 'road-label', L(l.f), l.t, {size:l.size||4.7, box:l.box, italic:l.italic});
+    });
+    // milestone circles sitting on the bends (real app achievement days) + goal
+    const mo = {r:6.6, fs:4.9, circCls:'chap-node', numCls:'chap-num', dayCls:'chap-day'};
+    [10,28,46].forEach(function(day){
+      boardMile(roadPath, g, roadLen*day/66, day, mo);
+    });
+    boardMile(roadPath, g, roadLen, 66, {r:9, fs:6.6, goal:true, circCls:'chap-node', numCls:'chap-num', dayCls:'chap-day'});
+    boardConfetti(roadPath, g, roadLen, 6.5, 2.1);
+    // a fellow runner's pet resting on the road (real app palette)
+    boardPet(roadPath, roadWrap, 100, 308, 0.462, 'happy', 'turquesa', 34, -4);
+  }
+
+  measureRoad();
+  renderPet(roadPet,'running',0,3); lastRoadFrame=0;
+  return true;
+}
+
+function stepRoad(dt){
+  if(!roadPath || !roadPet || !roadLen || !roadWrap || roadWrap.offsetWidth===0) return;
+  roadDist += dt * 0.055;
+  if(roadDist >= roadLen && !roadResetting){ roadDist = roadLen; roadResetting = true; setTimeout(()=>{ roadDist=0; roadResetting=false; }, 1500); }
+  roadWalkTimer += dt;
+  if(roadWalkTimer >= 110){ roadWalkTimer = 0; roadWalkFrame = (roadWalkFrame+1)%4; }
+  if(roadWalkFrame !== lastRoadFrame){ renderPet(roadPet,'running',roadWalkFrame,3); lastRoadFrame = roadWalkFrame; }
+
+  const p = roadPath.getPointAtLength(roadDist);
+  const ahead = roadPath.getPointAtLength(Math.min(roadLen, roadDist+2));
+  const flip = (ahead.x - p.x) < -0.02;
+  const s = roadScale;
+  roadPet.style.left = (p.x * s) + 'px';
+  roadPet.style.top  = (p.y * s) + 'px';
+  roadPet.style.transform = 'translate(-50%,-90%) scaleX(' + (flip ? 1 : -1) + ')';
+  if(roadDayEl) roadDayEl.textContent = Math.max(1, Math.round(roadDist / roadLen * 66));
+}
+
+/* ── station pixel icons (pet canvases in mockups/cards) ── */
+function renderStationIcons(f){
+  document.querySelectorAll('canvas[data-pet]').forEach(function(cv){
+    const pose = cv.getAttribute('data-pet');
+    const px = +(cv.getAttribute('data-px') || 2);
+    const pal = PALS[cv.getAttribute('data-pal')] || null;
+    renderPet(cv, pose, pose==='running' ? fastFrameIdx : f, px, pal);
+  });
+}
+
+/* ═════════ DESKTOP WRAPPING BOARD (organic snake frames the content) ═════════ */
+const WRAP_WP = [
+  [62,150],[150,70],[380,50],[650,78],[900,52],[1024,118],
+  [1032,228],[915,318],[610,344],[310,308],[108,336],
+  [48,428],[52,518],[160,604],[450,580],[740,616],[975,590],
+  [1034,684],[1024,784],[875,868],[555,846],[245,880],[72,862]
+];
+let wrapWrap=null, wrapPath=null, wrapPet=null;
+let wrapLen=0, wrapScale=1, wrapDist=0, wrapResetting=false, wrapWalkFrame=0, wrapWalkTimer=0, lastWrapFrame=-1;
+
+function buildWrapDecor(){
+  const g=document.getElementById('wrapDecor'); if(!g) return; g.innerHTML='';
+  const L = function(f){ return wrapLen*f; };
+  // one game piece is enough — the board should breathe
+  boardToken(wrapPath, g, L(0.225), '#7BD66B', '#3f8f4d', 11);
+  boardToken(wrapPath, g, L(0.550), '#B58CFF', '#6f4fc0', 11);
+  // narrative tile labels — one idea per straight
+  [
+    {f:0.062, t:'elige tu mascota'},
+    {f:0.128, t:'una semana corriendo', box:true},
+    {f:0.300, t:'0.1 km ya cuenta', italic:true},
+    {f:0.408, t:'tu racha crece'},
+    {f:0.600, t:'un fondo cada 3 días', box:true, size:14},
+    {f:0.850, t:'recta final', italic:true}
+  ].forEach(function(l){
+    boardLabel(wrapPath, wrapLen, g, 'wrap-label', L(l.f), l.t, {size:l.size||15, box:l.box, italic:l.italic});
+  });
+  // direction chevrons right after the start
+  boardArrow(wrapPath, g, L(0.026), 8, '#1d1608');
+  // START plate + milestone circles sitting exactly on the bends (real app achievement days) + goal
+  boardStart(wrapPath, wrapLen, g, L(0.006), 96, 36, 16);
+  const mo = {r:26, fs:18, circCls:'wrap-chap', numCls:'wrap-num', dayCls:'wrap-chap-day'};
+  [13,34,49].forEach(function(day){
+    boardMile(wrapPath, g, wrapLen*day/66, day, mo);
+  });
+  boardMile(wrapPath, g, wrapLen, 66, {r:31, fs:23, goal:true, circCls:'wrap-chap', numCls:'wrap-num', dayCls:'wrap-chap-day'});
+  boardConfetti(wrapPath, g, wrapLen, 27, 8);
+  // fellow runners' pets on the road (real app palettes)
+  boardPet(wrapPath, wrapWrap, 1080, 930, 0.352, 'happy', 'turquesa', 46, -3);
+  boardPet(wrapPath, wrapWrap, 1080, 930, 0.660, 'sign', 'oliva_oro', 48, 3);
+}
+function measureWrap(){ if(wrapWrap) wrapScale = wrapWrap.clientWidth/1080; }
+function initWrap(){
+  wrapWrap=document.getElementById('wrapWrap'); wrapPath=document.getElementById('wrapCenter'); wrapPet=document.getElementById('wrapPet');
+  if(!wrapWrap||!wrapPath||!wrapPet||!wrapPath.getTotalLength) return false;
+  const d=catmullPath(WRAP_WP);
+  ['wrapBase','wrapCenter','wrapTies'].forEach(function(id){ const p=document.getElementById(id); if(p)p.setAttribute('d',d); });
+  wrapLen=wrapPath.getTotalLength();
+  setTiles(document.getElementById('wrapTies'), wrapLen, 1.9);
+  buildWrapDecor(); measureWrap();
+  renderPet(wrapPet,'running',0,4); lastWrapFrame=0;
+  return true;
+}
+function stepWrap(dt){
+  if(!wrapPath||!wrapPet||!wrapLen||!wrapWrap||wrapWrap.offsetWidth===0) return;
+  wrapDist += dt*0.10;
+  if(wrapDist>=wrapLen && !wrapResetting){ wrapDist=wrapLen; wrapResetting=true; setTimeout(function(){wrapDist=0;wrapResetting=false;},1500); }
+  wrapWalkTimer+=dt;
+  if(wrapWalkTimer>=110){ wrapWalkTimer=0; wrapWalkFrame=(wrapWalkFrame+1)%4; }
+  if(wrapWalkFrame!==lastWrapFrame){ renderPet(wrapPet,'running',wrapWalkFrame,4); lastWrapFrame=wrapWalkFrame; }
+  const p=wrapPath.getPointAtLength(wrapDist), ah=wrapPath.getPointAtLength(Math.min(wrapLen,wrapDist+3));
+  const flip=(ah.x-p.x)<-0.02, s=wrapScale;
+  wrapPet.style.left=(p.x*s)+'px'; wrapPet.style.top=(p.y*s)+'px';
+  wrapPet.style.transform='translate(-50%,-78%) scaleX('+(flip?1:-1)+')';
+}
+function fillStreakCal(){
+  const c=document.getElementById('streakCal'); if(!c||c.children.length) return;
+  for(let i=1;i<=66;i++){
+    const im=document.createElement('img');
+    const done = i<=33 && i%9!==0;
+    im.src = done ? 'assets/life-complete.png' : 'assets/life-uncomplete.png';
+    im.alt = '';
+    if(!done) im.className='off';
+    if(i===33) im.className='today';
+    c.appendChild(im);
+  }
+}
+
+// state
+let frameIdx=0, frameTimer=0, fastFrameIdx=0, fastFrameTimer=0, lastTs=0;
+
+// Hero: contador 00 → 66; al llegar, "Se formó un hábito." y aparece el mono corriendo.
+var heroCountDone = false;
+(function(){
+  var num=document.getElementById('hcDay'), lbl=document.getElementById('hcLabel'), pet=document.getElementById('heroPet');
+  if(!num||!lbl||!pet) return;
+  var start=null, dur=3200;
+  function tick(ts){
+    if(start===null) start=ts;
+    var t=Math.min(1,(ts-start)/dur);
+    var eased=1-Math.pow(1-t,3);
+    num.textContent=String(Math.round(eased*66)).padStart(2,'0');
+    if(t<1){ requestAnimationFrame(tick); return; }
+    lbl.textContent='Se formó un hábito.';
+    lbl.classList.add('done');
+    pet.classList.add('show');
+    heroCountDone=true;
+  }
+  window.addEventListener('load', function(){
+    setTimeout(function(){ requestAnimationFrame(tick); }, 500);
+  });
+})();
 
 function renderStatics(){
   const isMobile = window.innerWidth < 768;
-  renderPet(document.getElementById('heroPet'),'happy',0, isMobile ? 7 : 10);
   const cmpPx = isMobile ? 6 : 8;
+  renderPet(document.getElementById('heroPet'),'happy',0,5);
   renderPet(document.getElementById('runningPet'),'running',0,cmpPx);
   renderPet(document.getElementById('sadPet'),'sad',0,cmpPx);
-  renderPet(document.getElementById('ctaPet'),'sign',0, isMobile ? 7 : 12);
+  renderPet(document.getElementById('ctaPet'),'sign',0, isMobile ? 7 : 11);
+  renderStationIcons(0);
+  drawMedal(document.getElementById('medalCv'), 4);
+  initRoad();
+  initWrap();
+  fillStreakCal();
 }
 
 function animate(ts){
@@ -709,20 +1428,25 @@ function animate(ts){
   const isMobile = window.innerWidth < 768;
   const cmpPx = isMobile ? 6 : 8;
 
-  // Slow animations (3fps): hero (happy), CTA (idle), sad pet
+  // road: pet walks the 66-day path every frame (mobile vertical or desktop wrap, whichever is visible)
+  stepRoad(dt);
+  stepWrap(dt);
+
+  // Slow animations (3fps): hero, CTA, sad pet, station icons
   frameTimer+=dt;
   if(frameTimer>=333){
     frameTimer=0; frameIdx=(frameIdx+1)%8;
-    const hc=document.getElementById('heroPet');  if(hc)renderPet(hc,'happy',frameIdx%4, isMobile ? 7 : 10);
-    const cc=document.getElementById('ctaPet');   if(cc)renderPet(cc,'sign',frameIdx%4, isMobile ? 7 : 12);
-    const sp=document.getElementById('sadPet');   if(sp)renderPet(sp,'sad',frameIdx%4,cmpPx);
+    const cc=document.getElementById('ctaPet');  if(cc)renderPet(cc,'sign',frameIdx%4, isMobile ? 7 : 11);
+    const sp=document.getElementById('sadPet');  if(sp)renderPet(sp,'sad',frameIdx%4,cmpPx);
+    renderStationIcons(frameIdx%4);
   }
 
-  // Fast animation (10fps): running pet
+  // Fast animation (10fps): running pets
   fastFrameTimer+=dt;
   if(fastFrameTimer>=100){
     fastFrameTimer=0; fastFrameIdx=(fastFrameIdx+1)%4;
     const rp=document.getElementById('runningPet'); if(rp)renderPet(rp,'running',fastFrameIdx,cmpPx);
+    const hp=document.getElementById('heroPet'); if(hp)renderPet(hp,'happy',fastFrameIdx,5);
   }
 }
 
@@ -732,6 +1456,8 @@ const obs = new IntersectionObserver(
   { threshold: .12 }
 );
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+// Fail-safe: never leave content permanently hidden if the observer misbehaves
+setTimeout(function(){ document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); }); }, 2000);
 
 // section visibility tracking
 const sectionObs = new IntersectionObserver(
@@ -764,20 +1490,7 @@ document.querySelectorAll('section[id], section[data-section]').forEach(el => se
   }, { passive: true });
 })();
 
-// nav: aparece al pasar el hero
-const nav = document.getElementById('mainNav');
 const mobileBar = document.getElementById('mobileStickyBar');
-window.addEventListener('scroll', () => {
-  const vh = window.innerHeight;
-  const pastHero = window.scrollY > vh * 0.85;
-  nav.style.opacity = pastHero ? '1' : '0';
-  nav.style.transform = pastHero ? 'none' : 'translateY(-8px)';
-  nav.style.pointerEvents = pastHero ? 'auto' : 'none';
-  if (pastHero) {
-    nav.style.background = 'rgba(255,255,255,.92)';
-    nav.style.borderColor = 'rgba(0,0,0,.06)';
-  }
-}, { passive: true });
 
 // Sticky mobile CTA: show after 2 seconds (not on scroll — most users never scroll)
 if (mobileBar && window.innerWidth < 768) {
@@ -786,6 +1499,9 @@ if (mobileBar && window.innerWidth < 768) {
     posthog.capture('sticky_cta_shown', { delay_s: 2 });
   }, 2000);
 }
+
+// keep the road pet sized to the road on resize
+window.addEventListener('resize', function(){ measureRoad(); measureWrap(); }, { passive: true });
 
 // Android detection & waitlist
 var isAndroid = /android/i.test(navigator.userAgent);
@@ -847,13 +1563,20 @@ if (isAndroid) {
 //   var btn = document.createElement('button');
 //   btn.id = 'debugToggle';
 //   btn.textContent = isAndroid ? 'Android' : 'iOS';
-//   btn.style.cssText = 'position:fixed;top:80px;right:12px;z-index:9999;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:900;font-family:Nunito,sans-serif;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1.5px solid rgba(0,0,0,.12);color:#1a1a2e;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(0,0,0,.08);';
+//   btn.style.cssText = 'position:fixed;top:80px;right:12px;z-index:9999;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:900;font-family:Nunito,sans-serif;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:1.5px solid rgba(255,255,255,.18);color:#fff;background:rgba(20,22,28,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 8px rgba(0,0,0,.4);';
 //   btn.onclick = function(){ setAndroidMode(!showingAndroid); };
 //   document.body.appendChild(btn);
 // })();
 
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    btn.parentElement.classList.toggle('open');
+    posthog.capture('faq_toggle', { q: btn.textContent.replace('+','').trim().slice(0,60) });
+  });
+});
+
 renderStatics();
-updateHUD();
 requestAnimationFrame(animate);
 </script>
 </body>
