@@ -265,14 +265,6 @@
   }
   .hc-pet.show { opacity: 1; transform: none; }
 
-  /* fanned stack of real unlockable backgrounds */
-  .bgfan { position: relative; width: 108px; height: 168px; flex: 0 0 auto; }
-  .bgfan img {
-    position: absolute; inset: 0; width: 100%; border-radius: 12px;
-    border: 2.5px solid #0a0b0e;
-    transform: translate(var(--tx,0), var(--ty,0)) rotate(var(--r,0deg));
-    box-shadow: 0 10px 24px rgba(0,0,0,.5); image-rendering: pixelated;
-  }
 
   /* react.gg-style content panels beside the road */
   .panel-k { color: #FF4D7E; font-weight: 900; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
@@ -477,12 +469,7 @@
           <h3 class="panel-h">Día 66: medalla y diploma</h3>
           <p class="panel-p">Al día 66 tu pacepal gana su medalla y tú un <strong style="color:#fff">diploma</strong>. Ya no corres por él — corres porque eres alguien que corre.</p>
         </div>
-        <div class="pk-art" style="display:flex;align-items:center;gap:24px">
-          <div class="bgfan" style="margin-right:26px">
-            <img src="assets/background_05.jpg" alt="" style="--r:-11deg;--tx:-32%;--ty:3%">
-            <img src="assets/background_12.jpg" alt="">
-            <img src="assets/background_19.jpg" alt="" style="--r:11deg;--tx:32%;--ty:3%">
-          </div>
+        <div class="pk-art" style="display:flex;align-items:center;justify-content:center">
           <div class="medalbox"><canvas id="medalCv" width="0" height="0" style="width:56px;margin:0 auto"></canvas><div class="mt">HÁBITO FORMADO</div></div>
         </div>
       </div>
@@ -524,11 +511,6 @@
         <h3 class="panel-h">20 especies, infinitas combinaciones</h3>
         <p class="panel-p"><strong style="color:#fff">20 animales</strong> y <strong style="color:#fff">26 paletas</strong> con ADN generativo: la tuya es única. Cada 3 días de constancia desbloquea un <strong style="color:#fff">fondo nuevo</strong> y una pose de celebración.</p>
         <div style="display:flex;gap:14px;margin-top:18px;align-items:center">
-          <div class="bgfan" style="width:86px;height:134px;margin:0 22px 0 8px">
-            <img src="assets/background_05.jpg" alt="" style="--r:-11deg;--tx:-30%;--ty:3%">
-            <img src="assets/background_12.jpg" alt="">
-            <img src="assets/background_19.jpg" alt="" style="--r:11deg;--tx:30%;--ty:3%">
-          </div>
           <canvas data-pet="happy" data-pal="berenjena" data-px="3" style="width:58px"></canvas>
         </div>
       </div>
