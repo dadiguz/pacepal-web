@@ -244,71 +244,50 @@
   /* narrative emphasis */
   .narr strong { color: #fff; font-weight: 900; }
 
-  /* hero: el pacepal corriendo, en su marco */
-  .hero-video {
-    position: relative;
-    border-radius: 26px;
-    overflow: visible;
-    aspect-ratio: 16 / 10;
-  }
-  .hero-video::before {
-    /* resplandor naranja detrás del marco */
-    content: ''; position: absolute; inset: 6% 4%;
-    background: radial-gradient(ellipse at 50% 60%, rgba(249,112,62,.42), transparent 70%);
-    filter: blur(38px); z-index: 0;
-  }
+  /* hero: el video de fondo, con velo para que el texto se lea encima */
+  .hero-media { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  #top .hero-title, #top .hero-sub { text-shadow: 0 2px 20px rgba(0,0,0,.6); }
   .hv-media {
-    position: relative; z-index: 1;
     width: 100%; height: 100%; object-fit: cover; display: block;
-    border-radius: 26px;
-    background: #0a0b0e;
-    border: 1px solid rgba(255,255,255,.10);
-    box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.4);
+    /* Encuadre corrido a la izquierda: así el pacepal cae en la mitad
+       derecha y no queda debajo del titular. */
+    object-position: 34% center;
+    transform: scale(1.04);
   }
   .hv-scrim {
-    position: absolute; inset: 0; z-index: 2; border-radius: 26px; pointer-events: none;
-    background: linear-gradient(to top, rgba(14,14,17,.55), transparent 42%);
+    position: absolute; inset: 0;
+    /* Dos capas: columna izquierda opaca para que el texto se lea sobre
+       cualquier escena, y fundido inferior que entrega la sección siguiente. */
+    background:
+      linear-gradient(90deg, rgba(10,10,13,.95) 0%, rgba(10,10,13,.88) 32%, rgba(10,10,13,.42) 58%, rgba(10,10,13,.26) 100%),
+      linear-gradient(to bottom, rgba(10,10,13,.80) 0%, rgba(10,10,13,.12) 24%, rgba(10,10,13,.18) 56%, rgba(14,14,17,.88) 86%, #0e0e11 100%);
   }
-  .hv-chip {
-    position: absolute; z-index: 3; top: 14px; left: 14px;
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 13px; border-radius: 999px;
-    background: rgba(12,13,17,.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,.14);
-    font: 900 11px/1 ui-monospace, monospace; letter-spacing: .1em; color: #fff;
-  }
-  .hv-dot { width: 7px; height: 7px; border-radius: 999px; background: #7BD66B; box-shadow: 0 0 0 3px rgba(123,214,107,.22); }
-  /* Una tarjeta asomando por la esquina: enseña el premio sin explicarlo. */
-  .hv-card {
-    position: absolute; z-index: 4; width: 31%; right: -8%; bottom: -14%;
-    transform: rotate(8deg);
-    filter: drop-shadow(0 18px 30px rgba(0,0,0,.55));
+  .hv-grid {
+    position: absolute; inset: 0; opacity: .5;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 34px 34px;
   }
   @media (max-width: 767px) {
-    .hero-video { aspect-ratio: 5 / 4; }
-    .hv-card { width: 27%; right: -4%; bottom: -10%; }
-    .hv-chip { top: 10px; left: 10px; padding: 6px 11px; font-size: 10px; }
+    /* En vertical el recorte es una franja estrecha del video: el encuadre
+       vuelve al centro (ahí está el pacepal) y el velo pesa de arriba abajo,
+       porque el texto va centrado y cae sobre cielo claro. */
+    .hv-media { object-position: center; }
+    .hv-scrim {
+      background:
+        rgba(10,10,13,.34),
+        linear-gradient(to bottom, rgba(10,10,13,.80) 0%, rgba(10,10,13,.42) 22%, rgba(10,10,13,.74) 58%, rgba(14,14,17,.94) 84%, #0e0e11 100%);
+    }
   }
-
-
-  /* react.gg-style content panels beside the road */
-  .panel-k { color: #FF4D7E; font-weight: 900; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-  .panel-h { color: #fff; font-weight: 900; font-size: 22px; line-height: 1.12; margin: 6px 0 10px; }
-  .panel-p { color: rgba(255,255,255,.58); font-size: 15px; line-height: 1.5; }
-
-  /* FAQ accordion (react.gg-style) */
-  .faq-wrap { background: #161617; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 6px 22px; }
-  .faq-item { border-bottom: 1px solid rgba(255,255,255,.08); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-q { display: flex; justify-content: space-between; align-items: center; gap: 18px; width: 100%; text-align: left;
-    padding: 19px 0; font-weight: 800; font-size: 16px; color: #f4f4f1; background: none; border: none; cursor: pointer; font-family: inherit; }
-  .faq-q .ico { color: #F9703E; font-size: 26px; line-height: 1; flex: 0 0 auto; transition: transform .25s ease; }
-  .faq-item.open .faq-q .ico { transform: rotate(45deg); }
-  .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
-  .faq-item.open .faq-a { max-height: 360px; }
-  .faq-a-inner { padding: 0 0 19px; color: rgba(255,255,255,.55); font-size: 14.5px; line-height: 1.55; }
-  .faq-a-inner a { color: #F9703E; text-decoration: underline; text-underline-offset: 2px; }
-
+  /* La tarjeta del día flotando sobre el video, a la derecha del titular. */
+  .hero-card-float {
+    position: absolute; z-index: 2; width: 186px;
+    right: 3%; bottom: -6%; transform: rotate(7deg);
+    filter: drop-shadow(0 26px 44px rgba(0,0,0,.62));
+  }
+  @media (max-width: 1023px) { .hero-card-float { display: none; } }
+  @media (min-width: 1280px) { .hero-card-float { width: 210px; right: 5%; } }
 
   /* ── barra superior ── */
   #mainNav {
@@ -405,18 +384,26 @@
   </div>
 </nav>
 
-<!-- HERO — react.gg-style 2-column -->
+<!-- HERO — el pacepal corriendo, de fondo -->
 <section id="top" class="hero-bg relative flex flex-col items-center justify-center overflow-hidden"
          style="min-height:100svh">
 
-  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-8 grid md:grid-cols-2 gap-10 md:gap-10 items-center py-24 md:py-0">
+  <!-- fondo: video + velo para que el texto se lea sobre cualquier escena -->
+  <div class="hero-media" aria-hidden="true">
+    <video id="heroVid" class="hv-media" poster="assets/run-poster.jpg"
+           muted loop playsinline autoplay preload="none"></video>
+    <div class="hv-scrim"></div>
+    <div class="hv-grid"></div>
+  </div>
 
-    <!-- left: copy + CTA -->
-    <div class="text-center md:text-left order-2 md:order-1">
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-8 py-24 md:py-0">
+
+    <!-- copy + CTA -->
+    <div class="text-center md:text-left max-w-xl">
       <h1 class="hero-title text-4xl md:text-6xl font-black leading-[1.04] tracking-tight mb-4 md:mb-5" style="color:#fff">
         Corre.<br><span style="color:#F9703E">Mantenlo vivo.</span>
       </h1>
-      <p class="hero-sub text-base md:text-lg mb-6 md:mb-7 max-w-md mx-auto md:mx-0" style="color:rgba(255,255,255,.55)">
+      <p class="hero-sub text-base md:text-lg mb-6 md:mb-7 max-w-md mx-auto md:mx-0" style="color:rgba(255,255,255,.74)">
         Tu mascota pixel arranca con corazones. Cada día que no corres, pierde uno. En cero, se apaga. <span style="color:#fff;font-weight:700">66 días</span> para volverte alguien que corre —y <span style="color:#fff;font-weight:700">50 tarjetas</span> que ganar por el camino.
       </p>
 
@@ -460,19 +447,8 @@
       </div>
     </div>
 
-    <!-- right: el pacepal corriendo (video) + una tarjeta asomando -->
-    <div class="order-1 md:order-2">
-      <div class="hero-video">
-        <video id="heroVid" class="hv-media" poster="assets/run-poster.jpg"
-               muted loop playsinline autoplay preload="none"
-               aria-label="Un pacepal corriendo por la ciudad, la pista y la playa"></video>
-        <div class="hv-scrim"></div>
-        <div class="hv-chip">
-          <span class="hv-dot"></span>DÍA 12 <span style="opacity:.45">/ 66</span>
-        </div>
-        <div class="hv-card" id="heroCard"></div>
-      </div>
-    </div>
+    <!-- la tarjeta del día, flotando sobre el video (solo en pantalla ancha) -->
+    <div class="hero-card-float" id="heroCard"></div>
   </div>
 
   <!-- scroll hint -->
