@@ -292,6 +292,24 @@
   @media (max-width: 1023px) { .hero-card-float { display: none; } }
   @media (min-width: 1280px) { .hero-card-float { width: 210px; right: 5%; } }
 
+  /* react.gg-style content panels beside the road */
+  .panel-k { color: #FF4D7E; font-weight: 900; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .panel-h { color: #fff; font-weight: 900; font-size: 22px; line-height: 1.12; margin: 6px 0 10px; }
+  .panel-p { color: rgba(255,255,255,.58); font-size: 15px; line-height: 1.5; }
+
+  /* FAQ accordion (react.gg-style) */
+  .faq-wrap { background: #161617; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 6px 22px; }
+  .faq-item { border-bottom: 1px solid rgba(255,255,255,.08); }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q { display: flex; justify-content: space-between; align-items: center; gap: 18px; width: 100%; text-align: left;
+    padding: 19px 0; font-weight: 800; font-size: 16px; color: #f4f4f1; background: none; border: none; cursor: pointer; font-family: inherit; }
+  .faq-q .ico { color: #F9703E; font-size: 26px; line-height: 1; flex: 0 0 auto; transition: transform .25s ease; }
+  .faq-item.open .faq-q .ico { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .faq-item.open .faq-a { max-height: 360px; }
+  .faq-a-inner { padding: 0 0 19px; color: rgba(255,255,255,.55); font-size: 14.5px; line-height: 1.55; }
+  .faq-a-inner a { color: #F9703E; text-decoration: underline; text-underline-offset: 2px; }
+
   /* ── barra superior ── */
   #mainNav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 60;
