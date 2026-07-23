@@ -1,0 +1,220 @@
+/* ═══ Tarjetas coleccionables ════════════════════════════════════════════
+   Misma anatomía que RewardCardView.swift: la tarjeta se maqueta a 320×460 y
+   se escala al hueco disponible, así la tipografía queda proporcionada lo
+   mismo en una miniatura que a tamaño completo. */
+
+.pcard-stage {
+  position: relative;
+  width: 100%;
+  perspective: 1300px;
+  --holo: .22;
+}
+.pcard-stage[data-rarity="1"] { --holo: .10; }
+.pcard-stage[data-rarity="2"] { --holo: .13; }
+.pcard-stage[data-rarity="3"] { --holo: .17; }
+.pcard-stage[data-rarity="4"] { --holo: .22; }
+.pcard-stage[data-family="challenge"] { --holo: .26; }
+/* El foil sube al acercarse, como al girar la carta en la mano. */
+.pcard-stage:hover[data-rarity="1"] { --holo: .18; }
+.pcard-stage:hover[data-rarity="2"] { --holo: .24; }
+.pcard-stage:hover[data-rarity="3"] { --holo: .32; }
+.pcard-stage:hover[data-rarity="4"] { --holo: .40; }
+.pcard-stage:hover[data-family="challenge"] { --holo: .46; }
+
+.pcard-tilt {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.22,1,.36,1);
+  will-change: transform;
+}
+
+.pcard {
+  position: absolute; top: 0; left: 0;
+  width: 320px; height: 460px;
+  transform-origin: top left;
+  border-radius: 20px;
+  box-shadow: 0 22px 44px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.45);
+  isolation: isolate;
+}
+
+.pcard-inner {
+  position: absolute; inset: 12px;
+  border-radius: 9px;
+  padding: 5px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+
+/* ── Cabecera: tipo · nombre · distancia (el lugar de los HP) ── */
+.pc-header { display: flex; align-items: baseline; gap: 7px; padding: 0 2px 7px; }
+.pc-type {
+  flex: 0 0 auto;
+  font: 900 8.5px/1 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: .06em; color: #1A1512;
+  padding: 3px 7px; border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
+.pc-name {
+  flex: 1 1 auto; min-width: 0;
+  font-size: 22px; font-weight: 900; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pc-hp { flex: 0 0 auto; display: flex; align-items: baseline; gap: 3px; }
+.pc-hp b { font: 900 22px/1 ui-monospace, SFMono-Regular, monospace; color: #fff; font-variant-numeric: tabular-nums; }
+.pc-hp i { font-style: normal; font-size: 11px; font-weight: 800; color: #F9703E; }
+
+/* ── Ventana de arte: marco blanco + ficha, como una carta impresa ── */
+.pc-window {
+  margin: 0 6px;
+  background: #F2EFE8;
+  border: 1px solid rgba(0,0,0,.28);
+  border-radius: 9px;
+  padding: 2.5px 2.5px 0;
+}
+.pc-art { position: relative; height: 230px; border-radius: 4px; overflow: hidden; }
+.pc-canvas, .pc-wall {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  image-rendering: auto;
+}
+.pc-floor {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.38));
+}
+.pc-mono {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  transform: translate(var(--mx, 0), var(--my, 0));
+}
+.pc-sprite {
+  image-rendering: pixelated;
+  background: radial-gradient(circle at 50% 48%, rgba(255,255,255,.22), transparent 62%);
+  filter: drop-shadow(0 5px 9px rgba(0,0,0,.55));
+}
+.pc-caption {
+  height: 18px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  color: #3A322B; white-space: nowrap; overflow: hidden;
+  font: 800 7.5px/1 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: .02em; padding: 0 6px;
+}
+.pc-caption em { font-style: normal; opacity: .45; }
+
+/* ── Fila de ritmo ── */
+.pc-pace { display: flex; align-items: center; gap: 9px; padding: 9px 10px; }
+.pc-pace-ico {
+  width: 24px; height: 24px; border-radius: 999px; background: #fff; color: #000;
+  display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
+}
+.pc-pace-lb { font-size: 13px; font-weight: 800; letter-spacing: .05em; color: #fff; }
+.pc-pace-v { margin-left: auto; display: flex; align-items: baseline; gap: 3px; }
+.pc-pace-v b { font: 900 19px/1 ui-monospace, SFMono-Regular, monospace; color: #fff; font-variant-numeric: tabular-nums; }
+.pc-pace-v i { font-style: normal; font-size: 9px; font-weight: 800; color: #F9703E; }
+
+/* ── Descripción ── */
+/* Alto fijo: lo que sobra del cuerpo después de la ficha y la fila de ritmo.
+   El texto se recorta a cinco líneas, como el lineLimit(5) de la app. */
+.pc-detail {
+  height: 80px; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.10);
+}
+.pc-detail-t {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5;
+  overflow: hidden; text-align: center;
+  color: #fff; font-size: 11.5px; font-weight: 500; line-height: 1.24;
+}
+.pc-detail[data-long] .pc-detail-t { font-size: 10.2px; line-height: 1.22; }
+.pc-detail b { color: #F9703E; font-weight: 800; }
+
+/* ── Pie ── */
+.pc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding: 8px 3px 1px; }
+.pc-logo { height: 12px; width: auto; opacity: .6; filter: brightness(0) invert(1); }
+.pc-num { font: 700 8.5px/1 ui-monospace, SFMono-Regular, monospace; color: rgba(255,255,255,.5); }
+
+/* ── Foil holográfico (CardHoloOverlay.swift) ── */
+.pc-holo { position: absolute; inset: 0; border-radius: 20px; overflow: hidden; pointer-events: none; }
+.pc-holo::before {
+  content: ''; position: absolute; inset: -25%;
+  background: conic-gradient(from 0deg at var(--hx, 50%) var(--hy, 50%),
+    #ff004c, #ff8a00, #ffe600, #38e54d, #00e5ff, #3b6bff, #a24dff, #ff4dcd, #ff004c);
+  mix-blend-mode: overlay;
+  opacity: var(--holo);
+  animation: holoDrift 11s ease-in-out infinite;
+}
+.pc-holo::after {
+  content: ''; position: absolute; top: -30%; bottom: -30%; left: -55%; width: 42%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.30), transparent);
+  mix-blend-mode: screen;
+  animation: holoSweep 4.5s linear infinite;
+}
+.pc-holo[data-showcase] { mix-blend-mode: normal; }
+.pc-holo[data-showcase]::after { animation-duration: 3.4s; }
+
+.pc-gloss {
+  position: absolute; inset: 0; border-radius: 20px; pointer-events: none;
+  background: linear-gradient(155deg, rgba(255,255,255,.16), transparent 38%);
+}
+
+@keyframes holoDrift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50%      { transform: translate(4%, -3%) rotate(8deg); }
+}
+@keyframes holoSweep {
+  0%   { transform: translateX(0) skewX(-8deg); }
+  60%, 100% { transform: translateX(360%) skewX(-8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-holo::before, .pc-holo::after { animation: none; }
+  .pcard-tilt { transition: none; }
+}
+
+/* ── Vitrina: fila de tarjetas ── */
+.card-rail {
+  display: flex; gap: 18px;
+  overflow-x: auto; overflow-y: hidden;
+  padding: 10px 20px 26px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.card-rail::-webkit-scrollbar { display: none; }
+.card-rail > .rail-item { flex: 0 0 auto; width: 208px; scroll-snap-align: center; }
+.rail-item .rl-label { margin-top: 12px; font-size: 12.5px; font-weight: 800; color: #fff; }
+.rail-item .rl-sub { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,.38); line-height: 1.35; }
+@media (min-width: 768px) {
+  .card-rail { gap: 26px; padding: 14px 32px 34px; }
+  .card-rail > .rail-item { width: 244px; }
+}
+
+/* ── Álbum: casillas de las cinco familias ── */
+.album-fam {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.028);
+  border: 1px solid rgba(255,255,255,.07);
+  transition: border-color .25s ease, background .25s ease;
+}
+.album-fam:hover { border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.05); }
+.album-fam .af-dot { width: 10px; height: 10px; border-radius: 999px; margin-top: 6px; flex: 0 0 auto; }
+.album-fam .af-name { font-size: 15px; font-weight: 800; color: #fff; }
+.album-fam .af-count { font: 800 12px/1 ui-monospace, monospace; color: rgba(255,255,255,.4); margin-left: auto; flex: 0 0 auto; }
+.album-fam .af-how { font-size: 13px; color: rgba(255,255,255,.45); line-height: 1.45; margin-top: 4px; }
+
+/* Rejilla de casillas vacías, como el álbum de la app */
+.album-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
+@media (max-width: 640px) { .album-grid { grid-template-columns: repeat(10, 1fr); gap: 4px; } }
+.album-slot {
+  aspect-ratio: 320 / 460;
+  border-radius: 4px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+}
+.album-slot.owned { border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,.4); }

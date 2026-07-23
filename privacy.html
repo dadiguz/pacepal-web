@@ -31,68 +31,87 @@
 
 <main class="max-w-3xl mx-auto px-5 py-16">
   <h1 class="text-4xl font-black mb-2">Política de Privacidad</h1>
-  <p class="text-white/40 text-sm mb-4">Última actualización: 1 de enero de 2025</p>
+  <p class="text-white/40 text-sm mb-4">Última actualización: 22 de julio de 2026</p>
 
   <div class="callout">
     <p class="text-[#4ADE80] font-extrabold text-sm mb-1">🔒 Resumen rápido</p>
-    <p class="text-white/70 text-sm">Pacepal <strong class="text-white">no recopila ni transmite datos personales</strong> a ningún servidor. Toda la información se procesa localmente en tu dispositivo. No vendemos ni compartimos tus datos con terceros.</p>
+    <p class="text-white/70 text-sm">Tus datos de salud y el trazo GPS de tus carreras <strong class="text-white">se quedan en tu dispositivo</strong>. Lo único que sale de ahí es una <strong class="text-white">copia de tu progreso</strong> (corazones, días, mascota y tarjetas) guardada bajo una cuenta anónima, y <strong class="text-white">métricas de uso anónimas</strong> para saber qué partes de la app funcionan. No vendemos datos, no hay publicidad y no pedimos correo ni contraseña para usar Pacepal.</p>
   </div>
 
   <div class="prose">
-    <h2>1. Información que recopilamos</h2>
+    <h2>1. Información que tratamos</h2>
 
     <h3>Datos de salud (Apple HealthKit)</h3>
-    <p>Pacepal lee los siguientes datos de Apple HealthKit, <strong>únicamente en tu dispositivo</strong>:</p>
+    <p>Pacepal lee de Apple HealthKit, <strong>únicamente en tu dispositivo</strong>:</p>
     <ul>
       <li>Distancia caminada o corrida (km).</li>
       <li>Número de pasos (opcional, como dato de respaldo).</li>
     </ul>
-    <p>Estos datos se usan exclusivamente para calcular la energía de tu mascota. <strong>Nunca se almacenan en servidores externos, nunca se comparten, nunca se usan para publicidad.</strong></p>
+    <p>Se usan para contar tu día y calcular los corazones de tu mascota. <strong>Los datos de HealthKit nunca se suben a nuestros servidores, nunca se comparten y nunca se usan para publicidad.</strong></p>
 
-    <h3>Preferencias de la app</h3>
-    <p>Pacepal guarda en tu dispositivo (UserDefaults / almacenamiento local) la configuración de tu mascota: colores, nombre, racha de días y fondos desbloqueados. Estos datos no salen de tu dispositivo.</p>
+    <h3>Ubicación (GPS), solo mientras corres</h3>
+    <p>Si usas el registro de carreras con GPS, Pacepal accede a tu ubicación <strong>mientras la carrera está activa</strong> (incluida la pantalla bloqueada) para medir distancia, ritmo y dibujar el recorrido. Una versión ligera de ese trazo se guarda junto a la tarjeta de ese día <strong>en tu dispositivo</strong>. Las coordenadas <strong>no se suben a ningún servidor</strong> y puedes revocar el permiso cuando quieras en Ajustes de iOS; la app sigue funcionando con Apple Health o con el podómetro.</p>
 
-    <h3>Notificaciones push</h3>
-    <p>Si activas las notificaciones, el sistema iOS generará un token de notificación. Pacepal no envía este token a ningún servidor externo; las notificaciones se programan localmente en tu dispositivo.</p>
-
-    <h2>2. Cómo usamos la información</h2>
+    <h3>Progreso del reto y copia en la nube</h3>
+    <p>Para que no pierdas tu reto al cambiar de teléfono o reinstalar la app, Pacepal crea al arrancar una <strong>cuenta anónima</strong> (un identificador aleatorio, sin correo ni contraseña) y respalda tu progreso en Google Firebase. Se respalda:</p>
     <ul>
-      <li><strong>Calcular la energía de tu mascota</strong> basada en tu actividad física diaria.</li>
-      <li><strong>Mostrar estadísticas locales</strong> como racha de días y km acumulados.</li>
-      <li><strong>Programar notificaciones locales</strong> cuando la energía de tu mascota es crítica.</li>
-      <li><strong>Personalizar la experiencia</strong> recordando tus preferencias de diseño.</li>
+      <li>Corazones, días completados, nivel del reto, fechas de inicio e hibernaciones usadas.</li>
+      <li>Tu mascota (nombre y ADN de diseño) y las mascotas guardadas.</li>
+      <li>Tarjetas conseguidas (familia, nivel, fecha, distancia y ritmo de esa carrera) y el fondo elegido.</li>
+      <li>Logros y consejos ya vistos, unidad de medida y el registro diario de kilómetros de las carreras hechas dentro de la app.</li>
+    </ul>
+    <p>Si quieres poder recuperar ese progreso, puedes <strong>vincular tu Apple ID</strong> con «Iniciar sesión con Apple». En ese caso recibimos el identificador que Apple nos entrega y, si tú lo autorizas al vincular, tu correo (que puede ser el alias privado de Apple). No pedimos ni almacenamos contraseñas.</p>
+
+    <h3>Métricas de uso (PostHog)</h3>
+    <p>Usamos PostHog para entender cómo se usa la app: eventos como completar el onboarding, elegir personaje o terminar el cuestionario, más eventos de ciclo de vida (instalación, actualización, apertura), versión de la app y modelo de dispositivo. Estos eventos van asociados al identificador anónimo de tu cuenta, <strong>no a tu nombre</strong>. PostHog procesa la dirección IP de la petición para una ubicación aproximada a nivel de ciudad/país.</p>
+
+    <h3>Notificaciones</h3>
+    <p>Las notificaciones se programan <strong>localmente</strong> en tu dispositivo. No enviamos tu token de notificaciones a ningún servidor.</p>
+
+    <h2>2. Para qué usamos la información</h2>
+    <ul>
+      <li><strong>Contar tus días</strong> y calcular los corazones de tu mascota.</li>
+      <li><strong>Generar tus tarjetas</strong> con la distancia, el ritmo y la fecha de la carrera que las ganó.</li>
+      <li><strong>Respaldar y restaurar tu progreso</strong> si borras la app o cambias de teléfono.</li>
+      <li><strong>Programar recordatorios locales</strong> cuando tu mascota está por perder un corazón.</li>
+      <li><strong>Mejorar la app</strong> con métricas agregadas de uso.</li>
     </ul>
 
-    <h2>3. Información que NO recopilamos</h2>
+    <h2>3. Lo que NO hacemos</h2>
     <ul>
-      <li>No recopilamos nombre, correo electrónico ni datos de contacto.</li>
-      <li>No usamos análisis de comportamiento (no hay Google Analytics, Mixpanel, ni similares).</li>
-      <li>No recopilamos datos de ubicación GPS.</li>
-      <li>No creamos perfiles de usuario.</li>
-      <li>No hay publicidad personalizada.</li>
+      <li>No vendemos ni alquilamos tus datos a nadie.</li>
+      <li>No mostramos publicidad ni compartimos datos con redes publicitarias.</li>
+      <li>No subimos tus datos de HealthKit ni las coordenadas de tus rutas.</li>
+      <li>No pedimos correo, contraseña ni datos de contacto para usar la app.</li>
     </ul>
 
-    <h2>4. Compartir información con terceros</h2>
-    <p><strong>No compartimos ningún dato con terceros.</strong> Pacepal funciona completamente offline en lo que respecta al procesamiento de datos del usuario. La única conexión a internet que realiza la app es para actualizaciones opcionales de contenido (fondos, futuras funciones).</p>
+    <h2>4. Proveedores que tratan datos por nosotros</h2>
+    <ul>
+      <li><strong>Google Firebase</strong> (Authentication y Cloud Firestore, región <em>us-east1</em>): cuenta anónima y copia de tu progreso. <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Privacidad de Firebase</a>.</li>
+      <li><strong>PostHog</strong> (nube de EE. UU.): métricas de uso. <a href="https://posthog.com/privacy" target="_blank" rel="noopener">Privacidad de PostHog</a>.</li>
+      <li><strong>Apple</strong>: HealthKit, «Iniciar sesión con Apple» y App Store. Apple trata esos datos según su propia política.</li>
+    </ul>
+    <p>Estos proveedores actúan como encargados del tratamiento y solo procesan los datos para prestarnos el servicio descrito aquí.</p>
 
-    <h2>5. Seguridad de los datos</h2>
-    <p>Dado que todos los datos se almacenan localmente en tu dispositivo, la seguridad depende de las protecciones nativas de iOS (cifrado del dispositivo, Face ID / Touch ID). Te recomendamos mantener tu dispositivo con contraseña activada y con las actualizaciones de iOS al día.</p>
+    <h2>5. Seguridad</h2>
+    <p>La información viaja cifrada (TLS) y se guarda cifrada en reposo en la infraestructura de Google. Las reglas de Firestore permiten que <strong>cada cuenta lea y escriba únicamente su propio documento</strong>. En el dispositivo, la seguridad depende de las protecciones nativas de iOS: te recomendamos tener código de acceso y iOS actualizado.</p>
 
-    <h2>6. Retención de datos</h2>
-    <p>Los datos de la app se eliminan automáticamente cuando desinstales Pacepal. No hay datos almacenados en la nube que requieran eliminación adicional.</p>
+    <h2>6. Conservación y borrado</h2>
+    <p>Los datos locales se eliminan al desinstalar Pacepal. La copia en la nube se conserva mientras exista tu cuenta, precisamente para que puedas recuperarla. Si quieres que borremos tu copia y tu cuenta, escríbenos a <a href="mailto:soporte@dallio.io">soporte@dallio.io</a> desde el correo vinculado o indicándonos tu identificador de cuenta (Ajustes → Cuenta y copia en la nube): la eliminamos en un plazo máximo de 30 días.</p>
 
     <h2>7. Menores de edad</h2>
-    <p>Pacepal no está dirigida a menores de 13 años. No recopilamos intencionalmente información de menores. Si eres padre o tutor y crees que tu hijo usa la app, puedes desinstalarla en cualquier momento sin necesidad de contactarnos.</p>
+    <p>Pacepal no está dirigida a menores de 13 años. No recopilamos intencionalmente información de menores. Si eres padre o tutor y crees que tu hijo usa la app, escríbenos y borraremos la información asociada.</p>
 
     <h2>8. Cambios a esta política</h2>
     <p>Si actualizamos esta Política de Privacidad, te notificaremos dentro de la app con al menos 7 días de anticipación. El uso continuado de Pacepal después de los cambios implica tu aceptación de la nueva política.</p>
 
     <h2>9. Tus derechos</h2>
-    <p>Dado que no recopilamos datos personales en servidores externos, la mayoría de los derechos GDPR / CCPA / LGPD se ejercen directamente en tu dispositivo:</p>
+    <p>Puedes ejercer tus derechos (GDPR / CCPA / LGPD) así:</p>
     <ul>
-      <li><strong>Acceder a tus datos:</strong> revisa la app directamente o los datos de HealthKit en la app de Salud.</li>
-      <li><strong>Eliminar tus datos:</strong> desinstala Pacepal; los datos se borran del dispositivo.</li>
-      <li><strong>Revocar acceso a HealthKit:</strong> Configuración &gt; Privacidad y Seguridad &gt; Salud &gt; Pacepal.</li>
+      <li><strong>Acceder a tus datos:</strong> los ves en la app; para una copia de lo guardado en la nube, escríbenos.</li>
+      <li><strong>Eliminar tus datos:</strong> desinstala la app para lo local y pide el borrado de la copia en la nube en <a href="mailto:soporte@dallio.io">soporte@dallio.io</a>.</li>
+      <li><strong>Revocar permisos:</strong> Ajustes &gt; Privacidad y Seguridad &gt; Salud / Localización &gt; Pacepal.</li>
+      <li><strong>Oponerte a las métricas de uso:</strong> escríbenos y desactivaremos la analítica asociada a tu identificador.</li>
     </ul>
 
     <h2>10. Contacto</h2>
@@ -107,7 +126,7 @@
       <a href="terms.html" class="hover:text-white/60 transition-colors">Términos</a>
       <a href="privacy.html" class="text-white/60">Privacidad</a>
     </div>
-    <p class="text-white/25 text-sm">© 2025 Pacepal</p>
+    <p class="text-white/25 text-sm">© 2026 Pacepal</p>
   </div>
 </footer>
 

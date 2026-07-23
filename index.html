@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pacepal — Corre para mantenerlo vivo</title>
-<meta name="description" content="Adopta una mascota pixel-art con 5 corazones. Cada día que no corres, pierde uno. 66 días para volverte alguien que corre.">
+<meta name="description" content="Adopta una mascota pixel-art con 5 corazones. Cada día que no corres, pierde uno. Colecciona 50 tarjetas con arte generativo en 66 días. Gratis, sin anuncios.">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 
 <!-- Open Graph / social -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Pacepal — Corre para mantenerlo vivo">
-<meta property="og:description" content="Tu mascota pixel tiene corazones. Cada día que no corres, pierde uno. En cero, se apaga. 66 días para formar el hábito.">
+<meta property="og:description" content="Tu mascota pixel tiene corazones. Cada día que no corres, pierde uno. Colecciona 50 tarjetas en 66 días. Gratis.">
 <meta property="og:image" content="assets/icon.png">
 <meta property="og:locale" content="es_MX">
 <meta name="twitter:card" content="summary_large_image">
@@ -22,6 +22,7 @@
 <link rel="dns-prefetch" href="https://us.i.posthog.com">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cards.css">
 
 <!-- PostHog -->
 <script>
@@ -285,6 +286,87 @@
   .faq-a-inner a { color: #F9703E; text-decoration: underline; text-underline-offset: 2px; }
 
 
+  /* ── barra superior ── */
+  #mainNav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+    padding: 12px 0;
+    transition: background .3s ease, border-color .3s ease, padding .3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  #mainNav.stuck {
+    background: rgba(12,13,17,.82); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-bottom-color: rgba(255,255,255,.07); padding: 9px 0;
+  }
+  .nav-link { font-size: 13.5px; font-weight: 700; color: rgba(255,255,255,.5); transition: color .2s ease; }
+  .nav-link:hover { color: #fff; }
+  .nav-cta {
+    font-size: 13px; font-weight: 800; color: #14191f; background: #F9703E;
+    padding: 9px 16px; border-radius: 999px; transition: transform .15s ease, background .2s ease;
+  }
+  .nav-cta:hover { background: #ff8050; transform: translateY(-1px); }
+
+  /* ── etiquetas de sección ── */
+  .kicker { font-size: 11px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+  .badge-free {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 8px; border-radius: 999px;
+    background: rgba(123,214,107,.10); border: 1px solid rgba(123,214,107,.28);
+    font-size: 12px; font-weight: 800; color: #7BD66B; letter-spacing: .02em;
+  }
+  .badge-free span.dot { width: 6px; height: 6px; border-radius: 999px; background: #7BD66B; margin-left: 6px; box-shadow: 0 0 0 4px rgba(123,214,107,.18); }
+
+  /* ── tarjetas de característica ── */
+  .fcard {
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 22px; padding: 24px 22px;
+    transition: transform .3s cubic-bezier(.22,1,.36,1), border-color .3s ease, box-shadow .3s ease;
+  }
+  .fcard:hover { transform: translateY(-4px); border-color: rgba(255,255,255,.17); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+  .fcard::after {
+    content: ''; position: absolute; inset: -40% 55% 55% -40%;
+    background: radial-gradient(circle, var(--tint, rgba(249,112,62,.35)), transparent 68%);
+    opacity: .5; pointer-events: none;
+  }
+  .fcard > * { position: relative; z-index: 1; }
+  .fcard .fc-ico {
+    width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.09); margin-bottom: 14px;
+  }
+  .fcard h3 { font-size: 17px; font-weight: 900; color: #fff; margin-bottom: 7px; line-height: 1.2; }
+  .fcard p { font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.5); }
+  .fcard .fc-tag { font: 800 10px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.32); margin-bottom: 10px; display: block; }
+
+  /* ── vitrina de tarjetas: abanico de tres piezas ── */
+  .showcase { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: start; }
+  @media (min-width: 900px) { .showcase { grid-template-columns: 1fr 1.12fr; gap: 60px; align-items: center; } }
+  .hero-cards { position: relative; display: flex; align-items: center; justify-content: center; }
+  .hero-cards > div { flex: 0 0 auto; }
+  .hero-cards .hc-side { width: 31%; z-index: 1; }
+  .hero-cards .hc-mid  { width: 43%; z-index: 3; margin: 0 -4.5%; }
+  /* Las laterales van giradas: al rotar ocupan más ancho del que miden, así que
+     el trío suma 96% y no 100, o la de la derecha se sale de la sección. */
+  .hero-cards .hc-side:first-child { transform: rotate(-6deg) translateY(14px); }
+  .hero-cards .hc-side:last-child  { transform: rotate(6deg)  translateY(14px); }
+  .hero-cards > div:hover { z-index: 5; }
+  @media (max-width: 639px) {
+    /* El abanico se sale un poco del ancho de lectura: en móvil una tarjeta
+       de 110 px no deja ver el arte, que es justo lo que se quiere enseñar. */
+    .hero-cards { width: 116%; margin-left: -8%; }
+    .hero-cards .hc-side { width: 31%; }
+    .hero-cards .hc-mid  { width: 43%; margin: 0 -4%; }
+  }
+  .stat-line { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+  .stat-line .sl-n { font: 900 26px/1 ui-monospace, monospace; color: #fff; }
+  .stat-line .sl-l { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.38); letter-spacing: .04em; }
+
+  /* ── panel de ruta ── */
+  .route-panel {
+    background: #12141a; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 18px;
+  }
+  .route-panel canvas { width: 100%; height: auto; display: block; border-radius: 12px; background: rgba(255,255,255,.02); }
+
   /* ── hearts row (real app sprites) ── */
   .heart-row { display: inline-flex; gap: 7px; align-items: center; }
   .heart-row img { width: 30px; height: auto; image-rendering: pixelated; display: block; }
@@ -295,19 +377,40 @@
 </head>
 <body>
 
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="max-w-6xl mx-auto px-5 md:px-8 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5 shrink-0" aria-label="Pacepal">
+      <img src="assets/logo_sm.png" alt="Pacepal" class="h-6 md:h-7 w-auto" style="filter:brightness(0) invert(1)">
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#coleccion" class="nav-link">Colección</a>
+      <a href="#how" class="nav-link">Los 66 días</a>
+      <a href="#todo" class="nav-link">Qué trae</a>
+      <a href="#faq" class="nav-link">Preguntas</a>
+    </div>
+    <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
+       onclick="posthog.capture('cta_click',{location:'nav',label:'Descargar'})"
+       class="nav-cta hidden sm:inline-flex">Descargar · Gratis</a>
+  </div>
+</nav>
+
 <!-- HERO — react.gg-style 2-column -->
-<section class="hero-bg relative flex flex-col items-center justify-center overflow-hidden"
+<section id="top" class="hero-bg relative flex flex-col items-center justify-center overflow-hidden"
          style="min-height:100svh">
 
-  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-8 grid md:grid-cols-2 gap-10 md:gap-10 items-center py-20 md:py-0">
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-8 grid md:grid-cols-2 gap-10 md:gap-10 items-center py-24 md:py-0">
 
     <!-- left: copy + CTA -->
     <div class="text-center md:text-left order-2 md:order-1">
+      <div class="mb-5 flex justify-center md:justify-start">
+        <span class="badge-free">Gratis, sin anuncios<span class="dot"></span></span>
+      </div>
       <h1 class="hero-title text-4xl md:text-6xl font-black leading-[1.04] tracking-tight mb-4 md:mb-5" style="color:#fff">
         Corre.<br><span style="color:#F9703E">Mantenlo vivo.</span>
       </h1>
       <p class="hero-sub text-base md:text-lg mb-6 md:mb-7 max-w-md mx-auto md:mx-0" style="color:rgba(255,255,255,.55)">
-        Tu mascota pixel arranca con corazones. Cada día que no corres, pierde uno. En cero, se apaga. <span style="color:#fff;font-weight:700">66 días</span> para volverte alguien que corre.
+        Tu mascota pixel arranca con corazones. Cada día que no corres, pierde uno. En cero, se apaga. <span style="color:#fff;font-weight:700">66 días</span> para volverte alguien que corre —y <span style="color:#fff;font-weight:700">50 tarjetas</span> que ganar por el camino.
       </p>
 
       <!-- iOS CTA -->
@@ -408,6 +511,102 @@
   </div>
 </section>
 
+<!-- COLECCIÓN: tarjetas coleccionables (novedad de la 2.1) -->
+<section id="coleccion" data-section="cards" class="section-mobile py-16 md:py-28 overflow-hidden" style="border-top:1px solid rgba(255,255,255,.06)">
+  <div class="max-w-6xl mx-auto px-5 md:px-8">
+
+    <div class="showcase">
+      <div class="reveal">
+        <div class="kicker mb-3" style="color:#B58CFF">Lo nuevo</div>
+        <h2 class="text-3xl md:text-5xl font-black leading-[1.05] tracking-tight mb-4" style="color:#fff">
+          Cada logro se vuelve<br><span style="color:#F9703E">una tarjeta tuya</span>.
+        </h2>
+        <p class="text-base md:text-lg mb-6" style="color:rgba(255,255,255,.55)">
+          Corriste 10K, encadenaste 20 días, bajaste de 30 minutos en los 5K. En vez de una notificación que se olvida, te llevas una tarjeta con tu mascota, tu distancia, tu ritmo y la fecha exacta. Se queda en tu álbum para siempre.
+        </p>
+
+        <div class="stat-line mb-7">
+          <div><div class="sl-n">50</div><div class="sl-l">tarjetas en total</div></div>
+          <div><div class="sl-n">5</div><div class="sl-l">familias distintas</div></div>
+          <div><div class="sl-n">7</div><div class="sl-l">artes generativos</div></div>
+        </div>
+
+        <ul class="space-y-3 text-sm md:text-[15px]" style="color:rgba(255,255,255,.55)">
+          <li class="flex gap-3"><span style="color:#F9703E;font-weight:900">→</span><span><strong style="color:#fff">Arte único por tarjeta.</strong> El fondo se dibuja con la semilla de tu logro: la misma tarjeta se ve igual en cualquier teléfono, y ninguna se repite.</span></li>
+          <li class="flex gap-3"><span style="color:#F9703E;font-weight:900">→</span><span><strong style="color:#fff">Foil holográfico de verdad.</strong> Las especiales brillan al mover el teléfono; las leyendas —día 66, 100K, media maratón— van con marco arcoíris.</span></li>
+          <li class="flex gap-3"><span style="color:#F9703E;font-weight:900">→</span><span><strong style="color:#fff">Úsala de fondo o compártela.</strong> Cualquier tarjeta se convierte en el fondo de tu pantalla principal, o en una imagen para presumir.</span></li>
+        </ul>
+
+        <p class="mt-6 text-xs font-bold tracking-wide" style="color:rgba(255,255,255,.3)">
+          Pasa el cursor o inclina el teléfono para ver el foil
+        </p>
+      </div>
+
+      <div class="reveal">
+        <div class="hero-cards" id="heroCards"></div>
+      </div>
+    </div>
+
+    <!-- fila con el resto del set -->
+    <div class="mt-16 md:mt-24 reveal">
+      <div class="flex items-baseline justify-between mb-4 px-1">
+        <h3 class="text-xl md:text-2xl font-black" style="color:#fff">Todo lo que se puede ganar</h3>
+        <span class="text-xs font-extrabold tracking-widest uppercase" style="color:rgba(255,255,255,.3)">Desliza →</span>
+      </div>
+      <div class="card-rail" id="cardRail"></div>
+    </div>
+
+    <!-- familias + álbum + ruta -->
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 mt-10 md:mt-14 items-start">
+      <div class="reveal">
+        <div class="space-y-3" id="albumFams"></div>
+        <div class="mt-5 flex flex-col sm:flex-row sm:items-center gap-4 p-5 rounded-2xl"
+             style="background:linear-gradient(135deg,rgba(249,112,62,.14),rgba(249,112,62,.03));border:1px solid rgba(249,112,62,.22)">
+          <div class="flex-1">
+            <div class="text-[15px] font-black" style="color:#fff">Tu casilla nº 1 es el día 1</div>
+            <div class="text-[13px] mt-1" style="color:rgba(255,255,255,.5)">Sal a correr hoy y el álbum arranca esta misma noche.</div>
+          </div>
+          <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
+             onclick="posthog.capture('cta_click',{location:'cards',label:'Empezar álbum'})"
+             class="shrink-0 inline-flex items-center justify-center gap-2 font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-3 rounded-xl transition-colors">
+            Empezar gratis
+          </a>
+        </div>
+      </div>
+
+      <div class="space-y-6 reveal">
+        <div class="route-panel">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="kicker" style="color:#F9703E">Tu ruta</span>
+            <span class="text-[11px] font-extrabold tracking-widest uppercase" style="color:rgba(255,255,255,.3)">Salida del día 47</span>
+          </div>
+          <canvas id="routeCv" width="620" height="330"></canvas>
+          <div class="flex flex-wrap gap-x-6 gap-y-2 mt-4 mb-1">
+            <div><div style="font:900 17px/1 ui-monospace,monospace;color:#fff">20.06<span style="font-size:10px;color:#F9703E;margin-left:3px">KM</span></div><div class="text-[11px] font-bold mt-1" style="color:rgba(255,255,255,.35)">DISTANCIA</div></div>
+            <div><div style="font:900 17px/1 ui-monospace,monospace;color:#fff">6:31<span style="font-size:10px;color:#F9703E;margin-left:3px">/KM</span></div><div class="text-[11px] font-bold mt-1" style="color:rgba(255,255,255,.35)">RITMO</div></div>
+            <div><div style="font:900 17px/1 ui-monospace,monospace;color:#fff">2:10:38</div><div class="text-[11px] font-bold mt-1" style="color:rgba(255,255,255,.35)">TIEMPO</div></div>
+          </div>
+          <p class="text-[13px] mt-3" style="color:rgba(255,255,255,.45)">
+            Si corres con GPS, el trazo de esa salida se guarda con la tarjeta. Abres la tarjeta y ahí está el recorrido exacto que la ganó.
+          </p>
+        </div>
+
+        <div>
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="kicker" style="color:rgba(255,255,255,.5)">El álbum</span>
+            <span class="text-[11px] font-extrabold tracking-widest uppercase" style="color:rgba(255,255,255,.3)">20 de 50 conseguidas</span>
+          </div>
+          <div class="album-grid" id="albumGrid"></div>
+          <p class="text-[13px] mt-3" style="color:rgba(255,255,255,.45)">
+            Las casillas vacías te dicen exactamente qué falta para llenarlas. Nada de sorpresas: sabes qué correr para la siguiente.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- JOURNEY: the winding 66-day road + side panels -->
 <section id="how" class="section-mobile py-14 md:py-24 overflow-hidden" style="border-top:1px solid rgba(255,255,255,.06)">
   <div class="max-w-2xl mx-auto px-5 md:px-6 text-center mb-12 md:mb-16 reveal">
@@ -467,7 +666,7 @@
         <div class="pk-text">
           <div class="panel-k">La meta</div>
           <h3 class="panel-h">Día 66: medalla y diploma</h3>
-          <p class="panel-p">Al día 66 tu pacepal gana su medalla y tú un <strong style="color:#fff">diploma</strong>. Ya no corres por él — corres porque eres alguien que corre.</p>
+          <p class="panel-p">Al día 66 tu pacepal gana su medalla, tú un <strong style="color:#fff">diploma</strong> y cae la tarjeta que cierra el álbum. Ya no corres por él — corres porque eres alguien que corre.</p>
         </div>
         <div class="pk-art" style="display:flex;align-items:center;justify-content:center">
           <div class="medalbox"><canvas id="medalCv" width="0" height="0" style="width:56px;margin:0 auto"></canvas><div class="mt">HÁBITO FORMADO</div></div>
@@ -509,7 +708,7 @@
       <div class="panel reveal">
         <div class="panel-k">Una mascota que es tuya</div>
         <h3 class="panel-h">20 especies, infinitas combinaciones</h3>
-        <p class="panel-p"><strong style="color:#fff">20 animales</strong> y <strong style="color:#fff">26 paletas</strong> con ADN generativo: la tuya es única. Cada 3 días de constancia desbloquea un <strong style="color:#fff">fondo nuevo</strong> y una pose de celebración.</p>
+        <p class="panel-p"><strong style="color:#fff">20 animales</strong> y <strong style="color:#fff">26 paletas</strong> con ADN generativo: la tuya es única. Cada hito del reto te deja una <strong style="color:#fff">tarjeta nueva</strong> con su pose de celebración.</p>
         <div style="display:flex;gap:14px;margin-top:18px;align-items:center">
           <canvas data-pet="happy" data-pal="berenjena" data-px="3" style="width:58px"></canvas>
         </div>
@@ -543,7 +742,7 @@
 
 
 <!-- FEATURES: pills + tarjetas -->
-<section data-section="features" class="section-mobile py-16 md:py-24" style="border-top:1px solid rgba(255,255,255,.06)">
+<section id="todo" data-section="features" class="section-mobile py-16 md:py-24" style="border-top:1px solid rgba(255,255,255,.06)">
   <div class="max-w-5xl mx-auto px-5 md:px-6 grid md:grid-cols-2 gap-10 md:gap-14 items-center mb-14 md:mb-20">
     <div class="reveal">
       <div class="text-6xl md:text-8xl font-black leading-none" style="color:#FF4D7E">Todo</div>
@@ -554,7 +753,7 @@
     </div>
     <div class="pill-cluster reveal">
       <span class="pill" style="transform:rotate(-3deg)">5 corazones</span>
-      <span class="pill" style="transform:rotate(2deg)">Mapa estilo Duolingo</span>
+      <span class="pill" style="transform:rotate(2deg)">50 tarjetas coleccionables</span>
       <span class="pill" style="transform:rotate(-1.5deg)">Apple Health</span>
       <span class="pill" style="transform:rotate(2.5deg)">Modo caminadora</span>
       <span class="pill" style="transform:rotate(-2deg)">Apple Watch + widget</span>
@@ -563,10 +762,55 @@
     </div>
   </div>
 
+  <div class="max-w-6xl mx-auto px-5 md:px-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 reveal">
+
+    <div class="fcard" style="--tint:rgba(181,140,255,.35)">
+      <span class="fc-tag">Colección</span>
+      <div class="fc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B58CFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="16" rx="2"/><path d="M17 6.5 21 8l-2.5 9.5"/></svg></div>
+      <h3>50 tarjetas, 5 familias</h3>
+      <p>Hitos del reto, distancia en una salida, días seguidos, kilómetros acumulados y retos de ritmo. Cada casilla te dice qué correr para llenarla.</p>
+    </div>
+
+    <div class="fcard" style="--tint:rgba(107,227,184,.32)">
+      <span class="fc-tag">Retos</span>
+      <div class="fc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6BE3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M12 10v3l2 2M9 2h6"/></svg></div>
+      <h3>Retos de ritmo, no solo de km</h3>
+      <p>5K bajo 30 minutos, 10K dentro de la hora, ritmo 4:30/km, una hora entera en pie, media maratón sub 2:15. Diez peldaños para cuando ya no te basta con salir.</p>
+    </div>
+
+    <div class="fcard" style="--tint:rgba(249,112,62,.32)">
+      <span class="fc-tag">Rutas</span>
+      <div class="fc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F9703E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c4 0 3-6 7-6s3-6 7-6"/><circle cx="4" cy="18" r="2"/><circle cx="19" cy="6" r="2"/></svg></div>
+      <h3>El trazo de tu carrera</h3>
+      <p>Corre con GPS y la ruta queda dibujada junto a la tarjeta que ganaste ese día. El recorrido exacto, no un número suelto.</p>
+    </div>
+
+    <div class="fcard" style="--tint:rgba(107,197,255,.32)">
+      <span class="fc-tag">Nube</span>
+      <div class="fc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6BC5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1 .6-8 5.5 5.5 0 0 1 10.6 1.6A3.6 3.6 0 0 1 17.5 18Z"/><path d="M12 13v5m0 0-2-2m2 2 2-2"/></svg></div>
+      <h3>Tu progreso no se pierde</h3>
+      <p>Se respalda solo desde el primer día, sin pedirte nada. Vincula tu Apple ID y recupera corazones, días y colección si borras la app o cambias de teléfono.</p>
+    </div>
+
+    <div class="fcard" style="--tint:rgba(255,197,61,.3)">
+      <span class="fc-tag">Descanso</span>
+      <div class="fc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFC53D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14a8 8 0 1 1-10-10 7 7 0 0 0 10 10Z"/></svg></div>
+      <h3>Modo invernar</h3>
+      <p>Vacaciones o lesión: tu pacepal se duerme y deja de perder corazones. Vuelves y sigues justo donde lo dejaste, sin culpa y sin racha rota.</p>
+    </div>
+
+    <div class="fcard" style="--tint:rgba(123,214,107,.3)">
+      <span class="fc-tag">Precio</span>
+      <div class="fc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7BD66B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg></div>
+      <h3>Gratis, de verdad</h3>
+      <p>Sin muro de pago, sin anuncios y sin cuenta obligatoria. Todo lo que ves aquí —las 50 tarjetas incluidas— viene abierto desde el primer día.</p>
+    </div>
+
+  </div>
 </section>
 
 <!-- FAQ -->
-<section data-section="faq" class="section-mobile py-16 md:py-24" style="border-top:1px solid rgba(255,255,255,.06)">
+<section id="faq" data-section="faq" class="section-mobile py-16 md:py-24" style="border-top:1px solid rgba(255,255,255,.06)">
   <div class="max-w-3xl mx-auto px-5 md:px-6">
     <h2 class="text-2xl md:text-4xl font-black uppercase tracking-tight text-center mb-9 md:mb-12 reveal" style="color:#f4f4f1">
       Preguntas frecuentes
@@ -598,7 +842,19 @@
       </div>
       <div class="faq-item">
         <button class="faq-q" type="button">¿De verdad funciona lo de los 66 días?<span class="ico">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">66 es el número que la ciencia de hábitos asocia a hábitos complejos como correr (no los “21 días” del mito). Cada hito desbloquea uno de los 23 fondos y celebraciones para mantenerte enganchado hasta que el hábito sea tuyo. Al día 66 ganas medalla y un diploma pixel con tus KM totales.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">66 es el número que la ciencia de hábitos asocia a hábitos complejos como correr (no los “21 días” del mito). Los 23 hitos del reto te van dejando tarjetas y celebraciones para mantenerte enganchado hasta que el hábito sea tuyo. Al día 66 ganas medalla, diploma pixel con tus KM totales y la tarjeta que cierra el álbum.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Cuánto cuesta?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Nada. Pacepal es <strong style="color:#fff">gratis</strong>: no hay muro de pago, ni anuncios, ni funciones guardadas para una suscripción. Si te suscribiste cuando la app se cobraba, en Ajustes tienes el atajo para cancelar esa suscripción.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Qué son las tarjetas coleccionables?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Son 50 piezas que se ganan corriendo: los 23 hitos del reto, distancias en una sola salida (5K a 20K), rachas de días seguidos, kilómetros acumulados hasta 100K y diez retos de ritmo. Cada tarjeta guarda tu mascota, la distancia, el ritmo y la fecha de ese día, con arte generado a partir de tu logro. Puedes usarlas de fondo o compartirlas.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">¿Pierdo todo si cambio de teléfono?<span class="ico">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">No. Tu progreso se respalda solo en la nube desde el primer arranque, sin pedirte correo ni contraseña. Si vinculas tu <strong style="color:#fff">Apple ID</strong> (Ajustes → Cuenta y copia en la nube), puedes borrar la app o estrenar iPhone y recuperar corazones, días, mascota y colección con un botón.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" type="button">¿Qué tiene de especial la mascota?<span class="ico">+</span></button>
@@ -702,307 +958,11 @@
   </div>
 </div>
 
-<!-- sprite engine -->
+<!-- motor de sprites (assets/pet.js) + tarjetas coleccionables -->
+<script src="assets/pet.js"></script>
+<script src="assets/cards.js"></script>
+<script src="assets/card-set.js"></script>
 <script>
-const GS = 24;
-const C = {
-  empty:0, body:1, outline:2, face:3, eyePupil:4, eyeShine:5,
-  mouth:6, cheek:7, shade:8, nose:9, tear:10, gold:11,
-  speedLine:12, gray:13, accent1:14, accent2:15, lightning:16
-};
-
-const DNA = {
-  bodyCx:12, bodyCy:11, bodyRx:6, bodyRy:7,
-  earTopY:4, earSp:3, armStyle:1, eyeSp:3, mouthStyle:1,
-  hasCheeks:true, hasMuzzle:false, hasNose:false,
-  hasMarking:false, hasBow:false, hasTail:false, tailOffset:0,
-  palette:{
-    body:'#002159', shade:'#2186EB', face:'#B6E0FE',
-    eyeP:'#002159', cheek:'#F191C1', accent1:'#AFF75C', accent2:'#62F4EB'
-  }
-};
-
-// real palettes from the app (PetPalette.swift) — body/shade/face/eyeP/cheek
-const PALS = {
-  sapphire:  DNA.palette,
-  turquesa:  { body:'#0A7878', shade:'#109898', face:'#F0806A', eyeP:'#053C3C', cheek:'#F8B0A0', accent1:'#F35627', accent2:'#FADB5F' },
-  cereza:    { body:'#4A0820', shade:'#700C30', face:'#F0C0C8', eyeP:'#200410', cheek:'#E8A0B0', accent1:'#F35627', accent2:'#FADB5F' },
-  oliva_oro: { body:'#4A5A22', shade:'#6B8030', face:'#D4A835', eyeP:'#252E0F', cheek:'#E8CC6A', accent1:'#F35627', accent2:'#FADB5F' },
-  berenjena: { body:'#3A1860', shade:'#5A2890', face:'#D0C8D8', eyeP:'#1C0C30', cheek:'#B0A8C0', accent1:'#F35627', accent2:'#FADB5F' },
-  bordo:     { body:'#5A0818', shade:'#880C24', face:'#D4A830', eyeP:'#2D0408', cheek:'#E8CC70', accent1:'#F35627', accent2:'#FADB5F' }
-};
-
-const makeGrid = () => Array.from({length:GS},()=>new Array(GS).fill(C.empty));
-const pset = (g,x,y,c) => { if(x>=0&&x<GS&&y>=0&&y<GS) g[y][x]=c; };
-const pget = (g,x,y) => (x>=0&&x<GS&&y>=0&&y<GS)?g[y][x]:null;
-
-function fillEllipse(g,cx,cy,rx,ry,c){
-  if(rx<=0||ry<=0)return;
-  for(let y=Math.floor(cy-ry);y<=Math.ceil(cy+ry);y++)
-    for(let x=Math.floor(cx-rx);x<=Math.ceil(cx+rx);x++){
-      const dx=(x-cx)/rx,dy=(y-cy)/ry;
-      if(dx*dx+dy*dy<=1)pset(g,x,y,c);
-    }
-}
-
-function addOutline(g){
-  const dirs=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
-  const edges=[];
-  for(let y=0;y<GS;y++)for(let x=0;x<GS;x++){
-    if(g[y][x]!==C.body)continue;
-    for(const[dx,dy]of dirs)if(pget(g,x+dx,y+dy)===C.empty){edges.push([x,y]);break;}
-  }
-  for(const[x,y]of edges)g[y][x]=C.outline;
-}
-
-function buildGrid(pose,frame){
-  const g=makeGrid();
-  const{bodyCx:bCx,bodyCy:bCy,bodyRx:bRx,bodyRy:bRy}=DNA;
-  fillEllipse(g,bCx,bCy,bRx,bRy,C.body);
-
-  const aY=Math.round(bCy+bRy*0.1);
-  const lX=Math.round(bCx-bRx)-1;
-  const rX=Math.round(bCx+bRx);
-
-  if(pose==='running'){
-    switch(frame){
-      case 0: pset(g,lX-1,aY+2,C.body);pset(g,lX,aY+3,C.body);pset(g,rX,aY-3,C.body);pset(g,rX,aY-2,C.body);break;
-      case 1: pset(g,lX,aY+1,C.body);pset(g,lX,aY+2,C.body);pset(g,rX,aY-1,C.body);pset(g,rX,aY,C.body);break;
-      case 2: pset(g,lX,aY-3,C.body);pset(g,lX,aY-2,C.body);pset(g,rX+1,aY+2,C.body);pset(g,rX,aY+3,C.body);break;
-      default:pset(g,lX,aY-1,C.body);pset(g,lX,aY,C.body);pset(g,rX,aY+1,C.body);pset(g,rX,aY+2,C.body);
-    }
-  }else if(pose==='happy'){
-    const hi=frame%2===0;
-    pset(g,lX,hi?aY-2:aY-1,C.body);pset(g,lX,hi?aY-1:aY,C.body);
-    pset(g,rX,hi?aY-2:aY-1,C.body);pset(g,rX,hi?aY-1:aY,C.body);
-  }else if(pose==='sad'){
-    const dr=frame<=1?1:2;
-    pset(g,lX,aY+dr,C.body);pset(g,lX,aY+dr+1,C.body);
-    if(frame===3){pset(g,rX,aY-1,C.body);pset(g,rX,aY,C.body);}
-    else{pset(g,rX,aY+dr,C.body);pset(g,rX,aY+dr+1,C.body);}
-  }else if(pose==='angry'){
-    const hi=frame%2===0;
-    pset(g,hi?lX:lX-1,aY-1,C.body);pset(g,hi?lX:lX-1,aY,C.body);
-    const rt=hi?aY-3:aY-2;
-    pset(g,hi?rX:rX+1,rt,C.body);pset(g,hi?rX:rX+1,rt+1,C.body);
-  }else if(pose==='sign'){
-    const bob=frame%2===0;
-    // Left arm raised excited
-    pset(g,lX-1,bob?aY-3:aY-2,C.body);pset(g,lX-1,bob?aY-2:aY-1,C.body);
-    // Right arm holds sign
-    const sTop=bob?aY-3:aY-2;
-    pset(g,bob?rX:rX+1,sTop,C.body);pset(g,bob?rX:rX+1,sTop+1,C.body);
-  }else if(pose==='dead'){
-    pset(g,lX-1,aY,C.body);pset(g,lX,aY,C.body);pset(g,lX,aY+1,C.body);
-    pset(g,rX+1,aY,C.body);pset(g,rX,aY,C.body);pset(g,rX,aY+1,C.body);
-  }else{
-    pset(g,lX,aY-1,C.body);pset(g,lX,aY,C.body);
-    pset(g,rX,aY,C.body);pset(g,rX,aY+1,C.body);
-  }
-
-  for(let y=19;y<=21;y++)for(let x=0;x<GS;x++)if(g[y][x]===C.body)g[y][x]=C.empty;
-  if(pose==='running'){
-    switch(frame){
-      case 0: pset(g,8,17,C.body);pset(g,10,17,C.body);pset(g,8,18,C.body);pset(g,10,18,C.body);pset(g,9,19,C.body);break;
-      case 1: pset(g,8,18,C.body);pset(g,10,18,C.body);pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,9,20,C.body);break;
-      default:pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,8,20,C.body);pset(g,10,20,C.body);pset(g,9,21,C.body);
-    }
-    switch(frame){
-      case 2: pset(g,14,17,C.body);pset(g,16,17,C.body);pset(g,14,18,C.body);pset(g,16,18,C.body);pset(g,15,19,C.body);break;
-      case 3: pset(g,14,18,C.body);pset(g,16,18,C.body);pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,15,20,C.body);break;
-      default:pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,14,20,C.body);pset(g,16,20,C.body);pset(g,15,21,C.body);
-    }
-  }else if(pose!=='dead'){
-    pset(g,8,19,C.body);pset(g,10,19,C.body);pset(g,8,20,C.body);pset(g,10,20,C.body);pset(g,9,21,C.body);
-    pset(g,14,19,C.body);pset(g,16,19,C.body);pset(g,14,20,C.body);pset(g,16,20,C.body);pset(g,15,21,C.body);
-  }
-
-  addOutline(g);
-
-  const fCx=bCx-1,eyeY=bCy-Math.round(bRy*0.15),mthY=bCy+Math.round(bRy*0.35);
-  const fpCy=Math.round((eyeY+mthY)/2);
-  const fRy=(mthY-eyeY)/2+1;
-  const fRx=Math.max(fRy*0.65,Math.min(bRx*0.52,fRy*0.9));
-  fillEllipse(g,fCx,fpCy,fRx,fRy,C.face);
-
-  const esp=Math.min(Math.trunc(DNA.eyeSp),Math.max(1,Math.trunc(fRx-0.3)));
-  const eLX=Math.trunc(fCx)-esp,eRX=Math.trunc(fCx)+esp,eY=Math.trunc(eyeY);
-  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
-    if(pget(g,eLX+dx,eY+dy)!==C.empty)pset(g,eLX+dx,eY+dy,C.face);
-    if(pget(g,eRX+dx,eY+dy)!==C.empty)pset(g,eRX+dx,eY+dy,C.face);
-  }
-
-  if(pose==='running'){
-    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
-    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
-    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-  }else if(pose==='happy'){
-    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
-    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-    pset(g,eLX-1,eY-1,C.eyeShine);
-    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
-    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-    pset(g,eRX,eY-1,C.eyeShine);
-  }else if(pose==='sign'){
-    // Big happy eyes with shine
-    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
-    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-    pset(g,eLX-1,eY-1,C.eyeShine);
-    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
-    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-    pset(g,eRX,eY-1,C.eyeShine);
-  }else if(pose==='sad'){
-    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
-    pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
-    pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-    if(frame===3){pset(g,eLX,eY,C.eyePupil);pset(g,eRX,eY,C.eyePupil);}
-  }else if(pose==='angry'){
-    pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-    pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-  }else if(pose==='dead'){
-    for(const[ex,ey]of[[eLX,eY],[eRX,eY]]){
-      pset(g,ex-1,ey-1,C.eyePupil);pset(g,ex+1,ey-1,C.eyePupil);
-      pset(g,ex,ey,C.eyePupil);
-      pset(g,ex-1,ey+1,C.eyePupil);pset(g,ex+1,ey+1,C.eyePupil);
-    }
-  }else{
-    if(frame===6){
-      pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-      pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-    }else{
-      pset(g,eLX-1,eY,C.eyePupil);pset(g,eLX,eY,C.eyePupil);
-      pset(g,eLX-1,eY+1,C.eyePupil);pset(g,eLX,eY+1,C.eyePupil);
-      pset(g,eLX-1,eY-1,C.eyeShine);
-      pset(g,eRX,eY,C.eyePupil);pset(g,eRX+1,eY,C.eyePupil);
-      pset(g,eRX,eY+1,C.eyePupil);pset(g,eRX+1,eY+1,C.eyePupil);
-      pset(g,eRX,eY-1,C.eyeShine);
-    }
-  }
-
-  const mY=Math.trunc(bCy+Math.round(bRy*0.35)),mCx=Math.trunc(fCx);
-  if(pose==='running'){
-    pset(g,mCx-1,mY,C.mouth);pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY,C.mouth);
-  }else if(pose==='happy'){
-    pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY+1,C.mouth);
-    pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);pset(g,mCx+2,mY,C.mouth);
-  }else if(pose==='sign'){
-    // Big open smile alternating
-    if(frame%2===0){
-      pset(g,mCx-3,mY,C.mouth);pset(g,mCx-2,mY+1,C.mouth);
-      pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx,mY+1,C.mouth);
-      pset(g,mCx+1,mY+1,C.mouth);pset(g,mCx+2,mY+1,C.mouth);
-      pset(g,mCx+3,mY,C.mouth);
-    }else{
-      pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY+1,C.mouth);
-      pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
-      pset(g,mCx+2,mY,C.mouth);
-    }
-  }else if(pose==='sad'){
-    pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
-  }else if(pose==='angry'){
-    pset(g,mCx-2,mY,C.mouth);pset(g,mCx-1,mY,C.mouth);
-    pset(g,mCx,mY,C.mouth);pset(g,mCx+1,mY,C.mouth);
-  }else if(pose!=='dead'){
-    pset(g,mCx,mY,C.mouth);
-    pset(g,mCx-1,mY+1,C.mouth);pset(g,mCx+1,mY+1,C.mouth);
-  }
-
-  if(pose!=='dead'){
-    const ckY=eY+1,ckLX=Math.trunc(fCx-bRx*0.58),ckRX=Math.trunc(fCx+bRx*0.58);
-    pset(g,ckLX-1,ckY,C.cheek);pset(g,ckLX,ckY,C.cheek);
-    pset(g,ckRX,ckY,C.cheek);pset(g,ckRX+1,ckY,C.cheek);
-  }
-
-  if(pose==='happy'){
-    const ss=[[[eRX+2,eY-2],[lX-1,aY-2]],[[mCx+4,Math.trunc(bCy)],[eLX-2,eY-1]],[[eRX+3,Math.trunc(bCy)-1],[mCx-1,5]],[[eLX-1,eY-3],[rX+1,aY-2]]];
-    for(const[sx,sy]of ss[frame%4]){pset(g,sx,sy-1,C.gold);pset(g,sx-1,sy,C.gold);pset(g,sx,sy,C.gold);pset(g,sx+1,sy,C.gold);pset(g,sx,sy+1,C.gold);}
-  }
-  if(pose==='running'){
-    const lineYs=[Math.trunc(DNA.bodyCy)-2,Math.trunc(DNA.bodyCy),Math.trunc(DNA.bodyCy)+2,Math.trunc(DNA.bodyCy)+4];
-    const lenT=[[4,1,3,1],[2,3,1,2],[3,1,4,1],[1,2,2,3]];
-    const xs=frame%2;
-    for(let i=0;i<lineYs.length;i++)for(let dx=0;dx<lenT[frame][i];dx++)pset(g,rX+1+xs+dx,lineYs[i],C.speedLine);
-    if(frame===0){pset(g,13,22,C.shade);pset(g,14,22,C.shade);pset(g,15,22,C.shade);pset(g,16,22,C.shade);pset(g,12,21,C.shade);pset(g,17,21,C.shade);}
-    if(frame===2){pset(g,7,22,C.shade);pset(g,8,22,C.shade);pset(g,9,22,C.shade);pset(g,10,22,C.shade);pset(g,6,21,C.shade);pset(g,11,21,C.shade);}
-  }
-  if(pose==='sad'){
-    const tx=frame<2?eLX:eRX,ty=eY+1+(frame%2)*2;
-    pset(g,tx,ty,C.tear);pset(g,tx,ty+1,C.tear);
-  }
-  if(pose==='angry'){
-    const hi=frame%2===0,stX=hi?rX:rX+1,pnY=hi?aY-3:aY-2;
-    for(let d=1;d<=3;d++)pset(g,stX,pnY-d,C.body);
-    const sx1=Math.max(0,stX-2),sx2=Math.min(GS-1,stX+2),sy1=pnY-6;
-    if(sy1>=0){for(let sx=sx1;sx<=sx2;sx++){pset(g,sx,sy1,C.gray);if(sy1+2<GS)pset(g,sx,sy1+2,C.gray);}pset(g,sx1,sy1+1,C.gray);pset(g,sx2,sy1+1,C.gray);pset(g,stX,sy1+1,C.speedLine);}
-    if(!hi){const vX=eLX-3,vY=eY-2;pset(g,vX+1,vY,C.speedLine);pset(g,vX+2,vY,C.speedLine);pset(g,vX+1,vY+1,C.speedLine);pset(g,vX,vY+2,C.speedLine);pset(g,vX+1,vY+2,C.speedLine);}
-  }
-  if(pose==='sign'){
-    const bob=frame%2===0;
-    const stX=bob?rX:rX+1;
-    const pnY=bob?aY-3:aY-2;
-    // Stick
-    for(let d=1;d<=3;d++)pset(g,stX,pnY-d,C.body);
-    // Sign frame (accent1 border)
-    const sX1=Math.max(0,stX-2),sX2=Math.min(GS-1,stX+2);
-    const sY2=pnY-4,sY1=Math.max(0,sY2-3);
-    for(let x=sX1;x<=sX2;x++){pset(g,x,sY1,C.accent1);pset(g,x,sY2,C.accent1);}
-    for(let y=sY1;y<=sY2;y++){pset(g,sX1,y,C.accent1);pset(g,sX2,y,C.accent1);}
-    // Fill interior
-    if(sX1+1<=sX2-1&&sY1+1<=sY2-1){
-      for(let y=sY1+1;y<=sY2-1;y++)for(let x=sX1+1;x<=sX2-1;x++)pset(g,x,y,C.face);
-    }
-    // Bell icon inside
-    const signCx=Math.floor((sX1+sX2)/2);
-    if(sY1+1<sY2){pset(g,signCx-1,sY1+1,bob?C.accent1:C.gold);pset(g,signCx,sY1+1,bob?C.accent1:C.gold);pset(g,signCx+1,sY1+1,bob?C.accent1:C.gold);}
-    if(sY2-1>sY1){pset(g,signCx,sY2-1,bob?C.gold:C.accent1);}
-  }
-  return g;
-}
-
-function hexRgb(h){const n=parseInt(h.replace('#',''),16);return[(n>>16)&255,(n>>8)&255,n&255];}
-function tone(r,g,b,a){const cl=v=>Math.max(0,Math.min(255,Math.round(v+a)));return`rgb(${cl(r)},${cl(g)},${cl(b)})`;}
-
-function cellColor(cell,gx,gy,pal){
-  const p=pal||DNA.palette;
-  if(cell===C.empty)return null;
-  if(cell===C.outline){const[r,g,b]=hexRgb(p.body);return tone(r,g,b,-70);}
-  if(cell===C.body||cell===C.accent1||cell===C.accent2){
-    const h=cell===C.accent1?p.accent1:cell===C.accent2?p.accent2:p.body;
-    const[r,g,b]=hexRgb(h);
-    const dx=(gx-DNA.bodyCx)/Math.max(1,DNA.bodyRx),dy=(gy-DNA.bodyCy)/Math.max(1,DNA.bodyRy);
-    const l=dx-dy,ck=(gx+gy)%2;
-    if(l>0.65)return tone(r,g,b,90);
-    if(l>0.50)return tone(r,g,b,ck?42:90);
-    if(l>0.25)return tone(r,g,b,42);
-    if(l>0.10)return tone(r,g,b,ck?0:42);
-    if(l>-0.15)return tone(r,g,b,0);
-    if(l>-0.30)return tone(r,g,b,ck?-55:0);
-    return tone(r,g,b,-55);
-  }
-  if(cell===C.face){
-    const[r,g,b]=hexRgb(p.face);
-    const dx=(gx-DNA.bodyCx)/Math.max(1,DNA.bodyRx),dy=(gy-DNA.bodyCy)/Math.max(1,DNA.bodyRy);
-    const l=dx-dy,ck=(gx+gy)%2;
-    if(l>0.25)return tone(r,g,b,ck?-15:-40);
-    if(l>-0.10)return tone(r,g,b,-40);
-    return tone(r,g,b,ck?-40:-60);
-  }
-  return({[C.eyePupil]:p.eyeP,[C.eyeShine]:'#e0eeff',[C.mouth]:p.eyeP,[C.cheek]:p.cheek,[C.shade]:p.shade,[C.nose]:p.eyeP,[C.tear]:'#5599ff',[C.gold]:'#ffcc00',[C.speedLine]:'#ff7700',[C.gray]:'#888',[C.lightning]:'#00cfff'})[cell]||null;
-}
-
-function renderPet(canvas,pose,frame,px,pal){
-  if(!canvas) return;
-  const sz=GS*px;canvas.width=sz;canvas.height=sz;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,sz,sz);
-  const grid=buildGrid(pose,frame);
-  for(let y=0;y<GS;y++)for(let x=0;x<GS;x++){
-    const c=cellColor(grid[y][x],x,y,pal);
-    if(c){ctx.fillStyle=c;ctx.fillRect(x*px,y*px,px,px);}
-  }
-}
-
 /* ── pixel-art medal (day 66 reward) ── */
 const MEDAL_ROWS = [
   '.dddd...dddd.',
@@ -1235,7 +1195,7 @@ function initRoad(){
       {f:0.048, t:'día 1', size:4.7},
       {f:0.212, t:'0.1 km', italic:true},
       {f:0.358, t:'racha viva'},
-      {f:0.630, t:'fondos nuevos', box:true},
+      {f:0.630, t:'tarjeta nueva', box:true},
       {f:0.805, t:'recta final', box:true},
       {f:0.922, t:'ya casi', italic:true}
     ].forEach(function(l){
@@ -1307,7 +1267,7 @@ function buildWrapDecor(){
     {f:0.128, t:'una semana corriendo', box:true},
     {f:0.300, t:'0.1 km ya cuenta', italic:true},
     {f:0.408, t:'tu racha crece'},
-    {f:0.600, t:'un fondo cada 3 días', box:true, size:14},
+    {f:0.600, t:'una tarjeta cada hito', box:true, size:13},
     {f:0.850, t:'recta final', italic:true}
   ].forEach(function(l){
     boardLabel(wrapPath, wrapLen, g, 'wrap-label', L(l.f), l.t, {size:l.size||15, box:l.box, italic:l.italic});
@@ -1388,9 +1348,82 @@ var heroCountDone = false;
   });
 })();
 
+/* ═════════ COLECCIÓN: monta las tarjetas, el álbum y la ruta ═════════ */
+function cardById(id){ return CARD_SET.filter(function(c){ return c.id===id; })[0]; }
+
+function buildCollection(){
+  const hero = document.getElementById('heroCards');
+  if(hero && !hero.children.length){
+    // La leyenda del reto va al centro y un poco más alta que las de los lados.
+    [['t9','hc-side'],['m66','hc-mid'],['c10','hc-side']].forEach(function(pair){
+      const holder = document.createElement('div');
+      holder.className = pair[1];
+      hero.appendChild(holder);
+      PacepalCards.mount(holder, cardById(pair[0]));
+    });
+  }
+
+  const rail = document.getElementById('cardRail');
+  if(rail && !rail.children.length){
+    CARD_SET.filter(function(c){ return ['t9','m66','c10'].indexOf(c.id)<0; }).forEach(function(card){
+      const item = document.createElement('div');
+      item.className = 'rail-item';
+      const slot = document.createElement('div');
+      item.appendChild(slot);
+      const lb = document.createElement('div'); lb.className='rl-label'; lb.textContent=card.label;
+      const sb = document.createElement('div'); sb.className='rl-sub'; sb.textContent=card.sub;
+      item.appendChild(lb); item.appendChild(sb);
+      rail.appendChild(item);
+      PacepalCards.mount(slot, card);
+    });
+  }
+
+  const fams = document.getElementById('albumFams');
+  if(fams && !fams.children.length){
+    ALBUM.forEach(function(f){
+      const row = document.createElement('div');
+      row.className = 'album-fam';
+      row.innerHTML =
+        '<span class="af-dot" style="background:'+f.tint+'"></span>' +
+        '<div style="flex:1 1 auto;min-width:0">' +
+          '<div style="display:flex;align-items:baseline;gap:10px">' +
+            '<span class="af-name">'+f.name+'</span>' +
+            '<span class="af-count">'+f.count+'</span>' +
+          '</div>' +
+          '<div class="af-how">'+f.how+'</div>' +
+        '</div>';
+      fams.appendChild(row);
+    });
+  }
+
+  const grid = document.getElementById('albumGrid');
+  if(grid && !grid.children.length){
+    // 50 casillas en el orden del catálogo: 23 hitos, 4, 4, 9 y 10.
+    const tints = [];
+    ALBUM.forEach(function(f){ for(let i=0;i<f.count;i++) tints.push(f.tint); });
+    const owned = [0,1,2,3,4,5,6,7,8,9,10,11,23,24,27,28,31,32,33,40];
+    tints.forEach(function(tint,i){
+      const cell = document.createElement('div');
+      cell.className = 'album-slot' + (owned.indexOf(i)>=0 ? ' owned' : '');
+      if(owned.indexOf(i)>=0){
+        cell.style.background = 'linear-gradient(150deg,'+tint+',rgba(20,17,14,.92))';
+      }
+      grid.appendChild(cell);
+    });
+  }
+
+  const route = document.getElementById('routeCv');
+  if(route){
+    const dpr = Math.min(2, window.devicePixelRatio||1);
+    route.width = 620*dpr; route.height = 330*dpr;
+    PacepalCards.drawRoute(route, 404404, '#F9703E');
+  }
+}
+
 function renderStatics(){
   const isMobile = window.innerWidth < 768;
   const cmpPx = isMobile ? 6 : 8;
+  buildCollection();
   renderPet(document.getElementById('heroPet'),'happy',0,5);
   renderPet(document.getElementById('runningPet'),'running',0,cmpPx);
   renderPet(document.getElementById('sadPet'),'sad',0,cmpPx);
@@ -1472,6 +1505,15 @@ document.querySelectorAll('section[id], section[data-section]').forEach(el => se
   }, { passive: true });
 })();
 
+// barra superior: fondo sólido en cuanto se sale del hero
+(function(){
+  var nav = document.getElementById('mainNav');
+  if(!nav) return;
+  function upd(){ nav.classList.toggle('stuck', window.scrollY > 24); }
+  window.addEventListener('scroll', upd, { passive: true });
+  upd();
+})();
+
 const mobileBar = document.getElementById('mobileStickyBar');
 
 // Sticky mobile CTA: show after 2 seconds (not on scroll — most users never scroll)
@@ -1483,7 +1525,7 @@ if (mobileBar && window.innerWidth < 768) {
 }
 
 // keep the road pet sized to the road on resize
-window.addEventListener('resize', function(){ measureRoad(); measureWrap(); }, { passive: true });
+window.addEventListener('resize', function(){ measureRoad(); measureWrap(); if(window.PacepalCards) PacepalCards.fitAll(); }, { passive: true });
 
 // Android detection & waitlist
 var isAndroid = /android/i.test(navigator.userAgent);
