@@ -244,27 +244,51 @@
   /* narrative emphasis */
   .narr strong { color: #fff; font-weight: 900; }
 
-  /* hero: contador ascendente de días */
-  .hero-counter { text-align: center; min-width: 300px; }
-  .hc-num {
-    font-weight: 900; color: #fff; line-height: 1;
-    font-size: clamp(4.6rem, 11vw, 8.5rem); letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
+  /* hero: el pacepal corriendo, en su marco */
+  .hero-video {
+    position: relative;
+    border-radius: 26px;
+    overflow: visible;
+    aspect-ratio: 16 / 10;
   }
-  .hc-num .hc-total { color: rgba(255,255,255,.28); font-size: .48em; font-weight: 900; margin-left: 4px; }
-  .hc-label {
-    margin-top: 10px; font-weight: 800; font-size: 15px; letter-spacing: .06em;
-    text-transform: uppercase; color: rgba(255,255,255,.45);
-    transition: color .4s ease;
+  .hero-video::before {
+    /* resplandor naranja detrás del marco */
+    content: ''; position: absolute; inset: 6% 4%;
+    background: radial-gradient(ellipse at 50% 60%, rgba(249,112,62,.42), transparent 70%);
+    filter: blur(38px); z-index: 0;
   }
-  .hc-label.done { color: #F9703E; }
-  .hc-pet {
-    width: 110px; height: auto; margin: 22px auto 0; display: block;
-    opacity: 0; transform: translateY(10px);
-    transition: opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
-    filter: drop-shadow(0 6px 8px rgba(0,0,0,.5));
+  .hv-media {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    border-radius: 26px;
+    background: #0a0b0e;
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.4);
   }
-  .hc-pet.show { opacity: 1; transform: none; }
+  .hv-scrim {
+    position: absolute; inset: 0; z-index: 2; border-radius: 26px; pointer-events: none;
+    background: linear-gradient(to top, rgba(14,14,17,.55), transparent 42%);
+  }
+  .hv-chip {
+    position: absolute; z-index: 3; top: 14px; left: 14px;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 13px; border-radius: 999px;
+    background: rgba(12,13,17,.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.14);
+    font: 900 11px/1 ui-monospace, monospace; letter-spacing: .1em; color: #fff;
+  }
+  .hv-dot { width: 7px; height: 7px; border-radius: 999px; background: #7BD66B; box-shadow: 0 0 0 3px rgba(123,214,107,.22); }
+  /* Una tarjeta asomando por la esquina: enseña el premio sin explicarlo. */
+  .hv-card {
+    position: absolute; z-index: 4; width: 31%; right: -8%; bottom: -14%;
+    transform: rotate(8deg);
+    filter: drop-shadow(0 18px 30px rgba(0,0,0,.55));
+  }
+  @media (max-width: 767px) {
+    .hero-video { aspect-ratio: 5 / 4; }
+    .hv-card { width: 27%; right: -4%; bottom: -10%; }
+    .hv-chip { top: 10px; left: 10px; padding: 6px 11px; font-size: 10px; }
+  }
 
 
   /* react.gg-style content panels beside the road */
@@ -307,14 +331,6 @@
 
   /* ── etiquetas de sección ── */
   .kicker { font-size: 11px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
-  .badge-free {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 14px 6px 8px; border-radius: 999px;
-    background: rgba(123,214,107,.10); border: 1px solid rgba(123,214,107,.28);
-    font-size: 12px; font-weight: 800; color: #7BD66B; letter-spacing: .02em;
-  }
-  .badge-free span.dot { width: 6px; height: 6px; border-radius: 999px; background: #7BD66B; margin-left: 6px; box-shadow: 0 0 0 4px rgba(123,214,107,.18); }
-
   /* ── tarjetas de característica ── */
   .fcard {
     position: relative; overflow: hidden;
@@ -361,12 +377,6 @@
   .stat-line .sl-n { font: 900 26px/1 ui-monospace, monospace; color: #fff; }
   .stat-line .sl-l { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.38); letter-spacing: .04em; }
 
-  /* ── panel de ruta ── */
-  .route-panel {
-    background: #12141a; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 18px;
-  }
-  .route-panel canvas { width: 100%; height: auto; display: block; border-radius: 12px; background: rgba(255,255,255,.02); }
-
   /* ── hearts row (real app sprites) ── */
   .heart-row { display: inline-flex; gap: 7px; align-items: center; }
   .heart-row img { width: 30px; height: auto; image-rendering: pixelated; display: block; }
@@ -381,7 +391,7 @@
 <nav id="mainNav">
   <div class="max-w-6xl mx-auto px-5 md:px-8 flex items-center justify-between">
     <a href="#top" class="flex items-center gap-2.5 shrink-0" aria-label="Pacepal">
-      <img src="assets/logo_sm.png" alt="Pacepal" class="h-6 md:h-7 w-auto" style="filter:brightness(0) invert(1)">
+      <img src="assets/logo_sm.png" alt="Pacepal" class="h-7 md:h-8 w-auto" style="image-rendering:pixelated">
     </a>
     <div class="hidden md:flex items-center gap-8">
       <a href="#coleccion" class="nav-link">Colección</a>
@@ -403,9 +413,6 @@
 
     <!-- left: copy + CTA -->
     <div class="text-center md:text-left order-2 md:order-1">
-      <div class="mb-5 flex justify-center md:justify-start">
-        <span class="badge-free">Gratis, sin anuncios<span class="dot"></span></span>
-      </div>
       <h1 class="hero-title text-4xl md:text-6xl font-black leading-[1.04] tracking-tight mb-4 md:mb-5" style="color:#fff">
         Corre.<br><span style="color:#F9703E">Mantenlo vivo.</span>
       </h1>
@@ -423,7 +430,7 @@
           </svg>
           Descargar en el App Store
         </a>
-        <div class="mt-4"><span class="text-[11px] font-bold" style="color:rgba(255,255,255,.32)">Solo iOS</span></div>
+        <div class="mt-4"><span class="text-[11px] font-bold" style="color:rgba(255,255,255,.32)">Gratis · Solo iOS · Sin anuncios</span></div>
       </div>
 
       <!-- Android waitlist CTA -->
@@ -453,12 +460,17 @@
       </div>
     </div>
 
-    <!-- right: contador de días 00/66 → hábito formado -->
-    <div class="order-1 md:order-2 flex justify-center md:justify-end md:pr-10">
-      <div class="hero-counter" id="heroCounter">
-        <div class="hc-num"><span id="hcDay">00</span><span class="hc-total">/66</span></div>
-        <div class="hc-label" id="hcLabel">días corriendo</div>
-        <canvas id="heroPet" class="hc-pet"></canvas>
+    <!-- right: el pacepal corriendo (video) + una tarjeta asomando -->
+    <div class="order-1 md:order-2">
+      <div class="hero-video">
+        <video id="heroVid" class="hv-media" poster="assets/run-poster.jpg"
+               muted loop playsinline autoplay preload="none"
+               aria-label="Un pacepal corriendo por la ciudad, la pista y la playa"></video>
+        <div class="hv-scrim"></div>
+        <div class="hv-chip">
+          <span class="hv-dot"></span>DÍA 12 <span style="opacity:.45">/ 66</span>
+        </div>
+        <div class="hv-card" id="heroCard"></div>
       </div>
     </div>
   </div>
@@ -554,54 +566,6 @@
         <span class="text-xs font-extrabold tracking-widest uppercase" style="color:rgba(255,255,255,.3)">Desliza →</span>
       </div>
       <div class="card-rail" id="cardRail"></div>
-    </div>
-
-    <!-- familias + álbum + ruta -->
-    <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 mt-10 md:mt-14 items-start">
-      <div class="reveal">
-        <div class="space-y-3" id="albumFams"></div>
-        <div class="mt-5 flex flex-col sm:flex-row sm:items-center gap-4 p-5 rounded-2xl"
-             style="background:linear-gradient(135deg,rgba(249,112,62,.14),rgba(249,112,62,.03));border:1px solid rgba(249,112,62,.22)">
-          <div class="flex-1">
-            <div class="text-[15px] font-black" style="color:#fff">Tu casilla nº 1 es el día 1</div>
-            <div class="text-[13px] mt-1" style="color:rgba(255,255,255,.5)">Sal a correr hoy y el álbum arranca esta misma noche.</div>
-          </div>
-          <a href="https://apps.apple.com/mx/app/pacepal-corre-diario/id6761395287" target="_blank" rel="noopener"
-             onclick="posthog.capture('cta_click',{location:'cards',label:'Empezar álbum'})"
-             class="shrink-0 inline-flex items-center justify-center gap-2 font-extrabold text-sm text-[#14191f] bg-[#F9703E] hover:bg-[#ff8050] px-5 py-3 rounded-xl transition-colors">
-            Empezar gratis
-          </a>
-        </div>
-      </div>
-
-      <div class="space-y-6 reveal">
-        <div class="route-panel">
-          <div class="flex items-baseline justify-between mb-3">
-            <span class="kicker" style="color:#F9703E">Tu ruta</span>
-            <span class="text-[11px] font-extrabold tracking-widest uppercase" style="color:rgba(255,255,255,.3)">Salida del día 47</span>
-          </div>
-          <canvas id="routeCv" width="620" height="330"></canvas>
-          <div class="flex flex-wrap gap-x-6 gap-y-2 mt-4 mb-1">
-            <div><div style="font:900 17px/1 ui-monospace,monospace;color:#fff">20.06<span style="font-size:10px;color:#F9703E;margin-left:3px">KM</span></div><div class="text-[11px] font-bold mt-1" style="color:rgba(255,255,255,.35)">DISTANCIA</div></div>
-            <div><div style="font:900 17px/1 ui-monospace,monospace;color:#fff">6:31<span style="font-size:10px;color:#F9703E;margin-left:3px">/KM</span></div><div class="text-[11px] font-bold mt-1" style="color:rgba(255,255,255,.35)">RITMO</div></div>
-            <div><div style="font:900 17px/1 ui-monospace,monospace;color:#fff">2:10:38</div><div class="text-[11px] font-bold mt-1" style="color:rgba(255,255,255,.35)">TIEMPO</div></div>
-          </div>
-          <p class="text-[13px] mt-3" style="color:rgba(255,255,255,.45)">
-            Si corres con GPS, el trazo de esa salida se guarda con la tarjeta. Abres la tarjeta y ahí está el recorrido exacto que la ganó.
-          </p>
-        </div>
-
-        <div>
-          <div class="flex items-baseline justify-between mb-3">
-            <span class="kicker" style="color:rgba(255,255,255,.5)">El álbum</span>
-            <span class="text-[11px] font-extrabold tracking-widest uppercase" style="color:rgba(255,255,255,.3)">20 de 50 conseguidas</span>
-          </div>
-          <div class="album-grid" id="albumGrid"></div>
-          <p class="text-[13px] mt-3" style="color:rgba(255,255,255,.45)">
-            Las casillas vacías te dicen exactamente qué falta para llenarlas. Nada de sorpresas: sabes qué correr para la siguiente.
-          </p>
-        </div>
-      </div>
     </div>
 
   </div>
@@ -1326,29 +1290,26 @@ function fillStreakCal(){
 // state
 let frameIdx=0, frameTimer=0, fastFrameIdx=0, fastFrameTimer=0, lastTs=0;
 
-// Hero: contador 00 → 66; al llegar, "Se formó un hábito." y aparece el mono corriendo.
-var heroCountDone = false;
+// Hero: el video pesa, así que primero se pinta el póster y la fuente se
+// engancha después. En pantallas chicas va la versión de 640, y si el usuario
+// pidió ahorro de datos se queda solo con el póster.
 (function(){
-  var num=document.getElementById('hcDay'), lbl=document.getElementById('hcLabel'), pet=document.getElementById('heroPet');
-  if(!num||!lbl||!pet) return;
-  var start=null, dur=3200;
-  function tick(ts){
-    if(start===null) start=ts;
-    var t=Math.min(1,(ts-start)/dur);
-    var eased=1-Math.pow(1-t,3);
-    num.textContent=String(Math.round(eased*66)).padStart(2,'0');
-    if(t<1){ requestAnimationFrame(tick); return; }
-    lbl.textContent='Se formó un hábito.';
-    lbl.classList.add('done');
-    pet.classList.add('show');
-    heroCountDone=true;
+  var v = document.getElementById('heroVid');
+  if(!v) return;
+  var conn = navigator.connection || {};
+  var quiet = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(conn.saveData || quiet) return;   // se queda el póster, que ya cuenta la escena
+  function load(){
+    if(v.src) return;
+    v.src = window.innerWidth < 700 ? 'assets/run-hero-sm.mp4' : 'assets/run-hero.mp4';
+    var p = v.play();
+    if(p && p.catch) p.catch(function(){ /* si el navegador bloquea el autoplay queda el póster */ });
   }
-  window.addEventListener('load', function(){
-    setTimeout(function(){ requestAnimationFrame(tick); }, 500);
-  });
+  if(document.readyState === 'complete') setTimeout(load, 200);
+  else window.addEventListener('load', function(){ setTimeout(load, 200); });
 })();
 
-/* ═════════ COLECCIÓN: monta las tarjetas, el álbum y la ruta ═════════ */
+/* ═════════ TARJETAS: la del hero y la vitrina de la colección ═════════ */
 function cardById(id){ return CARD_SET.filter(function(c){ return c.id===id; })[0]; }
 
 function buildCollection(){
@@ -1378,53 +1339,15 @@ function buildCollection(){
     });
   }
 
-  const fams = document.getElementById('albumFams');
-  if(fams && !fams.children.length){
-    ALBUM.forEach(function(f){
-      const row = document.createElement('div');
-      row.className = 'album-fam';
-      row.innerHTML =
-        '<span class="af-dot" style="background:'+f.tint+'"></span>' +
-        '<div style="flex:1 1 auto;min-width:0">' +
-          '<div style="display:flex;align-items:baseline;gap:10px">' +
-            '<span class="af-name">'+f.name+'</span>' +
-            '<span class="af-count">'+f.count+'</span>' +
-          '</div>' +
-          '<div class="af-how">'+f.how+'</div>' +
-        '</div>';
-      fams.appendChild(row);
-    });
-  }
-
-  const grid = document.getElementById('albumGrid');
-  if(grid && !grid.children.length){
-    // 50 casillas en el orden del catálogo: 23 hitos, 4, 4, 9 y 10.
-    const tints = [];
-    ALBUM.forEach(function(f){ for(let i=0;i<f.count;i++) tints.push(f.tint); });
-    const owned = [0,1,2,3,4,5,6,7,8,9,10,11,23,24,27,28,31,32,33,40];
-    tints.forEach(function(tint,i){
-      const cell = document.createElement('div');
-      cell.className = 'album-slot' + (owned.indexOf(i)>=0 ? ' owned' : '');
-      if(owned.indexOf(i)>=0){
-        cell.style.background = 'linear-gradient(150deg,'+tint+',rgba(20,17,14,.92))';
-      }
-      grid.appendChild(cell);
-    });
-  }
-
-  const route = document.getElementById('routeCv');
-  if(route){
-    const dpr = Math.min(2, window.devicePixelRatio||1);
-    route.width = 620*dpr; route.height = 330*dpr;
-    PacepalCards.drawRoute(route, 404404, '#F9703E');
-  }
+  // La tarjeta que asoma por la esquina del video del hero.
+  const heroCard = document.getElementById('heroCard');
+  if(heroCard && !heroCard.children.length) PacepalCards.mount(heroCard, cardById('s4'));
 }
 
 function renderStatics(){
   const isMobile = window.innerWidth < 768;
   const cmpPx = isMobile ? 6 : 8;
   buildCollection();
-  renderPet(document.getElementById('heroPet'),'happy',0,5);
   renderPet(document.getElementById('runningPet'),'running',0,cmpPx);
   renderPet(document.getElementById('sadPet'),'sad',0,cmpPx);
   renderPet(document.getElementById('ctaPet'),'sign',0, isMobile ? 7 : 11);
@@ -1461,7 +1384,6 @@ function animate(ts){
   if(fastFrameTimer>=100){
     fastFrameTimer=0; fastFrameIdx=(fastFrameIdx+1)%4;
     const rp=document.getElementById('runningPet'); if(rp)renderPet(rp,'running',fastFrameIdx,cmpPx);
-    const hp=document.getElementById('heroPet'); if(hp)renderPet(hp,'happy',fastFrameIdx,5);
   }
 }
 

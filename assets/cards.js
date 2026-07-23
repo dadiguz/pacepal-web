@@ -456,65 +456,6 @@ function paintArt(canvas, card) {
   drawVignette(ctx, w, h);
 }
 
-/* ── Ruta GPS (RunRoute.swift) ─────────────────────────────────────────── */
-/* La app guarda el trazo del GPS normalizado a 0…1 y lo pinta detrás de la
-   tarjeta del día. Aquí se sintetiza un trazo con la misma normalización. */
-function routePoints(seed, count) {
-  const r = new RNG(seed + 977);
-  const n = count || 150;
-  let x = 0, y = 0, a = r.range(-0.5, 0.5);
-  const raw = [];
-  // Trazo de calle: giros suaves y encadenados —no un garabato— y ligeramente
-  // más ancho que alto, que es como se ve una vuelta por la ciudad.
-  let turn = 0;
-  for (let i = 0; i < n; i++) {
-    const t = i / n;
-    turn = turn * 0.82 + r.range(-0.10, 0.10);
-    a += turn + Math.sin(t * Math.PI * 3.1) * 0.055;
-    // La vuelta se cierra: el último tercio apunta de regreso al origen.
-    if (t > 0.66) {
-      let d = Math.atan2(-y, -x) - a;
-      while (d > Math.PI) d -= Math.PI * 2;
-      while (d < -Math.PI) d += Math.PI * 2;
-      a += d * 0.05;
-    }
-    x += Math.cos(a) * 1.55; y += Math.sin(a) * 0.9;
-    raw.push([x, y]);
-  }
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  raw.forEach(p => { minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]);
-                     minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]); });
-  const span = Math.max(maxX - minX, maxY - minY) || 1;
-  const offX = (span - (maxX - minX)) / 2, offY = (span - (maxY - minY)) / 2;
-  return raw.map(p => [(p[0] - minX + offX) / span, (p[1] - minY + offY) / span]);
-}
-
-function drawRoute(canvas, seed, color) {
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width, h = canvas.height;
-  const pad = Math.min(w, h) * 0.06;
-  const size = Math.min(w, h) - pad * 2;
-  const pts = routePoints(seed).map(p => [pad + p[0] * size + (w - size) / 2 - pad,
-                                          pad + p[1] * size + (h - size) / 2 - pad]);
-  ctx.clearRect(0, 0, w, h);
-  // Retícula tenue de fondo: da escala al trazo sin competir con él.
-  const step = Math.min(w, h) / 9;
-  ctx.strokeStyle = 'rgba(255,255,255,.045)'; ctx.lineWidth = 1;
-  for (let x = step; x < w; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-  for (let y = step; y < h; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = Math.max(5, size * 0.045); ctx.stroke();
-  ctx.strokeStyle = color || ORANGE; ctx.lineWidth = Math.max(2.5, size * 0.022); ctx.stroke();
-  // Salida y meta
-  ctx.fillStyle = '#7BD66B';
-  ctx.beginPath(); ctx.arc(pts[0][0], pts[0][1], Math.max(3, size * 0.028), 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#FFC53D';
-  const last = pts[pts.length - 1];
-  ctx.beginPath(); ctx.arc(last[0], last[1], Math.max(3, size * 0.028), 0, Math.PI * 2); ctx.fill();
-}
-
 /* ── Construcción de la tarjeta ────────────────────────────────────────── */
 
 const FAMILY_LABEL = {
@@ -724,7 +665,10 @@ function renderSprite(entry) {
 
 /* ── API pública ───────────────────────────────────────────────────────── */
 
-function mount(container, card) {
+function mount(container, cardSpec) {
+  // Copia por montaje: la misma pieza puede aparecer dos veces en la página
+  // (el hero y la vitrina) y cada una necesita sus propios canvas.
+  const card = Object.assign({}, cardSpec);
   const stage = buildCard(card);
   container.appendChild(stage);
 
@@ -763,8 +707,6 @@ global.PacepalCards = {
   mount: mount,
   paintArt: paintArt,
   makePalette: makePalette,
-  drawRoute: drawRoute,
-  routePoints: routePoints,
   fitAll: function () { document.querySelectorAll('.pcard-stage').forEach(fitCard); },
   TOTAL: TOTAL_CARDS
 };

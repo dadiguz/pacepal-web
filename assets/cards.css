@@ -134,7 +134,7 @@
 
 /* ── Pie ── */
 .pc-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding: 8px 3px 1px; }
-.pc-logo { height: 12px; width: auto; opacity: .6; filter: brightness(0) invert(1); }
+.pc-logo { height: 13px; width: auto; opacity: .8; image-rendering: pixelated; }
 .pc-num { font: 700 8.5px/1 ui-monospace, SFMono-Regular, monospace; color: rgba(255,255,255,.5); }
 
 /* ── Foil holográfico (CardHoloOverlay.swift) ── */
@@ -192,29 +192,3 @@
   .card-rail { gap: 26px; padding: 14px 32px 34px; }
   .card-rail > .rail-item { width: 244px; }
 }
-
-/* ── Álbum: casillas de las cinco familias ── */
-.album-fam {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 16px 18px;
-  border-radius: 16px;
-  background: rgba(255,255,255,.028);
-  border: 1px solid rgba(255,255,255,.07);
-  transition: border-color .25s ease, background .25s ease;
-}
-.album-fam:hover { border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.05); }
-.album-fam .af-dot { width: 10px; height: 10px; border-radius: 999px; margin-top: 6px; flex: 0 0 auto; }
-.album-fam .af-name { font-size: 15px; font-weight: 800; color: #fff; }
-.album-fam .af-count { font: 800 12px/1 ui-monospace, monospace; color: rgba(255,255,255,.4); margin-left: auto; flex: 0 0 auto; }
-.album-fam .af-how { font-size: 13px; color: rgba(255,255,255,.45); line-height: 1.45; margin-top: 4px; }
-
-/* Rejilla de casillas vacías, como el álbum de la app */
-.album-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
-@media (max-width: 640px) { .album-grid { grid-template-columns: repeat(10, 1fr); gap: 4px; } }
-.album-slot {
-  aspect-ratio: 320 / 460;
-  border-radius: 4px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.07);
-}
-.album-slot.owned { border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,.4); }

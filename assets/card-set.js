@@ -109,21 +109,6 @@ const CARD_SET = [
   }
 ];
 
-/* Las cinco familias del álbum, con lo que pide cada casilla. */
-const ALBUM = [
-  { key: 'milestone', name: 'Hitos del reto', count: 23, tint: '#FFC46B',
-    how: 'Una por cada hito de los 66 días. Llevan el fondo que se desbloquea ese día.' },
-  { key: 'distance', name: 'Distancia en una salida', count: 4, tint: '#FF7DB0',
-    how: '5K · 10K · 15K · 20K en una sola salida (3 / 6 / 9 / 13.1 mi si corres en millas).' },
-  { key: 'streak', name: 'Días seguidos', count: 4, tint: '#FF9A4D',
-    how: '5, 10, 15 y 20 días corriendo sin fallar uno solo.' },
-  { key: 'totalKm', name: 'Distancia acumulada', count: 9, tint: '#6BC5FF',
-    how: 'De los primeros 10K a los 100K sumados durante el reto.' },
-  { key: 'challenge', name: 'Retos de rendimiento', count: 10, tint: '#6BE3B8',
-    how: '5K sub 30, ritmo 4:30/km, 10K en la hora, 60 minutos en pie, media maratón sub 2:15…' }
-];
-
 global.CARD_SET = CARD_SET;
-global.ALBUM = ALBUM;
 
 })(window);
